@@ -7,6 +7,7 @@ import {
   ExternalLink,
   FolderTree,
   GitFork,
+  Map as MapIcon,
   RefreshCw,
   Star,
 } from 'lucide-react';
@@ -112,6 +113,7 @@ export default function RoadmapPage() {
   const [roadmaps, setRoadmaps] = useState<RoadmapsData | null>(null);
   const [graph, setGraph] = useState<GraphData | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [filterCategory, setFilterCategory] = useState<string>('all');
   // Seleksi datang dari query string (/roadmap?sub=...), jadi badge di halaman
   // lain (mis. /docs) bisa langsung mengarahkan ke subskill tertentu.
   const [searchParams] = useSearchParams();
@@ -217,32 +219,63 @@ export default function RoadmapPage() {
       })
     : null;
 
+  const displayedGroups = useMemo(() => {
+    if (filterCategory === 'all') return groups;
+    return groups.filter((g) => g.skill.toLowerCase() === filterCategory.toLowerCase());
+  }, [groups, filterCategory]);
+
   /* ============================ GRID VIEW (semua subskill) ============================ */
   if (!selected) {
     return (
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-        <header className="mb-8">
-          <p className="eyebrow">Roadmap</p>
-          <h1 className="mt-1.5 text-3xl font-bold tracking-tight text-slate-50">
-            Pilih Jalur Belajar
+        <header className="mb-8 space-y-3">
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-accent-500/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-accent-400">
+            <MapIcon className="h-3.5 w-3.5" />
+            Pohon Kurikulum Mandiri
+          </div>
+          <h1 className="text-3xl font-extrabold tracking-tight text-slate-50 light:text-slate-900 sm:text-4xl">
+            Alur Roadmap Belajar
           </h1>
+          <p className="text-sm text-slate-400 light:text-slate-600 max-w-2xl">
+            Peta jalan terstruktur dari catatan Obsidian: pelajari setiap subskill langkah demi langkah, lengkap dengan referensi teori dan source code latihan.
+          </p>
+
+          {/* Filter Pills */}
+          <div className="flex flex-wrap items-center gap-2 pt-2">
+            {[
+              { id: 'all', label: `Semua Jalur (${allItems.length})` },
+              ...groups.map((g) => ({
+                id: g.skill.toLowerCase(),
+                label: `${g.skill} (${g.items.length})`,
+              })),
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setFilterCategory(tab.id)}
+                className={cn(
+                  'rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-all',
+                  filterCategory === tab.id
+                    ? 'bg-accent-600 text-white shadow-sm'
+                    : 'bg-slate-900/80 text-slate-400 border border-slate-800 hover:bg-slate-800 hover:text-slate-200 light:bg-slate-100 light:border-slate-200 light:text-slate-700'
+                )}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </header>
 
-        {groups.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-slate-700 bg-slate-900/30 p-10 text-center text-sm text-slate-500">
-            Belum ada subskill. Tambahkan file bertag{' '}
-            <code className="rounded bg-slate-800 px-1.5 py-0.5 text-xs text-emerald-300">#Subskill</code>{' '}
-            dan{' '}
-            <code className="rounded bg-slate-800 px-1.5 py-0.5 text-xs text-amber-300">#roadmap</code>{' '}
-            di vault.
+        {displayedGroups.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-slate-800 bg-slate-900/30 p-10 text-center text-sm text-slate-500 light:border-slate-300 light:bg-slate-50">
+            Tidak ada roadmap dalam kategori ini.
           </div>
         ) : (
           <div className="space-y-10">
-            {groups.map((group) => (
+            {displayedGroups.map((group) => (
               <section key={group.skill} aria-label={group.skill}>
                 <div className="mb-4 flex items-center gap-3">
                   <span
-                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-white"
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-white shadow-sm"
                     style={{ backgroundColor: group.color }}
                   >
                     <FolderTree className="h-4 w-4" />
@@ -250,7 +283,7 @@ export default function RoadmapPage() {
                   <h2 className="text-lg font-bold tracking-tight" style={{ color: group.color }}>
                     {group.skill}
                   </h2>
-                  <span className="rounded-full border border-slate-800 bg-slate-900/60 px-2.5 py-0.5 text-xs tabular-nums text-slate-500">
+                  <span className="rounded-full border border-slate-800 bg-slate-900/60 px-2.5 py-0.5 text-xs tabular-nums text-slate-400 light:border-slate-200 light:bg-slate-100 light:text-slate-600">
                     {group.items.length} jalur
                   </span>
                 </div>
@@ -266,7 +299,7 @@ export default function RoadmapPage() {
         )}
 
         {syncedAt && (
-          <p className="mt-10 flex items-center gap-1.5 border-t border-slate-800/60 pt-5 text-[11px] text-slate-600">
+          <p className="mt-10 flex items-center gap-1.5 border-t border-slate-800/60 pt-5 text-[11px] text-slate-600 light:border-slate-200 light:text-slate-400">
             <RefreshCw className="h-3 w-3 shrink-0" />
             Terakhir diperbarui · {syncedAt}
           </p>
@@ -347,15 +380,22 @@ export default function RoadmapPage() {
       {/* Konten: detail roadmap bercabang */}
       <div className="min-w-0 flex-1 overflow-y-auto">
         <div className="mx-auto max-w-3xl p-5 sm:p-7">
-          <button
-            onClick={() => navigate('/roadmap')}
-            className="flex items-center gap-1.5 rounded-md px-2 py-1 text-xs text-slate-500 transition-colors hover:bg-slate-800/60 hover:text-slate-200"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" />
-            Semua Subskill
-          </button>
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80 pb-4 light:border-slate-200">
+            <button
+              onClick={() => navigate('/roadmap')}
+              className="w3-nav-btn w3-nav-btn-secondary text-xs"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              <span>❮ Kembali ke Semua Roadmap</span>
+            </button>
+            <div className="flex items-center gap-2">
+              <span className="rounded-full bg-accent-500/15 px-3 py-1 text-xs font-bold text-accent-400">
+                {totalSteps} Langkah Total
+              </span>
+            </div>
+          </div>
 
-          <header className="mb-6 mt-3">
+          <header className="mb-6">
             <p className="text-xs uppercase tracking-wider" style={{ color }}>
               {selected.skill} · {selected.path}
             </p>
@@ -458,40 +498,37 @@ function SubskillCard({
   return (
     <Link
       to={`/roadmap?sub=${encodeURIComponent(item.id)}`}
-      className="group flex flex-col rounded-2xl border-2 bg-slate-900/50 p-5 transition-all hover:-translate-y-1"
-      style={{ borderColor: `${color}3a`, boxShadow: '0 0 0 0 transparent' }}
-      onMouseEnter={(e) => {
-        (e.currentTarget as HTMLElement).style.boxShadow = `0 8px 24px ${color}30`;
-        (e.currentTarget as HTMLElement).style.borderColor = color;
-      }}
-      onMouseLeave={(e) => {
-        (e.currentTarget as HTMLElement).style.boxShadow = '0 0 0 0 transparent';
-        (e.currentTarget as HTMLElement).style.borderColor = `${color}3a`;
-      }}
+      className="group m3-card m3-card-hover flex flex-col justify-between p-5 border-t-4"
+      style={{ borderTopColor: color }}
     >
-      <div className="flex items-start justify-between gap-3">
-        <span
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl"
-          style={{ backgroundColor: `${color}22`, color }}
-        >
-          {isSub ? <Star className="h-5 w-5" /> : <GitFork className="h-5 w-5" />}
-        </span>
-        <ArrowRight className="h-4 w-4 text-slate-600 opacity-0 transition-opacity group-hover:opacity-100" />
+      <div>
+        <div className="flex items-start justify-between gap-3">
+          <span
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-bold shadow-sm"
+            style={{ backgroundColor: `${color}20`, color }}
+          >
+            {isSub ? <Star className="h-5 w-5" /> : <GitFork className="h-5 w-5" />}
+          </span>
+          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 light:text-slate-400">
+            {item.skill}
+          </span>
+        </div>
+
+        <h3 className="mt-3.5 text-base font-bold text-slate-100 group-hover:text-accent-400 transition-colors light:text-slate-900">
+          {item.label}
+        </h3>
+        <p className="mt-1 truncate text-xs text-slate-400 light:text-slate-500" title={item.path}>
+          {shortPath}
+        </p>
       </div>
 
-      <h3 className="mt-4 text-lg font-bold leading-snug text-slate-100 transition-colors group-hover:text-slate-50">
-        {item.label}
-      </h3>
-      <p className="mt-1 truncate text-xs text-slate-500" title={item.path}>
-        {shortPath}
-      </p>
-
-      <div className="mt-4 flex flex-wrap items-center gap-1.5">
-        <span className="rounded-full border border-slate-700 bg-slate-800/60 px-2.5 py-0.5 text-[11px] tabular-nums text-slate-400">
-          {item.roadmapIds.length} roadmap
-        </span>
-        <span className="rounded-full border border-slate-700 bg-slate-800/60 px-2.5 py-0.5 text-[11px] tabular-nums text-slate-400">
-          {steps} langkah
+      <div className="mt-5 flex items-center justify-between border-t border-slate-800/80 pt-3 light:border-slate-200">
+        <div className="flex items-center gap-1.5 text-[11px] font-medium text-slate-400 light:text-slate-500">
+          <span className="font-bold text-slate-200 light:text-slate-800">{steps}</span> langkah ·{' '}
+          <span>{item.roadmapIds.length} bab</span>
+        </div>
+        <span className="inline-flex items-center gap-1 text-xs font-bold text-accent-500 group-hover:translate-x-0.5 transition-transform">
+          Buka ❯
         </span>
       </div>
     </Link>

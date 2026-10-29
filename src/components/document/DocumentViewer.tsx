@@ -281,19 +281,16 @@ export function DocumentViewer({ doc }: { doc: DocumentData }) {
         {(prevDoc || nextDoc) && (
           <nav
             aria-label="Navigasi bab atas"
-            className="my-3 flex items-center justify-between gap-2 rounded-2xl border border-slate-800/80 bg-slate-900/60 p-2 light:border-slate-200 light:bg-slate-50 shadow-sm"
+            className="my-3 flex items-center justify-between gap-3"
           >
             {prevDoc ? (
               <Link
                 to={`/docs/${doc.previous}`}
-                className="w3-nav-btn w3-nav-btn-secondary text-xs"
+                className="w3-nav-btn w3-nav-btn-secondary px-4 py-2 sm:px-5 sm:py-2.5 font-bold shadow-sm"
                 title={prevDoc.title}
               >
-                <ArrowLeft className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">❮ Sebelumnya:</span>
-                <span className="truncate max-w-[120px] sm:max-w-[180px] font-medium">
-                  {prevDoc.title}
-                </span>
+                <span>❮</span>
+                <span>Sebelumnya</span>
               </Link>
             ) : (
               <div />
@@ -302,14 +299,11 @@ export function DocumentViewer({ doc }: { doc: DocumentData }) {
             {nextDoc ? (
               <Link
                 to={`/docs/${doc.next}`}
-                className="w3-nav-btn w3-nav-btn-primary text-xs ml-auto"
+                className="w3-nav-btn w3-nav-btn-primary px-5 py-2 sm:px-6 sm:py-2.5 font-bold shadow ml-auto"
                 title={nextDoc.title}
               >
-                <span className="hidden sm:inline">Selanjutnya:</span>
-                <span className="truncate max-w-[120px] sm:max-w-[180px] font-bold">
-                  {nextDoc.title}
-                </span>
-                <ArrowRight className="h-3.5 w-3.5" />
+                <span>Selanjutnya</span>
+                <span>❯</span>
               </Link>
             ) : (
               <div />
@@ -383,6 +377,40 @@ export function DocumentViewer({ doc }: { doc: DocumentData }) {
 
           {/* Backlinks & Bottom Navigation */}
           <div className="mt-12 space-y-6">
+            {/* W3Schools Signature Bottom Nav Bar */}
+            {(prevDoc || nextDoc) && (
+              <nav
+                aria-label="Navigasi bab bawah"
+                className="my-6 flex items-center justify-between gap-3 border-t border-slate-800 pt-6 light:border-slate-200"
+              >
+                {prevDoc ? (
+                  <Link
+                    to={`/docs/${doc.previous}`}
+                    className="w3-nav-btn w3-nav-btn-secondary px-4 py-2 sm:px-5 sm:py-2.5 font-bold shadow-sm"
+                    title={prevDoc.title}
+                  >
+                    <span>❮</span>
+                    <span>Sebelumnya</span>
+                  </Link>
+                ) : (
+                  <div />
+                )}
+
+                {nextDoc ? (
+                  <Link
+                    to={`/docs/${doc.next}`}
+                    className="w3-nav-btn w3-nav-btn-primary px-5 py-2 sm:px-6 sm:py-2.5 font-bold shadow ml-auto"
+                    title={nextDoc.title}
+                  >
+                    <span>Selanjutnya</span>
+                    <span>❯</span>
+                  </Link>
+                ) : (
+                  <div />
+                )}
+              </nav>
+            )}
+
             <Backlinks doc={doc} />
             <PrevNext doc={doc} />
           </div>

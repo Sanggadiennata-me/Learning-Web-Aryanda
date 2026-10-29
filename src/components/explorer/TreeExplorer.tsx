@@ -168,7 +168,7 @@ function TreeNodeRow({
             'group relative flex items-center gap-2 rounded-xl py-1.5 pr-2.5 text-xs transition-all duration-150',
             node.isCode && 'font-mono',
             active
-              ? 'bg-accent-500/15 text-accent-400 font-semibold ring-1 ring-accent-500/30'
+              ? 'bg-accent-600 text-white font-bold shadow-sm'
               : node.isRoadmap
                 ? 'font-medium text-slate-200 hover:bg-slate-800/80 hover:text-white light:text-slate-700 light:hover:bg-slate-100'
                 : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200 light:text-slate-600 light:hover:bg-slate-100'
@@ -176,23 +176,23 @@ function TreeNodeRow({
           style={{ paddingLeft: padding }}
           title={node.isCode ? `${node.title} · ${codeLang?.label}` : node.title}
         >
-          {/* Active Accent Bar on Left (W3Schools / Material marker) */}
-          {active && (
-            <span className="absolute left-1 top-1.5 bottom-1.5 w-1 rounded-full bg-accent-500" />
-          )}
-
           {node.isRoadmap ? (
-            <Map className="h-3.5 w-3.5 shrink-0 text-accent-400" />
+            <Map className={cn('h-3.5 w-3.5 shrink-0', active ? 'text-white' : 'text-accent-400')} />
           ) : node.isCode ? (
-            <Code2 className="h-3.5 w-3.5 shrink-0" style={{ color: codeLang?.color }} />
+            <Code2 className="h-3.5 w-3.5 shrink-0" style={{ color: active ? '#ffffff' : codeLang?.color }} />
           ) : (
-            <FileText className="h-3.5 w-3.5 shrink-0 opacity-60 group-hover:opacity-100" />
+            <FileText className={cn('h-3.5 w-3.5 shrink-0', active ? 'text-white' : 'opacity-60 group-hover:opacity-100')} />
           )}
 
           <span className="truncate">{node.title}</span>
 
           {node.isRoadmap && (
-            <span className="ml-auto shrink-0 rounded-full bg-accent-500/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-accent-400">
+            <span
+              className={cn(
+                'ml-auto shrink-0 rounded-full px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider',
+                active ? 'bg-white/20 text-white' : 'bg-accent-500/15 text-accent-400'
+              )}
+            >
               map
             </span>
           )}

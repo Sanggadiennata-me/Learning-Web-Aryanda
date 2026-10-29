@@ -679,73 +679,86 @@ export default function EditorPage() {
   const taRef = useRef<HTMLTextAreaElement>(null);
 
   return (
-    <div className="flex h-[calc(100vh-6rem)] flex-col">
-      {/* Header halaman */}
-      <div className="flex flex-wrap items-center gap-3 border-b border-slate-800 px-4 py-2.5">
-        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-600 shadow-sm">
-          <Code2 className="h-4 w-4 text-white" />
-        </span>
-        <h1 className="text-base font-bold text-slate-50">Code Editor</h1>
-        <span className="hidden text-xs text-slate-500 sm:block">
-          Tulis &amp; jalankan kode langsung di browser, tanpa backend.
-        </span>
+    <div className="flex h-[calc(100vh-5.5rem)] flex-col bg-slate-950 light:bg-slate-50">
+      {/* ============ W3SCHOOLS TRYIT EDITOR HEADER ============ */}
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 bg-slate-900/90 px-4 py-2.5 backdrop-blur light:border-slate-200 light:bg-white shadow-sm z-10">
+        <div className="flex items-center gap-3">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent-600 text-white shadow-sm">
+            <Code2 className="h-4 w-4" />
+          </span>
+          <div>
+            <h1 className="text-sm font-bold text-slate-100 light:text-slate-900 leading-none">
+              Code Editor (Try it Yourself)
+            </h1>
+            <span className="text-[11px] text-slate-500 light:text-slate-500 mt-0.5 block">
+              Eksekusi kode langsung di browser via WebAssembly tanpa backend.
+            </span>
+          </div>
+        </div>
+
+        {/* Action Buttons: Run & Tools */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={copyCode}
+            className={cn(
+              'flex h-9 items-center gap-1.5 rounded-xl border px-3 text-xs font-semibold transition-all shadow-sm',
+              copied
+                ? 'border-emerald-500/60 bg-emerald-500/15 text-emerald-300 light:bg-emerald-100 light:text-emerald-700'
+                : 'border-slate-800 bg-slate-900/80 text-slate-400 hover:border-slate-700 hover:text-slate-200 light:border-slate-200 light:bg-slate-100 light:text-slate-700'
+            )}
+            title="Salin kode ke clipboard"
+            aria-label="Salin kode"
+          >
+            {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+            <span className="hidden sm:inline">{copied ? 'Tersalin' : 'Copy'}</span>
+          </button>
+
+          <button
+            onClick={clearAll}
+            className="flex h-9 items-center gap-1.5 rounded-xl border border-slate-800 bg-slate-900/80 px-3 text-xs font-semibold text-slate-400 hover:border-red-500/60 hover:text-red-400 light:border-slate-200 light:bg-slate-100 light:text-slate-700 transition-all shadow-sm active:scale-95"
+            title="Hapus semua kode dan output"
+            aria-label="Hapus semua kode dan output"
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Reset</span>
+          </button>
+
+          {/* W3Schools Signature Green Run Button */}
+          <button
+            onClick={() => void run()}
+            disabled={running}
+            className="flex h-9 items-center gap-2 rounded-xl bg-accent-600 px-5 text-xs sm:text-sm font-bold text-white shadow-md transition-all hover:bg-accent-700 active:scale-95 disabled:pointer-events-none disabled:opacity-50"
+            title="Jalankan kode (Ctrl+Enter)"
+          >
+            {running ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4 fill-current" />}
+            <span>{running ? 'Menjalankan…' : 'Run ❯'}</span>
+          </button>
+        </div>
       </div>
 
       <div className="flex min-h-0 flex-1 flex-col md:flex-row">
         {/* ============ PANEL EDITOR ============ */}
-        <div className="flex min-h-0 flex-1 flex-col border-b border-slate-800 md:w-1/2 md:border-b-0 md:border-r">
-          {/* Toolbar editor */}
-          <div className="flex items-center gap-2 border-b border-slate-800 px-3 py-2">
-            <select
-              value={lang}
-              onChange={(e) => changeLang(e.target.value as LangId)}
-              className="h-8 rounded-lg border border-slate-700 bg-slate-900 px-2.5 text-sm text-slate-200 focus:border-accent-500 focus:outline-none"
-              aria-label="Pilih bahasa pemrograman"
-            >
-              {LANGUAGES.map((l) => (
-                <option key={l.id} value={l.id}>
-                  {l.label}
-                </option>
-              ))}
-            </select>
-            <button
-              onClick={copyCode}
-              className={cn(
-                'flex h-8 items-center gap-1.5 rounded-lg border px-2.5 text-xs transition-colors',
-                copied
-                  ? 'border-emerald-500/60 bg-emerald-500/15 text-emerald-300'
-                  : 'border-slate-700 text-slate-400 hover:border-slate-500 hover:text-slate-200'
-              )}
-              title="Salin kode"
-              aria-label="Salin kode"
-            >
-              {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
-              {copied ? 'Tersalin' : 'Copy'}
-            </button>
-
-            <div className="ml-auto flex items-center gap-2">
+        <div className="flex min-h-0 flex-1 flex-col border-b border-slate-800 light:border-slate-200 md:w-1/2 md:border-b-0 md:border-r">
+          {/* Language Selector Pills Bar (W3Schools Style) */}
+          <div className="flex items-center gap-1.5 overflow-x-auto border-b border-slate-800 bg-slate-950/80 px-3 py-2 scrollbar-thin light:border-slate-200 light:bg-slate-100">
+            {LANGUAGES.map((l) => (
               <button
-                onClick={clearAll}
-                className="flex h-8 items-center gap-1.5 rounded-lg border border-slate-700 px-2.5 text-xs text-slate-400 transition-colors hover:border-red-500/60 hover:text-red-400"
-                title="Hapus semua kode dan output"
-                aria-label="Hapus semua kode dan output"
+                key={l.id}
+                onClick={() => changeLang(l.id)}
+                className={cn(
+                  'rounded-lg px-2.5 py-1 text-xs font-semibold whitespace-nowrap transition-all',
+                  lang === l.id
+                    ? 'bg-accent-600 text-white shadow-sm'
+                    : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200 light:text-slate-600 light:hover:bg-slate-200'
+                )}
               >
-                <Trash2 className="h-3.5 w-3.5" />
+                {l.label}
               </button>
-              <button
-                onClick={() => void run()}
-                disabled={running}
-                className="flex h-8 items-center gap-1.5 rounded-lg bg-accent-500 px-3.5 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-accent-600 disabled:pointer-events-none disabled:opacity-50"
-                title="Jalankan (Ctrl+Enter)"
-              >
-                {running ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Play className="h-3.5 w-3.5" />}
-                {running ? 'Menjalankan…' : 'Run'}
-              </button>
-            </div>
+            ))}
           </div>
 
           {/* Area kode: gutter nomor baris + overlay highlight + textarea */}
-          <div className="flex min-h-0 flex-1 bg-slate-950 font-mono text-[13px] leading-6">
+          <div className="flex min-h-0 flex-1 bg-slate-950 font-mono text-[13px] leading-6 light:bg-slate-900">
             <div
               ref={gutterRef}
               className="w-11 shrink-0 select-none overflow-hidden border-r border-slate-800 bg-slate-950 py-3 text-right text-slate-600"
@@ -796,11 +809,11 @@ export default function EditorPage() {
         </div>
 
         {/* ============ PANEL OUTPUT ============ */}
-        <div className="flex min-h-0 flex-1 flex-col md:w-1/2">
-          <div className="flex items-center gap-2 border-b border-slate-800 px-3 py-2">
-            <Terminal className="h-3.5 w-3.5 text-emerald-400" />
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-              {htmlPreview ? 'Preview' : 'Output'}
+        <div className="flex min-h-0 flex-1 flex-col md:w-1/2 bg-slate-950 light:bg-slate-900">
+          <div className="flex items-center gap-2 border-b border-slate-800 bg-slate-950/80 px-3 py-2 light:border-slate-200 light:bg-slate-100">
+            <Terminal className="h-3.5 w-3.5 text-accent-500" />
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-300 light:text-slate-700">
+              {htmlPreview ? 'Pratinjau Browser (Live)' : 'Hasil Eksekusi (Output)'}
             </span>
             {status && (
               <span className="flex items-center gap-1.5 text-xs text-slate-400">
@@ -809,7 +822,7 @@ export default function EditorPage() {
               </span>
             )}
             {elapsed !== null && !running && (
-              <span className="ml-auto text-[11px] tabular-nums text-slate-600">
+              <span className="ml-auto text-[11px] tabular-nums text-slate-500 light:text-slate-600">
                 {output.length} baris · {elapsed.toFixed(1)} ms
               </span>
             )}

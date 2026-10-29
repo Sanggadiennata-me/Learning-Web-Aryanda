@@ -12,32 +12,33 @@ import { cn } from '../../../lib/utils';
 
 function ToolCard({ entry }: { entry: CatalogEntry }) {
   return (
-    <Link to={entry.path} className="card card-hover group block p-4">
-      <div className="flex items-start gap-3">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-800 bg-slate-900 text-lg" aria-hidden>
-          {entry.icon}
-        </span>
-        <div className="min-w-0">
-          <h3 className="text-sm font-semibold text-slate-100 transition-colors group-hover:text-accent-300">{entry.title}</h3>
-          <p className="mt-1 line-clamp-2 text-xs text-slate-500">{entry.description}</p>
+    <Link to={entry.path} className="m3-card m3-card-hover group flex flex-col justify-between p-4">
+      <div>
+        <div className="flex items-start gap-3">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-800/80 text-xl light:bg-slate-100 shadow-sm" aria-hidden>
+            {entry.icon}
+          </span>
+          <div className="min-w-0">
+            <h3 className="text-sm font-bold text-slate-100 transition-colors group-hover:text-accent-400 light:text-slate-900">
+              {entry.title}
+            </h3>
+            <p className="mt-1 line-clamp-2 text-xs text-slate-400 light:text-slate-600">
+              {entry.description}
+            </p>
+          </div>
         </div>
       </div>
-      <div className="mt-3 flex flex-wrap items-center gap-1.5">
-        {entry.tags.slice(0, 3).map((tag) => (
-          <span key={tag} className="rounded bg-slate-800/80 px-1.5 py-0.5 text-[10px] text-slate-500">{tag}</span>
-        ))}
-        {entry.privacy && (
-          <span
-            className={cn(
-              'ml-auto rounded px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide',
-              entry.privacy === 'local' && 'bg-emerald-500/10 text-emerald-400',
-              entry.privacy === 'external' && 'bg-amber-500/10 text-amber-400',
-              entry.privacy === 'hybrid' && 'bg-cyan-500/10 text-cyan-400'
-            )}
-          >
-            {entry.privacy}
-          </span>
-        )}
+      <div className="mt-4 flex items-center justify-between border-t border-slate-800/80 pt-2.5 light:border-slate-200">
+        <div className="flex items-center gap-1.5">
+          {entry.tags.slice(0, 2).map((tag) => (
+            <span key={tag} className="rounded-lg bg-slate-800/80 px-2 py-0.5 text-[10px] font-medium text-slate-400 light:bg-slate-100 light:text-slate-600">
+              {tag}
+            </span>
+          ))}
+        </div>
+        <span className="text-xs font-semibold text-accent-500 group-hover:translate-x-0.5 transition-transform">
+          Gunakan →
+        </span>
       </div>
     </Link>
   );
