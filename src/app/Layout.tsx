@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import {
   BookOpen,
@@ -21,8 +21,10 @@ import { useTheme } from './ThemeProvider';
 import { joinWithRoot } from '../lib/base';
 import { TreeExplorer } from '../components/explorer/TreeExplorer';
 import { TopicRibbon } from '../components/navigation/TopicRibbon';
+import { TutorialsModal } from '../components/navigation/TutorialsModal';
 import { MobileBottomNav } from '../components/navigation/MobileBottomNav';
 import { cn } from '../lib/utils';
+import type { TreeFolderNode, TreeNode } from '../domain/types';
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   cn(
@@ -42,6 +44,90 @@ function readSidebarState(): boolean {
   }
 }
 
+function getActiveTrackInfo(pathname: string, activeId: string | null, tree: TreeFolderNode[] | null): { title: string; nodes: TreeNode[] } {
+  const path = (activeId || pathname).toLowerCase();
+  if (path.includes('pemrograman/html') || path.includes('/html')) {
+    const pem = tree?.find((t) => t.name === 'Pemrograman');
+    const htmlFolder = pem?.children.find((c): c is TreeFolderNode => c.type === 'folder' && c.name.toLowerCase() === 'html');
+    return {
+      title: 'HTML TUTORIAL',
+      nodes: htmlFolder ? htmlFolder.children : [],
+    };
+  }
+  if (path.includes('pemrograman/css') || path.includes('/css')) {
+    const pem = tree?.find((t) => t.name === 'Pemrograman');
+    const cssFolder = pem?.children.find((c): c is TreeFolderNode => c.type === 'folder' && c.name.toLowerCase() === 'css');
+    return {
+      title: 'CSS TUTORIAL',
+      nodes: cssFolder ? cssFolder.children : [],
+    };
+  }
+  if (path.includes('pemrograman/javascript') || path.includes('/javascript')) {
+    const pem = tree?.find((t) => t.name === 'Pemrograman');
+    const jsFolder = pem?.children.find((c): c is TreeFolderNode => c.type === 'folder' && c.name.toLowerCase() === 'javascript');
+    return {
+      title: 'JAVASCRIPT TUTORIAL',
+      nodes: jsFolder ? jsFolder.children : [],
+    };
+  }
+  if (path.includes('pemrograman/python') || path.includes('/python')) {
+    const pem = tree?.find((t) => t.name === 'Pemrograman');
+    const pyFolder = pem?.children.find((c): c is TreeFolderNode => c.type === 'folder' && c.name.toLowerCase() === 'python');
+    return {
+      title: 'PYTHON TUTORIAL',
+      nodes: pyFolder ? pyFolder.children : [],
+    };
+  }
+  if (path.includes('pemrograman/php') || path.includes('/php')) {
+    const pem = tree?.find((t) => t.name === 'Pemrograman');
+    const phpFolder = pem?.children.find((c): c is TreeFolderNode => c.type === 'folder' && c.name.toLowerCase() === 'php');
+    return {
+      title: 'PHP TUTORIAL',
+      nodes: phpFolder ? phpFolder.children : [],
+    };
+  }
+  if (path.includes('pemrograman/fundamental') || path.includes('/fundamental')) {
+    const pem = tree?.find((t) => t.name === 'Pemrograman');
+    const fundFolder = pem?.children.find((c): c is TreeFolderNode => c.type === 'folder' && c.name.toLowerCase() === 'fundamental');
+    return {
+      title: 'FUNDAMENTAL CODING',
+      nodes: fundFolder ? fundFolder.children : [],
+    };
+  }
+  if (path.includes('cybersecurity')) {
+    const cy = tree?.find((t) => t.name === 'CyberSecurity');
+    return {
+      title: 'CYBERSECURITY TUTORIAL',
+      nodes: cy?.children || [],
+    };
+  }
+  if (path.includes('devops')) {
+    const dev = tree?.find((t) => t.name === 'DevOps');
+    return {
+      title: 'DEVOPS & CLOUD TUTORIAL',
+      nodes: dev?.children || [],
+    };
+  }
+  if (path.includes('jaringan')) {
+    const jar = tree?.find((t) => t.name === 'Jaringan');
+    return {
+      title: 'JARINGAN KOMPUTER TUTORIAL',
+      nodes: jar?.children || [],
+    };
+  }
+  if (path.includes('terms') || path.includes('foreign')) {
+    const terms = tree?.find((t) => t.name.toLowerCase().includes('terms'));
+    return {
+      title: 'KAMUS ISTILAH IT',
+      nodes: terms?.children || [],
+    };
+  }
+  return {
+    title: 'DAFTAR SEMUA MATERI',
+    nodes: tree || [],
+  };
+}
+
 /**
  * Layout Utama (Material Design & W3Schools Inspiration):
  * - Top App Bar dengan brand, navigasi utama ber-pill, search, & tema.
@@ -54,6 +140,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const { theme, toggleTheme } = useTheme();
   const location = useLocation();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [tutorialsModalOpen, setTutorialsModalOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(readSidebarState);
   const [sidebarFilter, setSidebarFilter] = useState('');
 
@@ -62,6 +149,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
     location.pathname.startsWith('/docs/') && location.pathname !== '/docs/'
       ? decodeURIComponent(location.pathname.slice('/docs/'.length))
       : null;
+
+  const activeTrackInfo = useMemo(() => {
+    return getActiveTrackInfo(location.pathname, activeId, tree);
+  }, [location.pathname, activeId, tree]);
 
   // Tutup drawer saat rute berubah.
   useEffect(() => {
@@ -99,40 +190,23 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
   const closeDrawer = () => setDrawerOpen(false);
 
-  // Komponen Sidebar Explorer
+  // Komponen Sidebar Explorer ala W3Schools
   const explorer = (
-    <div className="flex h-full min-h-0 flex-col bg-slate-950/70 light:bg-white/95">
-      <div className="flex items-center justify-between border-b border-slate-800 px-3.5 py-3 light:border-slate-200">
-        <div className="flex items-center gap-2">
-          <FolderTree className="h-4 w-4 text-accent-500" />
-          <span className="text-xs font-bold uppercase tracking-wider text-slate-300 light:text-slate-700">
-            Daftar Materi
-          </span>
-        </div>
-        <button
-          onClick={() => setSidebarCollapsed(true)}
-          className="hidden rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-800 hover:text-slate-100 light:hover:bg-slate-100 lg:block"
-          aria-label="Ciutkan sidebar"
-          title="Ciutkan sidebar"
-        >
-          <PanelLeftClose className="h-4 w-4" />
-        </button>
-      </div>
-
+    <div className="flex h-full min-h-0 flex-col bg-white border-r border-slate-200 dark:bg-slate-950 dark:border-slate-800">
       {/* Filter Bab Cepat ala W3Schools */}
-      <div className="border-b border-slate-800/60 p-2.5 light:border-slate-200/80">
+      <div className="border-b border-slate-200 p-2.5 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60">
         <div className="relative">
           <input
             type="text"
             value={sidebarFilter}
             onChange={(e) => setSidebarFilter(e.target.value)}
-            placeholder="Cari bab / judul..."
-            className="w-full rounded-xl border border-slate-800 bg-slate-900/90 px-3 py-1.5 text-xs text-slate-200 placeholder:text-slate-500 focus:border-accent-500 focus:outline-none light:border-slate-200 light:bg-slate-50 light:text-slate-800"
+            placeholder="Cari materi tutorial…"
+            className="w-full rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-800 placeholder:text-slate-400 focus:border-accent-500 focus:outline-none dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
           />
           {sidebarFilter && (
             <button
               onClick={() => setSidebarFilter('')}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-200"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
             >
               ×
             </button>
@@ -140,17 +214,29 @@ export function Layout({ children }: { children: React.ReactNode }) {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-2 scrollbar-thin">
-        {tree ? (
+      <div className="flex-1 overflow-y-auto scrollbar-thin">
+        {activeTrackInfo.nodes.length > 0 ? (
+          <TreeExplorer
+            nodes={activeTrackInfo.nodes}
+            activeId={activeId}
+            filterQuery={sidebarFilter}
+            sidebarTitle={activeTrackInfo.title}
+            variant="sidebar"
+            onNavigate={closeDrawer}
+            onOpenTutorialsModal={() => setTutorialsModalOpen(true)}
+          />
+        ) : tree ? (
           <TreeExplorer
             nodes={tree}
             activeId={activeId}
             filterQuery={sidebarFilter}
+            sidebarTitle="DAFTAR SEMUA MATERI"
             variant="sidebar"
             onNavigate={closeDrawer}
+            onOpenTutorialsModal={() => setTutorialsModalOpen(true)}
           />
         ) : (
-          <p className="px-3 py-4 text-xs text-slate-500">Memuat navigasi materi…</p>
+          <p className="px-4 py-6 text-xs text-slate-500">Memuat navigasi materi…</p>
         )}
       </div>
     </div>
@@ -226,6 +312,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 </span>
               </div>
             </Link>
+
+            {/* W3Schools Signature "Tutorials ▾" Dropdown (Screenshot 1 & 2) */}
+            <button
+              onClick={() => setTutorialsModalOpen(true)}
+              className="flex items-center gap-1.5 rounded-xl border border-slate-700 bg-slate-900/90 px-3 py-1.5 text-xs sm:text-sm font-bold text-slate-100 transition-all hover:bg-slate-800 hover:text-white dark:border-slate-700 dark:hover:bg-slate-800 light:border-slate-300 light:bg-slate-100 light:text-slate-800 light:hover:bg-slate-200 shadow-sm"
+              title="Pilih tutorial & materi (W3Schools style)"
+            >
+              <span>Tutorials</span>
+              <span className="text-[10px] text-slate-400">▾</span>
+            </button>
           </div>
 
           {/* Sisi Tengah: Navigasi Desktop Ber-Pills ala Material */}
@@ -398,6 +494,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
       {/* ============ MOBILE BOTTOM NAVIGATION BAR ============ */}
       <MobileBottomNav />
+
+      {/* ============ W3SCHOOLS TUTORIALS MEGA-MENU MODAL ============ */}
+      <TutorialsModal
+        isOpen={tutorialsModalOpen}
+        onClose={() => setTutorialsModalOpen(false)}
+      />
     </div>
   );
 }

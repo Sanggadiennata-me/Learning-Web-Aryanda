@@ -10,11 +10,12 @@ interface TreeExplorerProps {
   nodes: TreeNode[];
   activeId?: string | null;
   filterQuery?: string;
-  /** Sidebar: kompak, bisa collapse. Page: mode eksplorasi penuh. */
+  sidebarTitle?: string;
+  /** Sidebar: gaya tutorial W3Schools. Page: mode eksplorasi penuh. */
   variant?: 'sidebar' | 'page';
   className?: string;
-  /** Dipanggil saat file diklik (mis. menutup drawer mobile). */
   onNavigate?: () => void;
+  onOpenTutorialsModal?: () => void;
 }
 
 function ancestorsOf(nodes: TreeNode[], id: string, trail: string[] = []): string[] {
@@ -68,16 +69,20 @@ function filterTree(
 }
 
 /**
- * Sidebar dokumentasi recursive (W3Schools & Material Design).
- * Mendukung filter instan per bab, auto-expand, dan indikator aktif yang tajam.
+ * W3Schools Signature Sidebar Navigation (Screenshot 2):
+ * - Judul modul di paling atas (misal: "HTML TUTORIAL", "PYTHON TUTORIAL").
+ * - Item yang aktif memiliki background abu-abu (#E7E9EB) dan border kiri hijau tebal (#04AA6D).
+ * - Tampilan flat, bersih, tanpa ikon bertumpuk, nyaman dibaca.
  */
 export function TreeExplorer({
   nodes,
   activeId,
   filterQuery = '',
+  sidebarTitle,
   variant = 'sidebar',
   className,
   onNavigate,
+  onOpenTutorialsModal,
 }: TreeExplorerProps) {
   const { filtered: displayNodes, matchedPaths } = useMemo(
     () => filterTree(nodes, filterQuery),
@@ -111,26 +116,48 @@ export function TreeExplorer({
   };
 
   return (
-    <nav className={cn('select-none', className)} aria-label="Navigasi dokumen">
+    <nav className={cn('select-none flex flex-col h-full', className)} aria-label="Navigasi tutorial">
+      {/* W3Schools Sidebar Title (Screenshot 2) */}
+      {variant === 'sidebar' && sidebarTitle && (
+        <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3 bg-white dark:bg-slate-950 dark:border-slate-800">
+          <span className="text-xs font-extrabold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+            {sidebarTitle}
+          </span>
+          {onOpenTutorialsModal && (
+            <button
+              onClick={onOpenTutorialsModal}
+              className="text-[11px] font-bold text-accent-600 hover:underline dark:text-accent-400"
+              title="Ganti modul tutorial"
+            >
+              Ganti ▾
+            </button>
+          )}
+        </div>
+      )}
+
       {displayNodes.length === 0 && (
-        <div className="py-6 px-3 text-center text-xs text-slate-500">
+        <div className="py-8 px-4 text-center text-xs text-slate-400">
           Tidak ada materi yang sesuai &ldquo;{filterQuery}&rdquo;.
         </div>
       )}
-      <ul className="space-y-0.5">
-        {displayNodes.map((node) => (
-          <TreeNodeRow
-            key={node.type === 'file' ? node.id : node.relativePath}
-            node={node}
-            depth={0}
-            activeId={activeId}
-            expanded={expanded}
-            onToggle={toggle}
-            variant={variant}
-            onNavigate={onNavigate}
-          />
-        ))}
-      </ul>
+
+      {/* List bab & materi tutorial */}
+      <div className="flex-1 overflow-y-auto scrollbar-thin py-1">
+        <ul className="space-y-0.5">
+          {displayNodes.map((node) => (
+            <TreeNodeRow
+              key={node.type === 'file' ? node.id : node.relativePath}
+              node={node}
+              depth={0}
+              activeId={activeId}
+              expanded={expanded}
+              onToggle={toggle}
+              variant={variant}
+              onNavigate={onNavigate}
+            />
+          ))}
+        </ul>
+      </div>
     </nav>
   );
 }
@@ -156,46 +183,55 @@ function TreeNodeRow({
 }: RowProps) {
   if (node.type === 'file') {
     const active = activeId === node.id;
-    const padding = variant === 'sidebar' ? 10 + depth * 14 : 10 + depth * 18;
+    const padding = variant === 'sidebar' ? 16 + depth * 12 : 12 + depth * 16;
     const codeLang = node.isCode ? languageInfo(node.language ?? 'plaintext') : null;
 
+    if (variant === 'sidebar') {
+      return (
+        <li>
+          <Link
+            to={`/docs/${node.id}`}
+            onClick={onNavigate}
+            className={cn(
+              'flex items-center justify-between w-full py-2 pr-3 text-[13.5px] transition-colors',
+              active
+                ? 'bg-[#E7E9EB] text-slate-950 font-bold border-l-4 border-l-[#04AA6D] dark:bg-[#38444D] dark:text-white dark:border-l-[#04AA6D]'
+                : 'text-slate-700 hover:bg-slate-200/80 hover:text-slate-950 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white'
+            )}
+            style={{ paddingLeft: padding }}
+            title={node.title}
+          >
+            <span className="truncate">{node.title}</span>
+            {node.isRoadmap && (
+              <span className="text-[9px] font-bold uppercase tracking-wider text-accent-600 dark:text-accent-400 ml-1.5 shrink-0">
+                MAP
+              </span>
+            )}
+          </Link>
+        </li>
+      );
+    }
+
+    // Tampilan Page Explorer (Directory Mode)
     return (
       <li>
         <Link
           to={`/docs/${node.id}`}
           onClick={onNavigate}
           className={cn(
-            'group relative flex items-center gap-2 rounded-xl py-1.5 pr-2.5 text-xs transition-all duration-150',
-            node.isCode && 'font-mono',
+            'group relative flex items-center gap-2 rounded-xl py-1.5 pr-2.5 text-xs transition-all',
             active
               ? 'bg-accent-600 text-white font-bold shadow-sm'
-              : node.isRoadmap
-                ? 'font-medium text-slate-200 hover:bg-slate-800/80 hover:text-white light:text-slate-700 light:hover:bg-slate-100'
-                : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200 light:text-slate-600 light:hover:bg-slate-100'
+              : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
           )}
           style={{ paddingLeft: padding }}
-          title={node.isCode ? `${node.title} · ${codeLang?.label}` : node.title}
         >
           {node.isRoadmap ? (
-            <Map className={cn('h-3.5 w-3.5 shrink-0', active ? 'text-white' : 'text-accent-400')} />
-          ) : node.isCode ? (
-            <Code2 className="h-3.5 w-3.5 shrink-0" style={{ color: active ? '#ffffff' : codeLang?.color }} />
+            <Map className="h-3.5 w-3.5 shrink-0 text-accent-400" />
           ) : (
-            <FileText className={cn('h-3.5 w-3.5 shrink-0', active ? 'text-white' : 'opacity-60 group-hover:opacity-100')} />
+            <FileText className="h-3.5 w-3.5 shrink-0 opacity-60" />
           )}
-
           <span className="truncate">{node.title}</span>
-
-          {node.isRoadmap && (
-            <span
-              className={cn(
-                'ml-auto shrink-0 rounded-full px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider',
-                active ? 'bg-white/20 text-white' : 'bg-accent-500/15 text-accent-400'
-              )}
-            >
-              map
-            </span>
-          )}
         </Link>
       </li>
     );
@@ -203,13 +239,48 @@ function TreeNodeRow({
 
   const isOpen = expanded.has(node.relativePath);
   const count = countFiles([node]);
-  const padding = variant === 'sidebar' ? 8 + depth * 14 : 8 + depth * 18;
+  const padding = variant === 'sidebar' ? 16 + depth * 12 : 10 + depth * 16;
+
+  if (variant === 'sidebar') {
+    return (
+      <li className="mt-0.5">
+        <button
+          onClick={() => onToggle(node.relativePath)}
+          className="flex w-full items-center justify-between py-2 pr-3 text-left text-[13.5px] font-bold text-slate-800 transition-colors hover:bg-slate-200/80 dark:text-slate-200 dark:hover:bg-slate-800"
+          style={{ paddingLeft: padding }}
+          aria-expanded={isOpen}
+        >
+          <span className="truncate">{node.name}</span>
+          <span className="text-[10px] text-slate-400 shrink-0 ml-1">
+            {isOpen ? '▲' : '▼'}
+          </span>
+        </button>
+
+        {isOpen && (
+          <ul className="space-y-0.5 bg-black/[0.02] dark:bg-white/[0.02]">
+            {node.children.map((child) => (
+              <TreeNodeRow
+                key={child.type === 'file' ? child.id : child.relativePath}
+                node={child}
+                depth={depth + 1}
+                activeId={activeId}
+                expanded={expanded}
+                onToggle={onToggle}
+                variant={variant}
+                onNavigate={onNavigate}
+              />
+            ))}
+          </ul>
+        )}
+      </li>
+    );
+  }
 
   return (
     <li>
       <button
         onClick={() => onToggle(node.relativePath)}
-        className="flex w-full items-center gap-2 rounded-xl py-1.5 pr-2 text-left text-xs text-slate-300 font-medium transition-colors hover:bg-slate-800/70 hover:text-slate-100 light:text-slate-700 light:hover:bg-slate-100"
+        className="flex w-full items-center gap-2 rounded-xl py-1.5 pr-2 text-left text-xs font-semibold text-slate-300 hover:bg-slate-800/70 hover:text-white"
         style={{ paddingLeft: padding }}
         aria-expanded={isOpen}
       >
@@ -218,23 +289,15 @@ function TreeNodeRow({
         ) : (
           <ChevronRight className="h-3.5 w-3.5 shrink-0 text-slate-400" />
         )}
-        <Folder className="h-3.5 w-3.5 shrink-0 text-amber-400/80" />
-        <span className="truncate font-semibold tracking-tight">{node.name}</span>
-
-        {node.isCodeFolder ? (
-          <span className="ml-auto flex shrink-0 items-center gap-1 rounded-full bg-slate-800/60 px-1.5 py-0.5 text-[9px] text-accent-400 font-mono">
-            <Code2 className="h-2.5 w-2.5" />
-            <span>{count}</span>
-          </span>
-        ) : (
-          <span className="ml-auto rounded-full bg-slate-800/50 light:bg-slate-200 px-1.5 py-0.5 text-[9px] tabular-nums text-slate-400 light:text-slate-600">
-            {count}
-          </span>
-        )}
+        <Folder className="h-3.5 w-3.5 shrink-0 text-amber-400" />
+        <span className="truncate">{node.name}</span>
+        <span className="ml-auto rounded-full bg-slate-800 px-1.5 py-0.5 text-[9px] text-slate-500">
+          {count}
+        </span>
       </button>
 
       {isOpen && (
-        <ul className="space-y-0.5 border-l border-slate-800/60 ml-3.5 pl-1 my-0.5 light:border-slate-200">
+        <ul className="space-y-0.5 border-l border-slate-800/60 ml-3.5 pl-1 my-0.5">
           {node.children.map((child) => (
             <TreeNodeRow
               key={child.type === 'file' ? child.id : child.relativePath}

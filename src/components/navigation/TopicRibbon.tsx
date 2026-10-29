@@ -3,32 +3,87 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
-export interface TopicItem {
+export interface RibbonItem {
+  id: string;
   label: string;
   path: string;
-  icon?: string;
-  badge?: string;
+  matchPrefixes: string[];
 }
 
-const DEFAULT_TOPICS: TopicItem[] = [
-  { label: 'Semua Docs', path: '/docs', icon: '📚' },
-  { label: 'Pemrograman', path: '/docs/pemrograman', icon: '💻' },
-  { label: 'Python', path: '/docs/pemrograman/python', icon: '🐍' },
-  { label: 'JavaScript', path: '/docs/pemrograman/javascript', icon: '⚡' },
-  { label: 'PHP', path: '/docs/pemrograman/php', icon: '🐘' },
-  { label: 'CyberSecurity', path: '/docs/cybersecurity', icon: '🛡️' },
-  { label: 'DevOps & Docker', path: '/docs/devops', icon: '☁️' },
-  { label: 'Jaringan', path: '/docs/jaringan', icon: '🌐' },
-  { label: 'Roadmap', path: '/roadmap', icon: '🗺️' },
-  { label: 'Code Editor', path: '/editor', icon: '⌨️' },
-  { label: 'CySec Tools', path: '/cysec-tools', icon: '🔧', badge: '108+' },
-  { label: 'Kamus IT', path: '/docs/terms-and-foreign-words', icon: '📖' },
+export const W3S_RIBBON_ITEMS: RibbonItem[] = [
+  {
+    id: 'html',
+    label: 'HTML',
+    path: '/docs/pemrograman/html/block-formatting-text',
+    matchPrefixes: ['/docs/pemrograman/html'],
+  },
+  {
+    id: 'css',
+    label: 'CSS',
+    path: '/docs/pemrograman/css/native/01_css-native',
+    matchPrefixes: ['/docs/pemrograman/css'],
+  },
+  {
+    id: 'javascript',
+    label: 'JAVASCRIPT',
+    path: '/docs/pemrograman/javascript/framework/react/react-lanjutan/react-lanjutan',
+    matchPrefixes: ['/docs/pemrograman/javascript'],
+  },
+  {
+    id: 'python',
+    label: 'PYTHON',
+    path: '/docs/pemrograman/python/python-advanced/02_python-advanced',
+    matchPrefixes: ['/docs/pemrograman/python'],
+  },
+  {
+    id: 'php',
+    label: 'PHP',
+    path: '/docs/pemrograman/php/framework/laravel/filament/filament',
+    matchPrefixes: ['/docs/pemrograman/php'],
+  },
+  {
+    id: 'cybersecurity',
+    label: 'CYBERSEC',
+    path: '/docs/cybersecurity/cryptography/pengenalan/1.-pengenalan',
+    matchPrefixes: ['/docs/cybersecurity'],
+  },
+  {
+    id: 'devops',
+    label: 'DEVOPS',
+    path: '/docs/devops/docker/docker-basic/pengenalan-docker',
+    matchPrefixes: ['/docs/devops'],
+  },
+  {
+    id: 'jaringan',
+    label: 'JARINGAN',
+    path: '/docs/jaringan/jaringan/jaringan-basic/1.-fundamental-jaringan',
+    matchPrefixes: ['/docs/jaringan'],
+  },
+  {
+    id: 'tools',
+    label: 'TOOLS',
+    path: '/cysec-tools',
+    matchPrefixes: ['/cysec-tools', '/osint'],
+  },
+  {
+    id: 'roadmap',
+    label: 'ROADMAP',
+    path: '/roadmap',
+    matchPrefixes: ['/roadmap'],
+  },
+  {
+    id: 'editor',
+    label: 'EDITOR',
+    path: '/editor',
+    matchPrefixes: ['/editor'],
+  },
 ];
 
 /**
- * W3Schools-style Category Ribbon Bar.
- * Horizontal scrollable quick-jump bar with smooth touch/mouse navigation,
- * Material 3 pill indicators, and high visibility across devices.
+ * W3Schools Signature Horizontal Ribbon Bar (Screenshot 2):
+ * - Background khas W3Schools: dark charcoal #282A35.
+ * - Tab aktif memiliki background PUTIH dan teks HITAM TEBAL (persis tab HTML di screenshot).
+ * - Tab non-aktif memiliki teks PUTIH dengan hover dark highlight.
  */
 export function TopicRibbon({ className }: { className?: string }) {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -64,20 +119,18 @@ export function TopicRibbon({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        'relative border-b border-slate-800/80 bg-slate-900/95 backdrop-blur shadow-sm select-none',
-        'dark:bg-slate-900/95 dark:border-slate-800/80',
-        'light:bg-slate-100/90 light:border-slate-200',
+        'relative bg-[#282a35] border-b border-black/40 text-white select-none shadow-sm z-30',
         className
       )}
       role="navigation"
-      aria-label="Pilihan topik cepat (W3Schools style)"
+      aria-label="Pilihan topik W3Schools"
     >
-      <div className="mx-auto flex max-w-[1500px] items-center px-1 sm:px-3">
+      <div className="mx-auto flex max-w-[1600px] items-center px-1 sm:px-2">
         {/* Scroll Left Button */}
         {canScrollLeft && (
           <button
             onClick={() => scroll('left')}
-            className="hidden sm:flex h-7 w-7 items-center justify-center rounded-full bg-slate-800 text-slate-300 shadow-sm transition-all hover:bg-slate-700 hover:text-white"
+            className="hidden sm:flex h-7 w-7 items-center justify-center rounded-full bg-black/50 text-white hover:bg-black transition-all shrink-0"
             aria-label="Geser ke kiri"
           >
             <ChevronLeft className="h-4 w-4" />
@@ -87,39 +140,25 @@ export function TopicRibbon({ className }: { className?: string }) {
         {/* Scrollable Container */}
         <div
           ref={scrollRef}
-          className="scrollbar-thin flex flex-1 items-center gap-1 overflow-x-auto py-1.5 px-1 scroll-smooth"
+          className="scrollbar-thin flex flex-1 items-center overflow-x-auto scroll-smooth"
         >
-          {DEFAULT_TOPICS.map((topic) => {
-            const isActive =
-              topic.path === '/docs'
-                ? location.pathname === '/docs'
-                : location.pathname.startsWith(topic.path);
+          {W3S_RIBBON_ITEMS.map((item) => {
+            const isActive = item.matchPrefixes.some((prefix) =>
+              location.pathname.startsWith(prefix)
+            );
 
             return (
               <NavLink
-                key={topic.path}
-                to={topic.path}
+                key={item.id}
+                to={item.path}
                 className={cn(
-                  'w3-ribbon-tab group inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold tracking-wide rounded-lg transition-all duration-150',
+                  'px-3.5 py-2 text-xs font-bold tracking-wider uppercase transition-colors whitespace-nowrap shrink-0',
                   isActive
-                    ? 'bg-accent-600 text-white shadow-sm ring-1 ring-accent-500/50'
-                    : 'text-slate-400 hover:bg-slate-800/80 hover:text-slate-100 light:text-slate-600 light:hover:bg-slate-200'
+                    ? 'bg-white text-black shadow'
+                    : 'text-white hover:bg-black/40'
                 )}
               >
-                {topic.icon && <span className="text-xs">{topic.icon}</span>}
-                <span>{topic.label}</span>
-                {topic.badge && (
-                  <span
-                    className={cn(
-                      'ml-0.5 rounded-full px-1.5 py-0.2 text-[9px] font-bold',
-                      isActive
-                        ? 'bg-white/20 text-white'
-                        : 'bg-accent-500/15 text-accent-400'
-                    )}
-                  >
-                    {topic.badge}
-                  </span>
-                )}
+                {item.label}
               </NavLink>
             );
           })}
@@ -129,7 +168,7 @@ export function TopicRibbon({ className }: { className?: string }) {
         {canScrollRight && (
           <button
             onClick={() => scroll('right')}
-            className="hidden sm:flex h-7 w-7 items-center justify-center rounded-full bg-slate-800 text-slate-300 shadow-sm transition-all hover:bg-slate-700 hover:text-white"
+            className="hidden sm:flex h-7 w-7 items-center justify-center rounded-full bg-black/50 text-white hover:bg-black transition-all shrink-0"
             aria-label="Geser ke kanan"
           >
             <ChevronRight className="h-4 w-4" />

@@ -278,38 +278,40 @@ export function DocumentViewer({ doc }: { doc: DocumentData }) {
         <Breadcrumb folder={doc.folder} current={doc.title} />
 
         {/* ============ W3SCHOOLS SIGNATURE TOP NAVIGATION BAR ============ */}
-        {(prevDoc || nextDoc) && (
-          <nav
-            aria-label="Navigasi bab atas"
-            className="my-3 flex items-center justify-between gap-3"
-          >
-            {prevDoc ? (
-              <Link
-                to={`/docs/${doc.previous}`}
-                className="w3-nav-btn w3-nav-btn-secondary px-4 py-2 sm:px-5 sm:py-2.5 font-bold shadow-sm"
-                title={prevDoc.title}
-              >
-                <span>❮</span>
-                <span>Sebelumnya</span>
-              </Link>
-            ) : (
-              <div />
-            )}
+        <nav
+          aria-label="Navigasi bab atas"
+          className="my-3 flex items-center justify-between gap-3"
+        >
+          {prevDoc ? (
+            <Link
+              to={`/docs/${doc.previous}`}
+              className="w3-nav-btn w3-nav-btn-secondary px-4 py-2 sm:px-5 sm:py-2.5 font-bold shadow-sm"
+              title={prevDoc.title}
+            >
+              <span>❮</span>
+              <span>Sebelumnya</span>
+            </Link>
+          ) : (
+            <Link
+              to="/docs"
+              className="w3-nav-btn w3-nav-btn-secondary px-4 py-2 sm:px-5 sm:py-2.5 font-bold shadow-sm"
+            >
+              <span>❮</span>
+              <span>Home</span>
+            </Link>
+          )}
 
-            {nextDoc ? (
-              <Link
-                to={`/docs/${doc.next}`}
-                className="w3-nav-btn w3-nav-btn-primary px-5 py-2 sm:px-6 sm:py-2.5 font-bold shadow ml-auto"
-                title={nextDoc.title}
-              >
-                <span>Selanjutnya</span>
-                <span>❯</span>
-              </Link>
-            ) : (
-              <div />
-            )}
-          </nav>
-        )}
+          {nextDoc && (
+            <Link
+              to={`/docs/${doc.next}`}
+              className="w3-nav-btn w3-nav-btn-primary px-5 py-2 sm:px-6 sm:py-2.5 font-bold shadow ml-auto"
+              title={nextDoc.title}
+            >
+              <span>Selanjutnya</span>
+              <span>❯</span>
+            </Link>
+          )}
+        </nav>
       </div>
 
       {/* ============ JUDUL DOKUMEN & METADATA ============ */}
@@ -333,6 +335,34 @@ export function DocumentViewer({ doc }: { doc: DocumentData }) {
             <TagBadge key={tag} tag={tag} />
           ))}
         </div>
+
+        {/* W3Schools Signature "Learn [Topic]" Hero Card (Screenshot 2) */}
+        {!doc.previous && (
+          <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900/90">
+            <div className="flex items-start gap-4">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-accent-500/15 text-accent-600 dark:text-accent-400 font-bold text-xl">
+                ★
+              </span>
+              <div className="min-w-0">
+                <h2 className="text-xl font-extrabold text-slate-900 dark:text-white">
+                  Pelajari {doc.title}
+                </h2>
+                <p className="mt-1 text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                  Modul kurikulum terstruktur. Ikuti materi di bawah secara bertahap untuk menguasai materi ini dengan tuntas.
+                </p>
+                {nextDoc && (
+                  <Link
+                    to={`/docs/${doc.next}`}
+                    className="mt-4 inline-flex items-center gap-2 rounded-xl bg-[#04AA6D] px-5 py-2.5 text-xs sm:text-sm font-bold text-white shadow transition-all hover:bg-[#059862] active:scale-95"
+                  >
+                    <span>Mulai Belajar Sekarang</span>
+                    <span>❯</span>
+                  </Link>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* ============ AREA KONTEN & TOC ============ */}
