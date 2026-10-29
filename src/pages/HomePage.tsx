@@ -186,8 +186,7 @@ export default function HomePage() {
             </div>
 
             <h1 className="text-3xl font-extrabold tracking-tight text-slate-50 sm:text-5xl lg:text-5xl light:text-slate-900 leading-[1.15]">
-              Belajar Coding, Keamanan Siber & Cloud{' '}
-              <span className="text-accent-500">Langkah demi Langkah.</span>
+              BELAJAR <span className="text-accent-500">STEP BY STEP</span>
             </h1>
 
             {/* W3Schools Signature Search Box */}
