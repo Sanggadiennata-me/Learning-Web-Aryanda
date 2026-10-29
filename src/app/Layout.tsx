@@ -7,7 +7,6 @@ import {
   FolderTree,
   Menu,
   Moon,
-  Network,
   PanelLeftClose,
   Search,
   Shield,
@@ -268,10 +267,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <BookOpen className="h-3.5 w-3.5" />
         Tutorials
       </NavLink>
-      <NavLink to="/graph" className={navLinkClass}>
-        <Network className="h-3.5 w-3.5" />
-        Graf Pengetahuan
-      </NavLink>
       <NavLink to="/editor" className={navLinkClass}>
         <Code2 className="h-3.5 w-3.5" />
         Code Editor Interaktif
@@ -340,10 +335,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
               <span>Tutorials</span>
               <span className="text-[10px] opacity-70">▾</span>
             </button>
-            <NavLink to="/graph" className={navLinkClass}>
-              <Network className="h-3.5 w-3.5" />
-              Graph
-            </NavLink>
             <NavLink to="/editor" className={navLinkClass}>
               <Code2 className="h-3.5 w-3.5" />
               Editor
@@ -480,9 +471,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
             <nav className="flex flex-wrap items-center gap-4 text-xs font-medium text-slate-500">
               <Link to="/docs" className="transition-colors hover:text-accent-500">
                 Tutorials
-              </Link>
-              <Link to="/graph" className="transition-colors hover:text-accent-500">
-                Graph
               </Link>
               <Link to="/editor" className="transition-colors hover:text-accent-500">
                 Editor

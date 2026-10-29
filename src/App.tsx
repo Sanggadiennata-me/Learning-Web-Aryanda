@@ -6,7 +6,6 @@ import HomePage from './pages/HomePage';
 import DocsPage from './pages/DocsPage';
 import DocumentPage from './pages/DocumentPage';
 import SearchPage from './pages/SearchPage';
-import GraphPage from './pages/GraphPage';
 import EditorPage from './pages/EditorPage';
 import CySecToolsPage from './features/cysec-tools/pages/CySecToolsPage';
 import CategoryPage from './features/cysec-tools/pages/CategoryPage';
@@ -25,7 +24,7 @@ function App() {
           <Route path="/tutorials" element={<Navigate to="/docs/pemrograman/html/html" replace />} />
           <Route path="/docs/*" element={<DocumentPage />} />
           <Route path="/search" element={<SearchPage />} />
-          <Route path="/graph" element={<GraphPage />} />
+          <Route path="/graph" element={<Navigate to="/docs" replace />} />
           <Route path="/roadmap" element={<Navigate to="/docs/pemrograman/html/html" replace />} />
           <Route path="/editor" element={<EditorPage />} />
           <Route path="/cysec-tools" element={<CySecToolsPage />} />

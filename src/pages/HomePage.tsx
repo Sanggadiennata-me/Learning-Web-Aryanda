@@ -8,7 +8,6 @@ import {
   Globe,
   Layers,
   Lock,
-  Network,
   Play,
   Search,
   Server,
@@ -241,18 +240,18 @@ export default function HomePage() {
                 Mulai Belajar ❯
               </Link>
               <Link
-                to="/graph"
-                className="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-800/80 px-5 py-2.5 text-xs sm:text-sm font-semibold text-slate-200 transition-all hover:border-accent-500 hover:bg-slate-800 hover:text-white light:border-slate-300 light:bg-white light:text-slate-700 active:scale-95"
-              >
-                <Network className="h-4 w-4 text-accent-500" />
-                Graf Pengetahuan
-              </Link>
-              <Link
                 to="/editor"
                 className="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-800/80 px-5 py-2.5 text-xs sm:text-sm font-semibold text-slate-200 transition-all hover:border-accent-500 hover:bg-slate-800 hover:text-white light:border-slate-300 light:bg-white light:text-slate-700 active:scale-95"
               >
                 <Code2 className="h-4 w-4 text-accent-500" />
                 Code Editor
+              </Link>
+              <Link
+                to="/cysec-tools"
+                className="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-800/80 px-5 py-2.5 text-xs sm:text-sm font-semibold text-slate-200 transition-all hover:border-accent-500 hover:bg-slate-800 hover:text-white light:border-slate-300 light:bg-white light:text-slate-700 active:scale-95"
+              >
+                <Shield className="h-4 w-4 text-accent-500" />
+                CySec Tools
               </Link>
             </div>
           </div>

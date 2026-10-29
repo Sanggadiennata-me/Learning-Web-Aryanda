@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { BookOpen, Code2, Home, Network, Shield } from 'lucide-react';
+import { BookOpen, Code2, Home, Shield } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 interface NavItem {
@@ -11,7 +11,6 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { label: 'Home', to: '/', icon: Home },
   { label: 'Tutorials', to: '/docs', icon: BookOpen },
-  { label: 'Graph', to: '/graph', icon: Network },
   { label: 'Editor', to: '/editor', icon: Code2 },
   { label: 'Tools', to: '/cysec-tools', icon: Shield },
 ];
@@ -26,7 +25,7 @@ export function MobileBottomNav() {
       className="fixed bottom-0 left-0 right-0 z-40 border-t border-slate-800 bg-slate-950/95 backdrop-blur supports-[backdrop-filter]:bg-slate-950/85 md:hidden"
       aria-label="Navigasi bawah mobile"
     >
-      <div className="grid h-16 grid-cols-5 items-center px-1">
+      <div className="grid h-16 grid-cols-4 items-center px-1">
         {NAV_ITEMS.map((item) => (
           <NavLink
             key={item.to}
