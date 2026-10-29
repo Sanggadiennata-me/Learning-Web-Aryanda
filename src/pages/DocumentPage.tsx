@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, Navigate, useParams } from 'react-router-dom';
 import { FileQuestion } from 'lucide-react';
 import { useSiteData } from '../app/SiteProvider';
 import { DocumentViewer } from '../components/document/DocumentViewer';
@@ -11,15 +11,17 @@ import type { DocumentData } from '../domain/types';
 
 /**
  * Halaman dokumen. URL /docs/:id* membawa stable id (path normalized).
- * Dispatcher tanpa hooks — resolusi route:
+ * Dispatcher:
  *   1. id = code FILE → CodeFileViewer (source code dari vault)
  *   2. id = code FOLDER → CodeFolderPage (code directory browser)
- *   3. selainnya → <DocumentDoc> (dokumen markdown biasa, spec §35 & §38).
+ *   3. id = folder prefix → Otomatis alihkan ke dokumen pertama di folder tersebut
+ *   4. selainnya → <DocumentDoc> (dokumen markdown biasa).
  */
 export default function DocumentPage() {
   const { '*': idParam } = useParams();
-  const id = idParam ? decodeURIComponent(idParam) : '';
-  const { codeFileById, codeFolderById } = useSiteData();
+  const rawId = idParam ? decodeURIComponent(idParam) : '';
+  const id = rawId.toLowerCase();
+  const { fileMap, codeFileById, codeFolderById } = useSiteData();
 
   const codeFile = codeFileById.get(id);
   if (codeFile) {
@@ -29,6 +31,23 @@ export default function DocumentPage() {
   if (codeFolder) {
     return <CodeFolderPage folder={codeFolder} />;
   }
+
+  // Jika ID persis ditemukan di fileMap
+  if (fileMap.has(id)) {
+    return <DocumentDoc id={id} />;
+  }
+
+  // Smart fallback: Jika user membuka nama folder (misal: "pemrograman", "devops", "jaringan", "cybersecurity")
+  // alihkan otomatis ke file pertama di folder tersebut agar tidak muncul halaman kosong!
+  if (id && fileMap.size > 0) {
+    const prefix = id.endsWith('/') ? id : `${id}/`;
+    for (const [key] of fileMap.entries()) {
+      if (key.toLowerCase().startsWith(prefix)) {
+        return <Navigate to={`/docs/${key}`} replace />;
+      }
+    }
+  }
+
   return <DocumentDoc id={id} />;
 }
 

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useSiteData } from '../app/SiteProvider';
 import { TreeExplorer } from '../components/explorer/TreeExplorer';
 import { Spinner } from '../components/ui/spinner';
@@ -22,12 +22,34 @@ import type { RoadmapsData } from '../domain/types';
  */
 export default function DocsPage() {
   const { tree, metadata, loading, error } = useSiteData();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const catParam = searchParams.get('category') || searchParams.get('cat') || 'all';
   const [roadmaps, setRoadmaps] = useState<RoadmapsData | null>(null);
   const [searchFilter, setSearchFilter] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedCategory, setSelectedCategory] = useState<string>(catParam);
   const stripRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
+
+  useEffect(() => {
+    const cat = searchParams.get('category') || searchParams.get('cat') || 'all';
+    if (cat !== selectedCategory) {
+      setSelectedCategory(cat);
+    }
+  }, [searchParams]);
+
+  const handleSelectCategory = (catId: string) => {
+    setSelectedCategory(catId);
+    const newParams = new URLSearchParams(searchParams);
+    if (catId === 'all') {
+      newParams.delete('category');
+      newParams.delete('cat');
+    } else {
+      newParams.set('category', catId);
+      newParams.delete('cat');
+    }
+    setSearchParams(newParams);
+  };
 
   const updateStripArrows = () => {
     const el = stripRef.current;
@@ -143,7 +165,7 @@ export default function DocsPage() {
           {CATEGORIES.map((cat) => (
             <button
               key={cat.id}
-              onClick={() => setSelectedCategory(cat.id)}
+              onClick={() => handleSelectCategory(cat.id)}
               className={`rounded-xl px-3 py-1.5 text-xs font-semibold transition-all ${
                 selectedCategory === cat.id
                   ? 'bg-accent-600 text-white shadow-sm'
