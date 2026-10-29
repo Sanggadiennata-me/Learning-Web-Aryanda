@@ -172,14 +172,17 @@ export function TreeExplorer({
     <nav className={cn('select-none flex flex-col h-full', className)} aria-label="Navigasi tutorial">
       {/* Sidebar Header Title */}
       {sidebarTitle && (
-        <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3 bg-white dark:bg-slate-950 dark:border-slate-800">
-          <span className="text-xs font-extrabold uppercase tracking-widest text-slate-500 dark:text-slate-400">
-            {sidebarTitle}
-          </span>
+        <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3 bg-white dark:bg-[#0c1410] dark:border-accent-950/60">
+          <div className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-accent-500" />
+            <span className="text-xs font-black uppercase tracking-wider text-accent-700 dark:text-accent-400">
+              {sidebarTitle}
+            </span>
+          </div>
           {onOpenTutorialsModal && (
             <button
               onClick={onOpenTutorialsModal}
-              className="text-[11px] font-bold text-accent-600 hover:underline dark:text-accent-400"
+              className="text-[11px] font-bold text-accent-600 hover:text-accent-700 hover:underline dark:text-accent-400 dark:hover:text-accent-300"
               title="Ganti modul tutorial"
             >
               Ganti ▾
@@ -246,7 +249,7 @@ function TreeNodeRow({
             'flex items-center justify-between w-full py-2 pr-3 text-[13.5px] transition-colors',
             active
               ? 'bg-accent-500/15 text-accent-700 font-bold border-l-4 border-l-accent-600 dark:bg-accent-500/20 dark:text-accent-300 dark:border-l-accent-400'
-              : 'text-slate-300 hover:bg-slate-800/60 hover:text-slate-100'
+              : 'text-slate-700 hover:bg-accent-50/70 hover:text-accent-700 dark:text-slate-300 dark:hover:bg-accent-500/10 dark:hover:text-accent-300'
           )}
           style={{ paddingLeft: padding }}
           title={node.title}
@@ -264,18 +267,18 @@ function TreeNodeRow({
     <li className="mt-0.5">
       <button
         onClick={() => onToggle(node.relativePath)}
-        className="flex w-full items-center justify-between py-2 pr-3 text-left text-[13.5px] font-bold text-slate-100 transition-colors hover:bg-slate-800/60"
+        className="flex w-full items-center justify-between py-2 pr-3 text-left text-[13.5px] font-bold text-slate-800 hover:text-accent-700 hover:bg-accent-50/60 dark:text-slate-100 dark:hover:text-accent-300 dark:hover:bg-accent-500/10 transition-colors"
         style={{ paddingLeft: padding }}
         aria-expanded={isOpen}
       >
         <span className="truncate">{node.name}</span>
-        <span className="text-[10px] text-slate-400 shrink-0 ml-1">
+        <span className="text-[10px] font-bold text-accent-600 dark:text-accent-400 shrink-0 ml-1">
           {isOpen ? '▲' : '▼'}
         </span>
       </button>
 
       {isOpen && (
-        <ul className="space-y-0.5 bg-black/[0.02] dark:bg-white/[0.02]">
+        <ul className="space-y-0.5 bg-accent-500/[0.03] dark:bg-accent-500/[0.04]">
           {node.children.map((child) => (
             <TreeNodeRow
               key={child.type === 'file' ? child.id : child.relativePath}

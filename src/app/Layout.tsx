@@ -210,21 +210,21 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
   // Komponen Sidebar Explorer ala W3Schools
   const explorer = (
-    <div className="flex h-full min-h-0 flex-col bg-white border-r border-slate-200 dark:bg-slate-950 dark:border-slate-800">
+    <div className="flex h-full min-h-0 flex-col bg-white border-r border-slate-200 dark:bg-[#0c1410] dark:border-accent-950/60">
       {/* Filter Bab Cepat ala W3Schools */}
-      <div className="border-b border-slate-200 p-2.5 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60">
+      <div className="border-b border-slate-200 p-2.5 dark:border-accent-950/60 bg-slate-50 dark:bg-[#0f1a14]">
         <div className="relative">
           <input
             type="text"
             value={sidebarFilter}
             onChange={(e) => setSidebarFilter(e.target.value)}
             placeholder="Cari materi tutorial…"
-            className="w-full rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-800 placeholder:text-slate-400 focus:border-accent-500 focus:outline-none dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+            className="w-full rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-800 placeholder:text-slate-400 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20 focus:outline-none dark:border-slate-800 dark:bg-[#13221a] dark:text-slate-200 dark:placeholder:text-slate-500"
           />
           {sidebarFilter && (
             <button
               onClick={() => setSidebarFilter('')}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-accent-500 dark:hover:text-accent-400"
             >
               ×
             </button>
@@ -390,17 +390,17 @@ export function Layout({ children }: { children: React.ReactNode }) {
               onClick={closeDrawer}
               aria-hidden
             />
-            <aside className="drawer-panel absolute left-0 top-0 flex h-full w-80 max-w-[85vw] flex-col border-r border-slate-800 bg-slate-950 shadow-2xl">
-              <div className="flex items-center justify-between border-b border-slate-800 px-4 py-3">
+            <aside className="drawer-panel absolute left-0 top-0 flex h-full w-80 max-w-[85vw] flex-col border-r border-slate-200 bg-white dark:border-accent-950/60 dark:bg-[#0c1410] shadow-2xl">
+              <div className="flex items-center justify-between border-b border-slate-200 dark:border-accent-950/60 px-4 py-3 bg-slate-50 dark:bg-[#0f1a14]">
                 <div className="flex items-center gap-2">
                   <Sparkles className="h-4 w-4 text-accent-500" />
-                  <span className="text-sm font-bold text-slate-100">
+                  <span className="text-sm font-bold text-slate-900 dark:text-slate-100">
                     Navigasi CodeLearn
                   </span>
                 </div>
                 <button
                   onClick={closeDrawer}
-                  className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-800 hover:text-slate-100"
+                  className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-accent-50 hover:text-accent-600 dark:hover:bg-accent-500/10 dark:hover:text-accent-400"
                   aria-label="Tutup menu"
                 >
                   <X className="h-5 w-5" />
@@ -416,7 +416,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {isDocsRoute && (
           <aside
             className={cn(
-              'sticky top-[5.75rem] hidden h-[calc(100vh-5.75rem)] shrink-0 border-r border-slate-800/80 transition-[width] duration-200 lg:block',
+              'sticky top-[5.75rem] hidden h-[calc(100vh-5.75rem)] shrink-0 border-r border-slate-200 dark:border-accent-950/60 transition-[width] duration-200 lg:block',
               sidebarCollapsed ? 'w-14' : 'w-60 xl:w-64'
             )}
           >
@@ -424,13 +424,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
               <div className="flex h-full flex-col items-center pt-4">
                 <button
                   onClick={() => setSidebarCollapsed(false)}
-                  className="rounded-xl border border-slate-800 p-2 text-slate-400 transition-all hover:bg-slate-800 hover:text-slate-100 shadow-sm"
+                  className="rounded-xl border border-slate-200 dark:border-accent-900/40 p-2 text-slate-400 transition-all hover:border-accent-500 hover:bg-accent-50 hover:text-accent-600 dark:hover:bg-accent-500/10 dark:hover:text-accent-400 shadow-sm"
                   aria-label="Buka sidebar materi"
                   title="Buka sidebar materi"
                 >
                   <ChevronsRight className="h-4 w-4" />
                 </button>
-                <span className="mt-4 text-[10px] font-bold uppercase tracking-widest text-slate-500 [writing-mode:vertical-rl]">
+                <span className="mt-4 text-[10px] font-bold uppercase tracking-widest text-accent-600 dark:text-accent-500 [writing-mode:vertical-rl]">
                   Buka Bab
                 </span>
               </div>
@@ -444,7 +444,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <main
           className={cn(
             'min-w-0 flex-1 pb-20 md:pb-8',
-            isDocsRoute ? 'px-6 sm:px-10 lg:px-12 xl:px-16 py-6' : ''
+            isDocsRoute
+              ? 'px-4 sm:px-8 lg:px-12 xl:px-16 py-4 sm:py-6'
+              : 'px-3 sm:px-6 lg:px-8'
           )}
         >
           {children}
