@@ -24,7 +24,8 @@ import {
   Zap,
 } from 'lucide-react';
 import { useSiteData } from '../../app/SiteProvider';
-import type { TreeFileNode, TreeFolderNode, TreeNode } from '../../domain/types';
+import type { TreeFolderNode } from '../../domain/types';
+import { getDefaultSubskillDocId } from '../../services/docs';
 
 export interface TutorialTrack {
   id: string;
@@ -106,43 +107,6 @@ const SUBSKILL_METAS: Record<string, SubskillMeta> = {
   jaringan: { displayName: 'Jaringan Komputer', icon: Globe, iconBg: '#6E9CB818', iconColor: '#6E9CB8' },
 };
 
-/** Mencari dokumen pengenalan / file markdown pertama yang paling ideal untuk landing subskill */
-function getBestDocId(node: TreeFolderNode): string {
-  const files: TreeFileNode[] = [];
-  function collect(n: TreeNode) {
-    if (n.type === 'file') {
-      files.push(n);
-    } else {
-      for (const child of n.children) {
-        collect(child);
-      }
-    }
-  }
-  collect(node);
-
-  const mdFiles = files.filter((f) => !f.isCode);
-  if (mdFiles.length === 0) {
-    return files[0]?.id || node.relativePath.toLowerCase();
-  }
-
-  // Prioritaskan file yang memuat kata kunci pembuka materi
-  for (const f of mdFiles) {
-    const titleLower = f.title.toLowerCase();
-    const idLower = f.id.toLowerCase();
-    if (
-      titleLower.includes('pengenalan') ||
-      idLower.includes('pengenalan') ||
-      titleLower.includes('intro') ||
-      titleLower.includes('dasar') ||
-      titleLower.includes('basic')
-    ) {
-      return f.id;
-    }
-  }
-
-  return mdFiles[0].id;
-}
-
 interface TutorialsModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -188,7 +152,7 @@ export function TutorialsModal({ isOpen, onClose }: TutorialsModalProps) {
             iconColor: meta.color,
           };
 
-          const bestId = getBestDocId(child);
+          const bestId = getDefaultSubskillDocId(child);
 
           tracks.push({
             id: `${catKey}-${subKey}`,

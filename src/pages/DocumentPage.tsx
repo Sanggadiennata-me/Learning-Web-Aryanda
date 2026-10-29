@@ -4,7 +4,7 @@ import { FileQuestion } from 'lucide-react';
 import { useSiteData } from '../app/SiteProvider';
 import { DocumentViewer } from '../components/document/DocumentViewer';
 import { Spinner } from '../components/ui/spinner';
-import { fetchDocument } from '../services/docs';
+import { fetchDocument, findFolderNode, getDefaultSubskillDocId } from '../services/docs';
 import { CodeFolderPage } from './CodeFolderPage';
 import { CodeFileViewer } from './CodeFileViewer';
 import type { DocumentData } from '../domain/types';
@@ -21,7 +21,7 @@ export default function DocumentPage() {
   const { '*': idParam } = useParams();
   const rawId = idParam ? decodeURIComponent(idParam) : '';
   const id = rawId.toLowerCase();
-  const { fileMap, codeFileById, codeFolderById } = useSiteData();
+  const { fileMap, tree, codeFileById, codeFolderById } = useSiteData();
 
   const codeFile = codeFileById.get(id);
   if (codeFile) {
@@ -37,8 +37,19 @@ export default function DocumentPage() {
     return <DocumentDoc id={id} />;
   }
 
-  // Smart fallback: Jika user membuka nama folder (misal: "pemrograman", "devops", "jaringan", "cybersecurity")
-  // alihkan otomatis ke file pertama di folder tersebut agar tidak muncul halaman kosong!
+  // Smart fallback: Jika user membuka nama folder / subskill (misal: "pemrograman/python", "cybersecurity/pwn")
+  // alihkan otomatis ke file #ROADMAP default dari subskill tersebut!
+  if (id && tree) {
+    const matchedFolder = findFolderNode(tree, id);
+    if (matchedFolder) {
+      const defaultDocId = getDefaultSubskillDocId(matchedFolder);
+      if (defaultDocId && defaultDocId !== id) {
+        return <Navigate to={`/docs/${defaultDocId}`} replace />;
+      }
+    }
+  }
+
+  // Fallback sekunder jika membuka prefix folder tanpa exact tree match
   if (id && fileMap.size > 0) {
     const prefix = id.endsWith('/') ? id : `${id}/`;
     for (const [key] of fileMap.entries()) {

@@ -1,4 +1,4 @@
-import type { CodeFolderData, DocumentData, GraphData, MetadataFile, RoadmapsData, SearchIndexEntry, TreeFolderNode, TreeNode } from '../domain/types';
+import type { CodeFolderData, DocumentData, GraphData, MetadataFile, RoadmapsData, SearchIndexEntry, TreeFileNode, TreeFolderNode, TreeNode } from '../domain/types';
 import { joinWithRoot } from '../lib/base';
 
 async function getJson<T>(path: string): Promise<T> {
@@ -121,15 +121,110 @@ export function parentPathOf(relativePath: string): string {
   return relativePath.includes('/') ? relativePath.split('/').slice(0, -1).join('/') : '';
 }
 
-/** Cari node folder di dalam tree berdasarkan relativePath asli. */
+/** Cari node folder di dalam tree berdasarkan relativePath asli atau normalized path. */
 export function findFolderNode(nodes: TreeNode[], relativePath: string): TreeFolderNode | null {
+  const normTarget = normalizeId(relativePath).replace(/^\/+|\/+$/g, '');
   for (const node of nodes) {
     if (node.type === 'file') continue;
-    if (node.relativePath === relativePath) return node;
+    if (
+      node.relativePath === relativePath ||
+      normalizeId(node.relativePath) === normTarget ||
+      normalizeId(node.name) === normTarget
+    ) {
+      return node;
+    }
     const found = findFolderNode(node.children, relativePath);
     if (found) return found;
   }
   return null;
+}
+
+/**
+ * Mencari dokumen default pembuka subskill:
+ * 1. Mengutamakan file yang memiliki hashtag #ROADMAP (node.isRoadmap === true).
+ * 2. Jika ada beberapa roadmap, utamakan yang berorientasi dasar / pembuka (dasar, pengenalan, 01, 1., dsb)
+ *    serta kedalaman folder yang lebih umum (shallower).
+ * 3. Jika belum memiliki #ROADMAP, utamakan file catatan indeks subskill (mis. Html.md, GitHub.md)
+ *    atau file pengenalan materi.
+ */
+export function getDefaultSubskillDocId(node: TreeFolderNode): string {
+  const files: TreeFileNode[] = [];
+  function collect(n: TreeNode) {
+    if (n.type === 'file') {
+      files.push(n);
+    } else {
+      for (const child of n.children) {
+        collect(child);
+      }
+    }
+  }
+  collect(node);
+
+  const mdFiles = files.filter((f) => !f.isCode);
+  if (mdFiles.length === 0) {
+    return files[0]?.id || node.relativePath.toLowerCase();
+  }
+
+  // 1. Prioritas Utama: File yang memiliki hashtag #ROADMAP (isRoadmap === true)
+  const roadmapFiles = mdFiles.filter((f) => f.isRoadmap);
+  if (roadmapFiles.length > 0) {
+    function getScore(f: TreeFileNode): number {
+      let score = 0;
+      const tl = f.title.toLowerCase();
+      const il = f.id.toLowerCase();
+      const depth = f.relativePath.split('/').length;
+
+      if (
+        tl.includes('pengenalan') ||
+        il.includes('pengenalan') ||
+        tl.includes('dasar') ||
+        il.includes('dasar') ||
+        tl.includes('basic') ||
+        il.includes('basic') ||
+        tl.includes('intro') ||
+        il.includes('intro') ||
+        tl.includes('01') ||
+        il.includes('01') ||
+        tl.startsWith('1.') ||
+        il.includes('/1.')
+      ) {
+        score += 50;
+      }
+
+      if (tl === node.name.toLowerCase()) {
+        score += 40;
+      }
+
+      score -= depth * 2;
+      return score;
+    }
+
+    roadmapFiles.sort((a, b) => getScore(b) - getScore(a));
+    return roadmapFiles[0].id;
+  }
+
+  // 2. Prioritas Kedua: File catatan indeks subskill (mis. Html.md, GitHub.md)
+  const subskillMatch = mdFiles.find(
+    (f) => f.title.toLowerCase() === node.name.toLowerCase()
+  );
+  if (subskillMatch) return subskillMatch.id;
+
+  // 3. Prioritas Ketiga: File pembuka materi (pengenalan, dasar, intro)
+  for (const f of mdFiles) {
+    const tl = f.title.toLowerCase();
+    const il = f.id.toLowerCase();
+    if (
+      tl.includes('pengenalan') ||
+      il.includes('pengenalan') ||
+      tl.includes('intro') ||
+      tl.includes('dasar') ||
+      tl.includes('basic')
+    ) {
+      return f.id;
+    }
+  }
+
+  return mdFiles[0].id;
 }
 
 /**

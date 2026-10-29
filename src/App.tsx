@@ -21,12 +21,12 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           {/* Halaman /docs dan /tutorials dialihkan langsung ke modul tutorial aktif */}
-          <Route path="/docs" element={<Navigate to="/docs/pemrograman/html/block-formatting-text" replace />} />
-          <Route path="/tutorials" element={<Navigate to="/docs/pemrograman/html/block-formatting-text" replace />} />
+          <Route path="/docs" element={<Navigate to="/docs/pemrograman/html/html" replace />} />
+          <Route path="/tutorials" element={<Navigate to="/docs/pemrograman/html/html" replace />} />
           <Route path="/docs/*" element={<DocumentPage />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/graph" element={<GraphPage />} />
-          <Route path="/roadmap" element={<Navigate to="/docs/pemrograman/html/block-formatting-text" replace />} />
+          <Route path="/roadmap" element={<Navigate to="/docs/pemrograman/html/html" replace />} />
           <Route path="/editor" element={<EditorPage />} />
           <Route path="/cysec-tools" element={<CySecToolsPage />} />
           <Route path="/cysec-tools/category/:categoryId" element={<CategoryPage />} />

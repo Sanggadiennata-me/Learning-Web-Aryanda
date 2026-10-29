@@ -2,8 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useSiteData } from '../../app/SiteProvider';
-import type { TreeFileNode, TreeFolderNode, TreeNode } from '../../domain/types';
-import { normalizeId } from '../../services/docs';
+import type { TreeFolderNode } from '../../domain/types';
+import { getDefaultSubskillDocId, normalizeId } from '../../services/docs';
 import { cn } from '../../lib/utils';
 
 export interface RibbonItem {
@@ -11,42 +11,6 @@ export interface RibbonItem {
   label: string;
   path: string;
   matchPrefixes: string[];
-}
-
-/** Temukan file dokumen pembuka terbaik untuk subskill */
-function getBestDocId(node: TreeFolderNode): string {
-  const files: TreeFileNode[] = [];
-  function collect(n: TreeNode) {
-    if (n.type === 'file') {
-      files.push(n);
-    } else {
-      for (const child of n.children) {
-        collect(child);
-      }
-    }
-  }
-  collect(node);
-
-  const mdFiles = files.filter((f) => !f.isCode);
-  if (mdFiles.length === 0) {
-    return files[0]?.id || node.relativePath.toLowerCase();
-  }
-
-  for (const f of mdFiles) {
-    const titleLower = f.title.toLowerCase();
-    const idLower = f.id.toLowerCase();
-    if (
-      titleLower.includes('pengenalan') ||
-      idLower.includes('pengenalan') ||
-      titleLower.includes('intro') ||
-      titleLower.includes('dasar') ||
-      titleLower.includes('basic')
-    ) {
-      return f.id;
-    }
-  }
-
-  return mdFiles[0].id;
 }
 
 const CATEGORY_ORDER: Record<string, number> = {
@@ -159,7 +123,7 @@ export function TopicRibbon({ className }: { className?: string }) {
       for (const sub of subFolders) {
         const subKey = sub.name.toLowerCase();
         const label = LABEL_MAP[subKey] || sub.name.toUpperCase();
-        const bestDocId = getBestDocId(sub);
+        const bestDocId = getDefaultSubskillDocId(sub);
         const normRelPath = normalizeId(sub.relativePath);
 
         items.push({
