@@ -1,7 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { Calendar, ChevronDown, ChevronRight, Clock, Hash } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import {
+  ArrowLeft,
+  ArrowRight,
+  Calendar,
+  ChevronDown,
+  ChevronRight,
+  Clock,
+  Code2,
+  FileText,
+  Hash,
+} from 'lucide-react';
 import type { DocumentData } from '../../domain/types';
+import { useSiteData } from '../../app/SiteProvider';
 import { useTheme } from '../../app/ThemeProvider';
 import { TagBadge } from './TagBadge';
 import { sortTags } from '../../lib/tagColors';
@@ -62,6 +73,20 @@ const LANG_LABELS: Record<string, string> = {
   http: 'HTTP',
 };
 
+const RUNNABLE_MAP: Record<string, string> = {
+  javascript: 'javascript',
+  js: 'javascript',
+  typescript: 'typescript',
+  ts: 'typescript',
+  html: 'html',
+  xml: 'html',
+  css: 'css',
+  php: 'php',
+  python: 'python',
+  py: 'python',
+  sql: 'sql',
+};
+
 function languageFromCode(code: HTMLElement | null): string {
   if (!code) return '';
   for (const cls of code.classList) {
@@ -73,9 +98,7 @@ function languageFromCode(code: HTMLElement | null): string {
 }
 
 /**
- * Scroll ke elemen heading berdasarkan hash. Anchor Obsidian bisa berbeda
- * case dari slug heading ([[Note#Soal]] vs id "soal"), jadi cari dengan
- * fallback case-insensitive agar seluruh materi tetap bisa dinavigasi.
+ * Scroll ke elemen heading berdasarkan hash.
  */
 function scrollToHash(rawHash: string): boolean {
   const id = decodeURIComponent(rawHash);
@@ -96,20 +119,22 @@ function scrollToHash(rawHash: string): boolean {
 }
 
 /**
- * Document viewer utama. HTML sudah disanitasi saat parsing
- * (rehype-sanitize), jadi aman dirender via innerHTML.
- *
- * Perbaikan routing: semua tautan hash memakai URL absolut
- * (pathname#anchor) karena <base href> membuat `#anchor` relatif
- * berubah menjadi `/#anchor` → dashboard. Tautan hash di dalam konten
- * juga di-intercept untuk smooth-scroll tanpa meninggalkan halaman.
+ * Document viewer utama (W3Schools & Material Design UX):
+ * - Navigasi Bab Atas & Bawah ala W3Schools (Previous / Next selalu terlihat).
+ * - Code Block dilengkapi tombol "Coba Sendiri »" yang langsung membuka code editor.
+ * - Material 3 chips untuk reading time, tanggal update, dan tags.
+ * - Table of contents dinamis dengan smooth scroll spy.
  */
 export function DocumentViewer({ doc }: { doc: DocumentData }) {
   const articleRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
   const { theme } = useTheme();
+  const { fileMap } = useSiteData();
   const [tocOpen, setTocOpen] = useState(false);
+
+  const prevDoc = doc.previous ? fileMap.get(doc.previous) : null;
+  const nextDoc = doc.next ? fileMap.get(doc.next) : null;
 
   // Intercept klik pada link internal agar SPA tidak reload/redirect.
   useEffect(() => {
@@ -122,14 +147,11 @@ export function DocumentViewer({ doc }: { doc: DocumentData }) {
       const href = anchor.getAttribute('href') ?? '';
 
       if (href.startsWith('/docs/')) {
-        // Link antar dokumen (wiki-link / markdown link). SPA navigation.
         event.preventDefault();
         navigate(href);
       } else if (href === '#') {
-        // Link rusak / anchor kosong. jangan redirect ke dashboard.
         event.preventDefault();
       } else if (href.startsWith('#')) {
-        // Anchor heading di dalam dokumen: scroll + update hash dengan aman.
         event.preventDefault();
         const id = href.slice(1);
         scrollToHash(id);
@@ -151,13 +173,13 @@ export function DocumentViewer({ doc }: { doc: DocumentData }) {
     return () => clearTimeout(timer);
   }, [location.hash, doc.id]);
 
-  // Tingkatkan code block: label bahasa + tombol copy.
+  // Tingkatkan code block: label bahasa + tombol "Coba Sendiri" + tombol copy.
   useEffect(() => {
     const root = articleRef.current;
     if (!root) return;
 
     root.querySelectorAll<HTMLPreElement>('pre').forEach((pre) => {
-      if (pre.querySelector('.code-block-header')) return; // sudah diproses
+      if (pre.querySelector('.code-block-header')) return;
       const code = pre.querySelector('code');
       const lang = languageFromCode(code);
       const label = LANG_LABELS[lang] ?? (lang ? lang.charAt(0).toUpperCase() + lang.slice(1) : 'Text');
@@ -169,6 +191,26 @@ export function DocumentViewer({ doc }: { doc: DocumentData }) {
       langEl.className = 'code-block-lang';
       langEl.textContent = label;
 
+      const actions = document.createElement('div');
+      actions.className = 'flex items-center gap-1.5 ml-auto';
+
+      // Coba Sendiri (Run Code) button ala W3Schools
+      const mappedLang = RUNNABLE_MAP[lang];
+      if (mappedLang) {
+        const tryBtn = document.createElement('button');
+        tryBtn.type = 'button';
+        tryBtn.className = 'code-block-try';
+        tryBtn.textContent = 'Coba Sendiri »';
+        tryBtn.setAttribute('title', `Buka dan jalankan contoh ${label} ini di Code Editor`);
+        tryBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const text = code?.innerText ?? '';
+          navigate(`/editor?lang=${mappedLang}&code=${encodeURIComponent(text)}`);
+        });
+        actions.appendChild(tryBtn);
+      }
+
+      // Tombol Copy
       const copyBtn = document.createElement('button');
       copyBtn.type = 'button';
       copyBtn.className = 'code-block-copy';
@@ -190,31 +232,31 @@ export function DocumentViewer({ doc }: { doc: DocumentData }) {
         }, 1600);
       });
 
-      header.append(langEl, copyBtn);
+      actions.appendChild(copyBtn);
+      header.append(langEl, actions);
       pre.prepend(header);
       pre.classList.add('code-block');
     });
-  }, [doc.id, doc.html]);
+  }, [doc.id, doc.html, navigate]);
 
-  // TOC mencakup seluruh level heading Obsidian (# .. ######);
-  // item yang lebih dalam (banyak #) diindent sesuai levelnya.
+  // TOC
   const toc = doc.headings.filter((h) => h.depth >= 1 && h.depth <= 6);
   const tocAnchor = (id: string) => `${location.pathname}${location.search}#${id}`;
 
-  /** Gaya item daftar isi per kedalaman heading. semakin dalam, semakin indent. */
   const TOC_DEPTH_CLASSES: Record<number, string> = {
-    1: 'pl-0 font-medium text-slate-300',
-    2: 'pl-3 text-slate-400',
-    3: 'pl-6 text-slate-500',
-    4: 'pl-9 text-slate-500',
-    5: 'pl-11 text-slate-500',
-    6: 'pl-14 text-slate-500',
+    1: 'pl-0 font-bold text-slate-200 light:text-slate-800',
+    2: 'pl-3 font-medium text-slate-300 light:text-slate-700',
+    3: 'pl-6 text-slate-400 light:text-slate-600',
+    4: 'pl-8 text-slate-500',
+    5: 'pl-10 text-slate-500',
+    6: 'pl-12 text-slate-500',
   };
+
   const tocItemClass = (depth: number) =>
-    `block py-0.5 transition-colors hover:text-accent-300 ${TOC_DEPTH_CLASSES[depth] ?? TOC_DEPTH_CLASSES[6]}`;
+    `block py-1 text-xs transition-colors hover:text-accent-400 ${TOC_DEPTH_CLASSES[depth] ?? TOC_DEPTH_CLASSES[6]}`;
 
   const tocList = (mobile: boolean) => (
-    <ul className={mobile ? 'mt-2 space-y-0.5 text-sm' : 'mt-3 space-y-0.5 text-sm'}>
+    <ul className={mobile ? 'mt-2 space-y-0.5 text-xs' : 'mt-3 space-y-0.5 text-xs'}>
       {toc.map((heading) => (
         <li key={`${heading.id}-${heading.text}`}>
           <a
@@ -230,20 +272,66 @@ export function DocumentViewer({ doc }: { doc: DocumentData }) {
   );
 
   return (
-    <article className="mx-auto max-w-3xl">
-      <Breadcrumb folder={doc.folder} current={doc.title} />
+    <article className="mx-auto max-w-4xl">
+      {/* ============ BREADCRUMB & HEADER ============ */}
+      <div className="flex flex-col gap-2">
+        <Breadcrumb folder={doc.folder} current={doc.title} />
 
-      <header className="mt-4 border-b border-slate-800 pb-7">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-50 sm:text-4xl">{doc.title}</h1>
+        {/* ============ W3SCHOOLS SIGNATURE TOP NAVIGATION BAR ============ */}
+        {(prevDoc || nextDoc) && (
+          <nav
+            aria-label="Navigasi bab atas"
+            className="my-3 flex items-center justify-between gap-2 rounded-2xl border border-slate-800/80 bg-slate-900/60 p-2 light:border-slate-200 light:bg-slate-50 shadow-sm"
+          >
+            {prevDoc ? (
+              <Link
+                to={`/docs/${doc.previous}`}
+                className="w3-nav-btn w3-nav-btn-secondary text-xs"
+                title={prevDoc.title}
+              >
+                <ArrowLeft className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">❮ Sebelumnya:</span>
+                <span className="truncate max-w-[120px] sm:max-w-[180px] font-medium">
+                  {prevDoc.title}
+                </span>
+              </Link>
+            ) : (
+              <div />
+            )}
 
-        <div className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-xs text-slate-500">
-          <span className="flex items-center gap-1.5 rounded-full border border-slate-800 bg-slate-900/60 px-2.5 py-1">
-            <Clock className="h-3.5 w-3.5 text-accent-400" />
+            {nextDoc ? (
+              <Link
+                to={`/docs/${doc.next}`}
+                className="w3-nav-btn w3-nav-btn-primary text-xs ml-auto"
+                title={nextDoc.title}
+              >
+                <span className="hidden sm:inline">Selanjutnya:</span>
+                <span className="truncate max-w-[120px] sm:max-w-[180px] font-bold">
+                  {nextDoc.title}
+                </span>
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            ) : (
+              <div />
+            )}
+          </nav>
+        )}
+      </div>
+
+      {/* ============ JUDUL DOKUMEN & METADATA ============ */}
+      <header className="mt-4 border-b border-slate-800 pb-6 light:border-slate-200">
+        <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-50 light:text-slate-900">
+          {doc.title}
+        </h1>
+
+        <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-slate-400 light:text-slate-600">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-800 bg-slate-900/80 px-3 py-1 font-medium light:border-slate-200 light:bg-white shadow-sm">
+            <Clock className="h-3.5 w-3.5 text-accent-500" />
             {doc.readingTime} menit baca
           </span>
           {doc.updated && (
-            <span className="flex items-center gap-1.5 rounded-full border border-slate-800 bg-slate-900/60 px-2.5 py-1">
-              <Calendar className="h-3.5 w-3.5 text-accent-400" />
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-800 bg-slate-900/80 px-3 py-1 font-medium light:border-slate-200 light:bg-white shadow-sm">
+              <Calendar className="h-3.5 w-3.5 text-accent-500" />
               {doc.updated}
             </span>
           )}
@@ -253,51 +341,60 @@ export function DocumentViewer({ doc }: { doc: DocumentData }) {
         </div>
       </header>
 
-      <div className="mt-6 flex gap-10">
-        {/* Konten */}
+      {/* ============ AREA KONTEN & TOC ============ */}
+      <div className="mt-8 flex gap-8">
+        {/* Konten Utama */}
         <div className="min-w-0 flex-1">
-          {/* TOC mobile/tablet (di bawah xl) */}
+          {/* TOC Mobile / Tablet Collapsible */}
           {toc.length > 1 && (
-            <div className="mb-6 rounded-xl border border-slate-800 bg-slate-900/40 xl:hidden">
+            <div className="mb-8 rounded-2xl border border-slate-800 bg-slate-900/60 p-4 light:border-slate-200 light:bg-slate-50 xl:hidden shadow-sm">
               <button
                 onClick={() => setTocOpen((v) => !v)}
-                className="flex w-full items-center justify-between gap-2 px-4 py-3 text-left text-sm font-medium text-slate-300 transition-colors hover:text-slate-100"
+                className="flex w-full items-center justify-between text-left text-xs font-bold uppercase tracking-wider text-slate-200 light:text-slate-800"
                 aria-expanded={tocOpen}
               >
-                <span className="flex items-center gap-1.5">
-                  <Hash className="h-3.5 w-3.5 text-accent-400" />
-                  Daftar Isi
+                <span className="flex items-center gap-2">
+                  <Hash className="h-4 w-4 text-accent-500" />
+                  Daftar Isi Bab Ini ({toc.length} Bagian)
                 </span>
                 {tocOpen ? (
-                  <ChevronDown className="h-4 w-4 text-slate-500" />
+                  <ChevronDown className="h-4 w-4 text-slate-400" />
                 ) : (
-                  <ChevronRight className="h-4 w-4 text-slate-500" />
+                  <ChevronRight className="h-4 w-4 text-slate-400" />
                 )}
               </button>
-              {tocOpen && <div className="border-t border-slate-800 px-4 pb-3">{tocList(true)}</div>}
+              {tocOpen && (
+                <div className="mt-3 pt-3 border-t border-slate-800 light:border-slate-200">
+                  {tocList(true)}
+                </div>
+              )}
             </div>
           )}
 
+          {/* HTML Markdown Content */}
           <div
             ref={articleRef}
             className={cn(
-              'doc-content prose prose-slate max-w-none',
+              'doc-content prose prose-slate max-w-none text-slate-300 light:text-slate-700',
               theme === 'dark' && 'prose-invert'
             )}
             dangerouslySetInnerHTML={{ __html: doc.html }}
           />
 
-          <Backlinks doc={doc} />
-          <PrevNext doc={doc} />
+          {/* Backlinks & Bottom Navigation */}
+          <div className="mt-12 space-y-6">
+            <Backlinks doc={doc} />
+            <PrevNext doc={doc} />
+          </div>
         </div>
 
-        {/* TOC sticky di layar besar */}
+        {/* Sticky TOC di Layar Desktop XL */}
         {toc.length > 1 && (
-          <aside className="hidden w-52 shrink-0 xl:block">
-            <div className="sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto border-l border-slate-800 pl-4">
-              <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-500">
-                <Hash className="h-3 w-3" />
-                Daftar Isi
+          <aside className="hidden w-64 shrink-0 xl:block">
+            <div className="sticky top-28 max-h-[calc(100vh-9rem)] overflow-y-auto rounded-2xl border border-slate-800/80 bg-slate-900/40 p-4 light:border-slate-200 light:bg-slate-50/80 scrollbar-thin">
+              <p className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-400 light:text-slate-600 border-b border-slate-800 pb-2 light:border-slate-200">
+                <Hash className="h-3.5 w-3.5 text-accent-500" />
+                Daftar Isi Bab
               </p>
               {tocList(false)}
             </div>

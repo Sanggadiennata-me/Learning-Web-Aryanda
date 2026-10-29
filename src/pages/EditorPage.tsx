@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Check, Code2, Copy, Loader2, Play, Terminal, Trash2 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { appRoot } from '../lib/base';
@@ -532,8 +533,31 @@ ${css}
  * (100% frontend), lihat output di panel terminal / preview web.
  */
 export default function EditorPage() {
-  const [lang, setLang] = useState<LangId>('javascript');
-  const [code, setCode] = useState(LANGUAGES[0].template);
+  const [searchParams] = useSearchParams();
+  const urlLang = searchParams.get('lang') as LangId | null;
+  const urlCode = searchParams.get('code');
+
+  const initialLang = urlLang && LANGUAGES.some((l) => l.id === urlLang) ? urlLang : 'javascript';
+  const initialCode = urlCode ? decodeURIComponent(urlCode) : (LANGUAGES.find((l) => l.id === initialLang)?.template ?? LANGUAGES[0].template);
+
+  const [lang, setLang] = useState<LangId>(initialLang);
+  const [code, setCode] = useState(initialCode);
+
+  useEffect(() => {
+    if (urlLang && LANGUAGES.some((l) => l.id === urlLang)) {
+      setLang(urlLang);
+      if (urlCode) {
+        try {
+          setCode(decodeURIComponent(urlCode));
+        } catch {
+          setCode(urlCode);
+        }
+      } else {
+        const found = LANGUAGES.find((l) => l.id === urlLang);
+        if (found) setCode(found.template);
+      }
+    }
+  }, [urlLang, urlCode]);
   const [output, setOutput] = useState<OutputLine[]>([]);
   const [running, setRunning] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
@@ -655,7 +679,7 @@ export default function EditorPage() {
   const taRef = useRef<HTMLTextAreaElement>(null);
 
   return (
-    <div className="flex h-[calc(100vh-3.5rem)] flex-col">
+    <div className="flex h-[calc(100vh-6rem)] flex-col">
       {/* Header halaman */}
       <div className="flex flex-wrap items-center gap-3 border-b border-slate-800 px-4 py-2.5">
         <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-600 shadow-sm">

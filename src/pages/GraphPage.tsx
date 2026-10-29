@@ -58,7 +58,7 @@ export default function GraphPage() {
   const connected = data.nodes.filter((n) => data.links.some((l) => l.source === n.id || l.target === n.id));
 
   return (
-    <div className="flex h-[calc(100vh-3.5rem)] flex-col">
+    <div className="flex h-[calc(100vh-6rem)] flex-col">
       {/* header */}
       <div className="flex flex-wrap items-center gap-x-6 gap-y-2 border-b border-slate-800/80 px-5 py-3">
         <h1 className="flex items-center gap-2 text-lg font-bold text-slate-100">

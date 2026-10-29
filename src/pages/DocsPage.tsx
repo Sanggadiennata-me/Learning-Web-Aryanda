@@ -1,20 +1,30 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSiteData } from '../app/SiteProvider';
 import { TreeExplorer } from '../components/explorer/TreeExplorer';
 import { Spinner } from '../components/ui/spinner';
 import { countFiles, fetchRoadmaps } from '../services/docs';
 import { folderColor } from '../lib/colors';
-import { ChevronLeft, ChevronRight, Map, Star } from 'lucide-react';
+import {
+  BookOpen,
+  ChevronLeft,
+  ChevronRight,
+  FolderTree,
+  Map,
+  Search,
+  Sparkles,
+  Star,
+} from 'lucide-react';
 import type { RoadmapsData } from '../domain/types';
 
 /**
- * Halaman index dokumen: seluruh struktur vault divisualisasikan
- * sebagai pohon eksplorasi (recursive, tanpa hardcode folder).
+ * Halaman Direktori / Katalog Dokumentasi (W3Schools & Material Style).
  */
 export default function DocsPage() {
   const { tree, metadata, loading, error } = useSiteData();
   const [roadmaps, setRoadmaps] = useState<RoadmapsData | null>(null);
+  const [searchFilter, setSearchFilter] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const stripRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
@@ -43,20 +53,26 @@ export default function DocsPage() {
     };
   }, [roadmaps]);
 
-  // Muat roadmaps untuk strip subskill; gagal diam saja (strip disembunyikan).
   useEffect(() => {
     let cancelled = false;
     fetchRoadmaps()
       .then((data) => {
         if (!cancelled) setRoadmaps(data);
       })
-      .catch(() => {
-        /* roadmaps.json belum tersedia */
-      });
+      .catch(() => {});
     return () => {
       cancelled = true;
     };
   }, []);
+
+  // Filter root folders based on selected category
+  const filteredTree = useMemo(() => {
+    if (!tree) return [];
+    if (selectedCategory === 'all') return tree;
+    return tree.filter(
+      (folder) => folder.name.toLowerCase() === selectedCategory.toLowerCase()
+    );
+  }, [tree, selectedCategory]);
 
   if (loading) {
     return (
@@ -74,30 +90,86 @@ export default function DocsPage() {
     );
   }
 
+  const CATEGORIES = [
+    { id: 'all', label: 'Semua Bidang' },
+    { id: 'pemrograman', label: '💻 Pemrograman' },
+    { id: 'cybersecurity', label: '🛡️ CyberSecurity' },
+    { id: 'devops', label: '☁️ DevOps' },
+    { id: 'jaringan', label: '🌐 Jaringan' },
+    { id: 'terms and foreign words', label: '📖 Kamus IT' },
+  ];
+
   return (
-    <div className="mx-auto max-w-3xl">
-      <header className="mb-6">
-        <p className="eyebrow">Dokumentasi</p>
-        <h1 className="mt-1.5 text-3xl font-bold tracking-tight text-slate-50">Semua Dokumen</h1>
-        <p className="mt-2 text-sm text-slate-500">
-          {metadata?.totalNotes ?? 0} catatan dalam {metadata?.totalFolders ?? 0} folder ·
-          klik folder untuk memperluas
+    <div className="mx-auto max-w-4xl space-y-8">
+      {/* Header Halaman */}
+      <header className="space-y-3">
+        <div className="inline-flex items-center gap-1.5 rounded-full bg-accent-500/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-accent-400">
+          <BookOpen className="h-3.5 w-3.5" />
+          Katalog Lengkap
+        </div>
+        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-50 light:text-slate-900">
+          Direktori Dokumentasi Pembelajaran
+        </h1>
+        <p className="text-sm text-slate-400 light:text-slate-600 max-w-2xl">
+          Eksplorasi {metadata?.totalNotes ?? 0} catatan dan {metadata?.totalCodeFiles ?? 0} latihan
+          koding yang terorganisir per folder vault Obsidian. Gunakan pencarian instan di bawah untuk
+          menemukan materi spesifik.
         </p>
       </header>
 
+      {/* Bar Pencarian Cepat & Kategori Filter */}
+      <div className="space-y-3">
+        <div className="relative">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+          <input
+            type="text"
+            value={searchFilter}
+            onChange={(e) => setSearchFilter(e.target.value)}
+            placeholder="Ketik kata kunci untuk menyaring bab/materi di pohon navigasi..."
+            className="w-full rounded-2xl border border-slate-800 bg-slate-900/90 pl-10 pr-4 py-2.5 text-sm text-slate-100 placeholder:text-slate-500 focus:border-accent-500 focus:outline-none focus:ring-2 focus:ring-accent-500/20 light:border-slate-300 light:bg-white light:text-slate-900 shadow-sm"
+          />
+          {searchFilter && (
+            <button
+              onClick={() => setSearchFilter('')}
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 hover:text-slate-200"
+            >
+              Hapus
+            </button>
+          )}
+        </div>
+
+        {/* Filter Bidang Kategori */}
+        <div className="flex flex-wrap items-center gap-1.5 pt-1">
+          {CATEGORIES.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => setSelectedCategory(cat.id)}
+              className={`rounded-xl px-3 py-1.5 text-xs font-semibold transition-all ${
+                selectedCategory === cat.id
+                  ? 'bg-accent-600 text-white shadow-sm'
+                  : 'bg-slate-900/80 text-slate-400 border border-slate-800 hover:bg-slate-800 hover:text-slate-200 light:bg-slate-100 light:border-slate-200 light:text-slate-600'
+              }`}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Subskills Ribbon Strip */}
       {roadmaps && roadmaps.subskills.length > 0 && (
-        <section className="mb-7">
-          <div className="mb-2.5 flex items-center justify-between gap-3">
-            <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-500">
-              <Star className="h-3.5 w-3.5 text-emerald-400" />
-              Subskill · semua kategori
+        <section className="space-y-2.5">
+          <div className="flex items-center justify-between">
+            <p className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-400 light:text-slate-600">
+              <Star className="h-3.5 w-3.5 text-accent-500" />
+              Pohon Subskill Terstruktur
             </p>
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1">
               <button
                 onClick={() => scrollStrip(-1)}
                 disabled={!canScrollLeft}
                 aria-label="Geser subskill ke kiri"
-                className="flex h-7 w-7 items-center justify-center rounded-full border border-slate-700 bg-slate-900/70 text-slate-400 transition-colors hover:border-slate-500 hover:text-slate-100 disabled:pointer-events-none disabled:opacity-30"
+                className="flex h-7 w-7 items-center justify-center rounded-full border border-slate-800 bg-slate-900 text-slate-400 hover:text-white disabled:opacity-30 transition-all light:border-slate-200 light:bg-slate-100"
               >
                 <ChevronLeft className="h-4 w-4" />
               </button>
@@ -105,43 +177,51 @@ export default function DocsPage() {
                 onClick={() => scrollStrip(1)}
                 disabled={!canScrollRight}
                 aria-label="Geser subskill ke kanan"
-                className="flex h-7 w-7 items-center justify-center rounded-full border border-slate-700 bg-slate-900/70 text-slate-400 transition-colors hover:border-slate-500 hover:text-slate-100 disabled:pointer-events-none disabled:opacity-30"
+                className="flex h-7 w-7 items-center justify-center rounded-full border border-slate-800 bg-slate-900 text-slate-400 hover:text-white disabled:opacity-30 transition-all light:border-slate-200 light:bg-slate-100"
               >
                 <ChevronRight className="h-4 w-4" />
               </button>
             </div>
           </div>
-          <div ref={stripRef} className="scrollbar-thin -mx-1 flex gap-2 overflow-x-auto px-1 pb-2">
+
+          <div
+            ref={stripRef}
+            className="scrollbar-thin flex gap-2 overflow-x-auto pb-2 scroll-smooth"
+          >
             {roadmaps.subskills.map((sub) => (
               <Link
                 key={sub.id}
                 to={`/roadmap?sub=${encodeURIComponent(`sub:${sub.id}`)}`}
-                title={`${sub.folder.split('/')[0]} · ${sub.title}`}
-                className="group flex shrink-0 items-center gap-2 rounded-full border border-slate-700 bg-slate-900/60 py-1.5 pl-3 pr-4 text-sm text-slate-300 transition-colors hover:border-accent-500/50 hover:bg-accent-500/10 hover:text-accent-200"
+                className="group flex shrink-0 items-center gap-2 rounded-xl border border-slate-800 bg-slate-900/80 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-accent-500 hover:text-accent-300 light:border-slate-200 light:bg-white light:text-slate-700 shadow-sm transition-all"
               >
                 <span
                   className="h-2 w-2 shrink-0 rounded-full"
                   style={{ backgroundColor: folderColor(sub.folder.split('/')[0]) }}
                 />
-                <span className="whitespace-nowrap font-medium">{sub.title}</span>
+                <span className="whitespace-nowrap">{sub.title}</span>
               </Link>
             ))}
           </div>
         </section>
       )}
 
-      <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-4 shadow-lg shadow-black/10">
-        <TreeExplorer nodes={tree} variant="page" />
+      {/* Main Material Card Explorer */}
+      <div className="m3-surface p-5 sm:p-7 shadow-md">
+        <TreeExplorer
+          nodes={filteredTree}
+          filterQuery={searchFilter}
+          variant="page"
+        />
       </div>
 
-      <p className="mt-4 flex items-center justify-center gap-1.5 text-xs text-slate-600">
-        <Map className="h-3.5 w-3.5 text-accent-400" />
-        = file roadmap · mulai dari sini untuk mengikuti urutan belajar folder
-      </p>
-
-      <p className="mt-6 text-center text-xs text-slate-600">
-        Total: {countFiles(tree)} dokumen
-      </p>
+      {/* Footer Info */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 light:text-slate-400 border-t border-slate-800/60 pt-4 light:border-slate-200">
+        <span className="flex items-center gap-1.5">
+          <Map className="h-3.5 w-3.5 text-accent-500" />
+          Ikon Map menunjukkan dokumen Roadmap resmi bidang
+        </span>
+        <span>Total: {countFiles(tree)} dokumen terindeks</span>
+      </div>
     </div>
   );
 }

@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import {
+  BookOpen,
   ChevronsRight,
   Code2,
+  FolderTree,
   Map,
   Menu,
   Moon,
@@ -10,6 +12,7 @@ import {
   PanelLeftClose,
   Search,
   Shield,
+  Sparkles,
   Sun,
   X,
 } from 'lucide-react';
@@ -17,14 +20,16 @@ import { useSiteData } from './SiteProvider';
 import { useTheme } from './ThemeProvider';
 import { joinWithRoot } from '../lib/base';
 import { TreeExplorer } from '../components/explorer/TreeExplorer';
+import { TopicRibbon } from '../components/navigation/TopicRibbon';
+import { MobileBottomNav } from '../components/navigation/MobileBottomNav';
 import { cn } from '../lib/utils';
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   cn(
-    'rounded-md px-3 py-1.5 text-sm font-medium transition-colors',
+    'relative inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all duration-200',
     isActive
-      ? 'nav-active'
-      : 'text-slate-300 hover:bg-accent-500/10 hover:text-accent-700'
+      ? 'bg-accent-600 text-white shadow-sm ring-1 ring-accent-500/50'
+      : 'text-slate-300 hover:bg-slate-800 hover:text-white light:text-slate-600 light:hover:bg-slate-200'
   );
 
 const SIDEBAR_STORAGE_KEY = 'lw-sidebar-collapsed';
@@ -38,14 +43,11 @@ function readSidebarState(): boolean {
 }
 
 /**
- * Layout utama: navbar atas (responsive) + drawer navigasi (mobile/tablet)
- * + sidebar dokumentasi (desktop, bisa di-collapse) + footer.
- *
- * - Mobile (< lg): hamburger membuka drawer berisi nav + explorer.
- * - Desktop (>= lg): sidebar explorer sticky; bisa di-collapse agar materi
- *   mendapat ruang lebih besar. State collapse disimpan di localStorage.
- * - Tema dark/light: toggle di navbar (kanan search bar), disimpan di
- *   localStorage oleh ThemeProvider.
+ * Layout Utama (Material Design & W3Schools Inspiration):
+ * - Top App Bar dengan brand, navigasi utama ber-pill, search, & tema.
+ * - W3Schools Topic Ribbon bar di bawah navbar untuk lompat cepat ke berbagai modul.
+ * - Sidebar Explorer yang fleksibel, rapi, dan mudah difilter.
+ * - Mobile Bottom Navigation Bar untuk ergonomi penggunaan HP.
  */
 export function Layout({ children }: { children: React.ReactNode }) {
   const { tree } = useSiteData();
@@ -53,6 +55,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(readSidebarState);
+  const [sidebarFilter, setSidebarFilter] = useState('');
 
   const isDocsRoute = location.pathname.startsWith('/docs');
   const activeId =
@@ -60,7 +63,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       ? decodeURIComponent(location.pathname.slice('/docs/'.length))
       : null;
 
-  // Tutup drawer saat rute berubah (klik item navigasi).
+  // Tutup drawer saat rute berubah.
   useEffect(() => {
     setDrawerOpen(false);
   }, [location.pathname]);
@@ -75,7 +78,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener('keydown', onKey);
   }, [drawerOpen]);
 
-  // Kunci scroll halaman saat drawer terbuka.
+  // Kunci scroll body saat drawer terbuka.
   useEffect(() => {
     if (!drawerOpen) return;
     const previous = document.body.style.overflow;
@@ -85,7 +88,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
     };
   }, [drawerOpen]);
 
-  // Persist state collapse sidebar desktop.
+  // Simpan preferensi collapse sidebar.
   useEffect(() => {
     try {
       window.localStorage.setItem(SIDEBAR_STORAGE_KEY, sidebarCollapsed ? '1' : '0');
@@ -96,169 +99,215 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
   const closeDrawer = () => setDrawerOpen(false);
 
+  // Komponen Sidebar Explorer
   const explorer = (
-    <div className="flex h-full min-h-0 flex-col">
-      <div className="flex items-center justify-between border-b border-slate-800 px-4 py-3">
-        <span className="text-xs uppercase tracking-wider text-slate-500">Explorer</span>
+    <div className="flex h-full min-h-0 flex-col bg-slate-950/70 light:bg-white/95">
+      <div className="flex items-center justify-between border-b border-slate-800 px-3.5 py-3 light:border-slate-200">
+        <div className="flex items-center gap-2">
+          <FolderTree className="h-4 w-4 text-accent-500" />
+          <span className="text-xs font-bold uppercase tracking-wider text-slate-300 light:text-slate-700">
+            Daftar Materi
+          </span>
+        </div>
         <button
           onClick={() => setSidebarCollapsed(true)}
-          className="hidden rounded-md p-1.5 text-slate-500 transition-colors hover:bg-slate-800 hover:text-slate-100 lg:block"
+          className="hidden rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-800 hover:text-slate-100 light:hover:bg-slate-100 lg:block"
           aria-label="Ciutkan sidebar"
           title="Ciutkan sidebar"
         >
           <PanelLeftClose className="h-4 w-4" />
         </button>
       </div>
-      <div className="flex-1 overflow-y-auto p-3">
+
+      {/* Filter Bab Cepat ala W3Schools */}
+      <div className="border-b border-slate-800/60 p-2.5 light:border-slate-200/80">
+        <div className="relative">
+          <input
+            type="text"
+            value={sidebarFilter}
+            onChange={(e) => setSidebarFilter(e.target.value)}
+            placeholder="Cari bab / judul..."
+            className="w-full rounded-xl border border-slate-800 bg-slate-900/90 px-3 py-1.5 text-xs text-slate-200 placeholder:text-slate-500 focus:border-accent-500 focus:outline-none light:border-slate-200 light:bg-slate-50 light:text-slate-800"
+          />
+          {sidebarFilter && (
+            <button
+              onClick={() => setSidebarFilter('')}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-200"
+            >
+              ×
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div className="flex-1 overflow-y-auto p-2 scrollbar-thin">
         {tree ? (
-          <TreeExplorer nodes={tree} activeId={activeId} variant="sidebar" onNavigate={closeDrawer} />
+          <TreeExplorer
+            nodes={tree}
+            activeId={activeId}
+            filterQuery={sidebarFilter}
+            variant="sidebar"
+            onNavigate={closeDrawer}
+          />
         ) : (
-          <p className="px-2 text-sm text-slate-500">Memuat tree…</p>
+          <p className="px-3 py-4 text-xs text-slate-500">Memuat navigasi materi…</p>
         )}
       </div>
     </div>
   );
 
   const drawerNav = (
-    <nav className="flex flex-col gap-1 p-3" aria-label="Navigasi utama">
-      <p className="px-2 pb-1 text-xs uppercase tracking-wider text-slate-500">Menu</p>
+    <nav className="flex flex-col gap-1 p-3" aria-label="Navigasi drawer">
+      <p className="px-2 pb-1 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+        Menu Utama
+      </p>
       <NavLink to="/docs" className={navLinkClass}>
-        Docs
+        <BookOpen className="h-3.5 w-3.5" />
+        Dokumentasi
       </NavLink>
       <NavLink to="/roadmap" className={navLinkClass}>
-        <span className="flex items-center gap-1">
-          <Map className="h-3.5 w-3.5" />
-          Roadmap
-        </span>
+        <Map className="h-3.5 w-3.5" />
+        Roadmap Belajar
       </NavLink>
       <NavLink to="/graph" className={navLinkClass}>
-        <span className="flex items-center gap-1">
-          <Network className="h-3.5 w-3.5" />
-          Graph
-        </span>
+        <Network className="h-3.5 w-3.5" />
+        Graf Pengetahuan
       </NavLink>
       <NavLink to="/editor" className={navLinkClass}>
-        <span className="flex items-center gap-1">
-          <Code2 className="h-3.5 w-3.5" />
-          Code editor
-        </span>
+        <Code2 className="h-3.5 w-3.5" />
+        Code Editor Interaktif
       </NavLink>
       <NavLink to="/cysec-tools" className={navLinkClass}>
-        <span className="flex items-center gap-1">
-          <Shield className="h-3.5 w-3.5" />
-          CySec Tools
-        </span>
+        <Shield className="h-3.5 w-3.5" />
+        CySec & OSINT Tools
       </NavLink>
-      <div className="mt-2 border-t border-slate-800" />
+      <div className="my-2 border-t border-slate-800 light:border-slate-200" />
     </nav>
   );
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-300">
-      {/* ============ NAVBAR ============ */}
-      <header className="sticky top-0 z-40 border-b border-slate-800 bg-slate-950/85 backdrop-blur supports-[backdrop-filter]:bg-slate-950/75">
-        <div className="mx-auto flex h-14 max-w-[1500px] items-center gap-2 px-3 sm:gap-3 sm:px-4">
-          {/* Hamburger. mobile/tablet (< lg) */}
-          <button
-            onClick={() => setDrawerOpen(true)}
-            className="rounded-md p-2 text-slate-400 transition-colors hover:bg-slate-800 hover:text-slate-100 lg:hidden"
-            aria-label="Buka menu"
-          >
-            <Menu className="h-5 w-5" />
-          </button>
+    <div className="min-h-screen bg-slate-950 text-slate-300 light:bg-slate-50 light:text-slate-800">
+      {/* ============ TOP APP BAR (Material 3 Style) ============ */}
+      <header className="sticky top-0 z-40 border-b border-slate-800/90 bg-slate-950/90 backdrop-blur-md supports-[backdrop-filter]:bg-slate-950/80 light:border-slate-200 light:bg-white/95 shadow-sm">
+        <div className="mx-auto flex h-14 max-w-[1550px] items-center justify-between gap-2 px-3 sm:gap-4 sm:px-5">
+          {/* Sisi Kiri: Hamburger + Brand */}
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            {/* Hamburger button (muncul saat rute docs di HP atau drawer umum) */}
+            <button
+              onClick={() => setDrawerOpen(true)}
+              className="rounded-xl p-2 text-slate-400 transition-colors hover:bg-slate-800 hover:text-slate-100 light:hover:bg-slate-100 lg:hidden"
+              aria-label="Buka navigasi materi"
+            >
+              <Menu className="h-5 w-5" />
+            </button>
 
-          <Link to="/" className="flex min-w-0 items-center gap-2.5 text-slate-100">
-            <img
-              src={joinWithRoot('assets/asset/logo%20web.png')}
-              alt="Logo CodeLearn"
-              className="h-8 w-8 shrink-0 object-contain"
-            />
-            <span className="hidden truncate text-sm font-semibold tracking-tight sm:block">
-              CodeLearn
-            </span>
-          </Link>
+            <Link
+              to="/"
+              className="group flex min-w-0 items-center gap-2.5 rounded-xl py-1 focus:outline-none"
+            >
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-accent-500/10 p-1 ring-1 ring-accent-500/30 transition-transform group-hover:scale-105">
+                <img
+                  src={joinWithRoot('assets/asset/logo%20web.png')}
+                  alt="Logo CodeLearn"
+                  className="h-full w-full object-contain"
+                />
+              </div>
+              <div className="flex flex-col">
+                <div className="flex items-center gap-1.5">
+                  <span className="font-extrabold tracking-tight text-slate-100 group-hover:text-accent-400 transition-colors light:text-slate-900 text-sm sm:text-base">
+                    CodeLearn
+                  </span>
+                  <span className="hidden rounded-full bg-accent-500/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent-400 light:bg-accent-100 light:text-accent-700 sm:inline-block">
+                    PRO
+                  </span>
+                </div>
+                <span className="hidden text-[10px] text-slate-500 light:text-slate-400 sm:block leading-none -mt-0.5">
+                  Knowledge & Security Hub
+                </span>
+              </div>
+            </Link>
+          </div>
 
-          {/* Nav utama. tablet/desktop */}
-          <nav className="ml-6 hidden items-center gap-1 md:flex">
+          {/* Sisi Tengah: Navigasi Desktop Ber-Pills ala Material */}
+          <nav className="hidden items-center gap-1 lg:flex" aria-label="Navigasi Utama">
             <NavLink to="/docs" className={navLinkClass}>
+              <BookOpen className="h-3.5 w-3.5" />
               Docs
             </NavLink>
             <NavLink to="/roadmap" className={navLinkClass}>
-              <span className="flex items-center gap-1">
-                <Map className="h-3.5 w-3.5" />
-                Roadmap
-              </span>
+              <Map className="h-3.5 w-3.5" />
+              Roadmap
             </NavLink>
             <NavLink to="/graph" className={navLinkClass}>
-              <span className="flex items-center gap-1">
-                <Network className="h-3.5 w-3.5" />
-                Graph
-              </span>
+              <Network className="h-3.5 w-3.5" />
+              Graph
             </NavLink>
             <NavLink to="/editor" className={navLinkClass}>
-              <span className="flex items-center gap-1">
-                <Code2 className="h-3.5 w-3.5" />
-                Code editor
-              </span>
+              <Code2 className="h-3.5 w-3.5" />
+              Editor
             </NavLink>
             <NavLink to="/cysec-tools" className={navLinkClass}>
-              <span className="flex items-center gap-1">
-                <Shield className="h-3.5 w-3.5" />
-                CySec Tools
-              </span>
+              <Shield className="h-3.5 w-3.5" />
+              CySec Tools
             </NavLink>
           </nav>
 
-          <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
-            {/* Search bar. sm+ */}
+          {/* Sisi Kanan: Search Bar + Theme Toggle */}
+          <div className="flex items-center gap-1.5 sm:gap-2.5">
+            {/* Search Pill Button */}
             <Link
               to="/search"
-              className="hidden items-center gap-2 rounded-lg border border-slate-800 bg-slate-900/70 px-3 py-1.5 text-sm text-slate-500 transition-colors hover:border-slate-600 hover:bg-slate-900 hover:text-slate-300 sm:flex"
+              className="flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-900/90 px-3 py-1.5 text-xs text-slate-400 transition-all hover:border-accent-500/50 hover:text-slate-200 light:border-slate-200 light:bg-slate-100 light:text-slate-600 shadow-sm"
+              aria-label="Cari materi pembelajaran"
             >
-              <Search className="h-4 w-4" />
-              <span className="hidden md:inline">Cari materi…</span>
-              <span className="md:hidden">Cari</span>
-              <kbd className="hidden rounded border border-slate-700 bg-slate-800 px-1.5 py-0.5 font-mono text-[10px] text-slate-500 md:inline">
+              <Search className="h-3.5 w-3.5 text-accent-500" />
+              <span className="hidden sm:inline">Cari materi & tool…</span>
+              <kbd className="hidden rounded-md border border-slate-700 bg-slate-800/80 px-1.5 py-0.5 font-mono text-[10px] text-slate-400 light:border-slate-300 light:bg-white md:inline">
                 /
               </kbd>
             </Link>
-            {/* Search icon. mobile (< sm) */}
-            <Link
-              to="/search"
-              className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-800 bg-slate-900/70 text-slate-400 transition-colors hover:border-slate-600 hover:text-slate-200 sm:hidden"
-              aria-label="Cari materi"
-            >
-              <Search className="h-4 w-4" />
-            </Link>
 
-            {/* Theme toggle. selalu tampil di kanan search bar */}
+            {/* Theme Toggle Button */}
             <button
               onClick={toggleTheme}
-              className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-800 bg-slate-900/70 text-slate-400 transition-colors hover:border-slate-600 hover:text-slate-200"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-800 bg-slate-900/90 text-slate-400 transition-all hover:border-slate-700 hover:text-slate-100 light:border-slate-200 light:bg-slate-100 light:text-slate-700 shadow-sm active:scale-95"
               aria-label={theme === 'dark' ? 'Ganti ke tema terang' : 'Ganti ke tema gelap'}
               title={theme === 'dark' ? 'Tema terang' : 'Tema gelap'}
             >
-              {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              {theme === 'dark' ? (
+                <Sun className="h-4 w-4 text-amber-400" />
+              ) : (
+                <Moon className="h-4 w-4 text-indigo-600" />
+              )}
             </button>
           </div>
         </div>
+
+        {/* ============ W3SCHOOLS TOPIC RIBBON BAR ============ */}
+        <TopicRibbon />
       </header>
 
-      <div className="mx-auto flex max-w-[1500px]">
-        {/* ============ DRAWER (mobile/tablet) ============ */}
+      {/* ============ KONTEN & SIDEBAR ============ */}
+      <div className="mx-auto flex max-w-[1550px]">
+        {/* ============ MOBILE/TABLET DRAWER ============ */}
         {drawerOpen && (
           <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true">
             <div
-              className="drawer-overlay absolute inset-0 bg-black/60"
+              className="drawer-overlay absolute inset-0 bg-black/60 backdrop-blur-sm"
               onClick={closeDrawer}
               aria-hidden
             />
-            <aside className="drawer-panel absolute left-0 top-0 flex h-full w-80 max-w-[85vw] flex-col border-r border-slate-800 bg-slate-950 shadow-2xl">
-              <div className="flex items-center justify-between border-b border-slate-800 px-4 py-3">
-                <span className="text-sm font-semibold text-slate-200">Navigasi</span>
+            <aside className="drawer-panel absolute left-0 top-0 flex h-full w-80 max-w-[85vw] flex-col border-r border-slate-800 bg-slate-950 shadow-2xl light:border-slate-200 light:bg-white">
+              <div className="flex items-center justify-between border-b border-slate-800 px-4 py-3 light:border-slate-200">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-accent-500" />
+                  <span className="text-sm font-bold text-slate-100 light:text-slate-900">
+                    Navigasi CodeLearn
+                  </span>
+                </div>
                 <button
                   onClick={closeDrawer}
-                  className="rounded-md p-1.5 text-slate-400 transition-colors hover:bg-slate-800 hover:text-slate-100"
+                  className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-800 hover:text-slate-100 light:hover:bg-slate-100"
                   aria-label="Tutup menu"
                 >
                   <X className="h-5 w-5" />
@@ -270,26 +319,26 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </div>
         )}
 
-        {/* ============ SIDEBAR DESKTOP (collapsible) ============ */}
+        {/* ============ DESKTOP COLLAPSIBLE SIDEBAR ============ */}
         {isDocsRoute && (
           <aside
             className={cn(
-              'sticky top-14 hidden h-[calc(100vh-3.5rem)] shrink-0 border-r border-slate-800/80 transition-[width] duration-200 lg:block',
-              sidebarCollapsed ? 'w-14' : 'w-72'
+              'sticky top-[5.75rem] hidden h-[calc(100vh-5.75rem)] shrink-0 border-r border-slate-800/80 transition-[width] duration-200 light:border-slate-200 lg:block',
+              sidebarCollapsed ? 'w-14' : 'w-72 xl:w-80'
             )}
           >
             {sidebarCollapsed ? (
-              <div className="flex h-full flex-col items-center pt-3">
+              <div className="flex h-full flex-col items-center pt-4">
                 <button
                   onClick={() => setSidebarCollapsed(false)}
-                  className="rounded-md p-2 text-slate-500 transition-colors hover:bg-slate-800 hover:text-slate-100"
-                  aria-label="Buka sidebar"
-                  title="Buka sidebar"
+                  className="rounded-xl border border-slate-800 p-2 text-slate-400 transition-all hover:bg-slate-800 hover:text-slate-100 light:border-slate-200 light:hover:bg-slate-100 shadow-sm"
+                  aria-label="Buka sidebar materi"
+                  title="Buka sidebar materi"
                 >
-                  <ChevronsRight className="h-5 w-5" />
+                  <ChevronsRight className="h-4 w-4" />
                 </button>
-                <span className="mt-2 text-[10px] font-semibold uppercase tracking-wider text-slate-600 [writing-mode:vertical-rl]">
-                  Docs
+                <span className="mt-4 text-[10px] font-bold uppercase tracking-widest text-slate-500 [writing-mode:vertical-rl]">
+                  Buka Bab
                 </span>
               </div>
             ) : (
@@ -298,14 +347,20 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </aside>
         )}
 
-        <main className={cn('min-w-0 flex-1', isDocsRoute ? 'px-4 py-6 sm:px-8' : '')}>
+        {/* Konten Halaman */}
+        <main
+          className={cn(
+            'min-w-0 flex-1 pb-20 md:pb-8',
+            isDocsRoute ? 'px-4 py-6 sm:px-8 xl:px-10' : ''
+          )}
+        >
           {children}
         </main>
       </div>
 
       {/* ============ FOOTER ============ */}
-      <footer className="border-t border-slate-800/60 bg-slate-950/60">
-        <div className="mx-auto max-w-[1500px] px-4 py-8">
+      <footer className="border-t border-slate-800/80 bg-slate-950/80 light:border-slate-200 light:bg-white pb-16 md:pb-0">
+        <div className="mx-auto max-w-[1550px] px-4 py-8 sm:px-6">
           <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
             <div className="flex items-center gap-2.5 text-sm">
               <img
@@ -313,28 +368,36 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 alt=""
                 className="h-6 w-6 object-contain"
               />
-              <span className="font-medium text-slate-300">CodeLearn</span>
+              <span className="font-semibold text-slate-200 light:text-slate-800">
+                CodeLearn
+              </span>
+              <span className="text-xs text-slate-500">
+                — Platform Belajar Mandiri berbasis Obsidian Vault
+              </span>
             </div>
-            <nav className="flex items-center gap-5 text-xs text-slate-500">
-              <Link to="/docs" className="transition-colors hover:text-slate-300">
+            <nav className="flex flex-wrap items-center gap-4 text-xs font-medium text-slate-500 light:text-slate-600">
+              <Link to="/docs" className="transition-colors hover:text-accent-500">
                 Docs
               </Link>
-              <Link to="/roadmap" className="transition-colors hover:text-slate-300">
+              <Link to="/roadmap" className="transition-colors hover:text-accent-500">
                 Roadmap
               </Link>
-              <Link to="/graph" className="transition-colors hover:text-slate-300">
+              <Link to="/graph" className="transition-colors hover:text-accent-500">
                 Graph
               </Link>
-              <Link to="/editor" className="transition-colors hover:text-slate-300">
-                Code editor
+              <Link to="/editor" className="transition-colors hover:text-accent-500">
+                Editor
               </Link>
-              <Link to="/cysec-tools" className="transition-colors hover:text-slate-300">
+              <Link to="/cysec-tools" className="transition-colors hover:text-accent-500">
                 CySec Tools
               </Link>
             </nav>
           </div>
         </div>
       </footer>
+
+      {/* ============ MOBILE BOTTOM NAVIGATION BAR ============ */}
+      <MobileBottomNav />
     </div>
   );
 }

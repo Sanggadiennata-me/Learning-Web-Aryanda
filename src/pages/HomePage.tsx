@@ -1,26 +1,161 @@
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   ArrowRight,
   BookOpen,
-  Clock,
+  Check,
+  Code2,
+  Cpu,
   ExternalLink,
+  FileCode,
   FileText,
-  Folder,
   FolderTree,
-  Github,
+  Globe,
   Layers,
+  Lock,
+  Map,
+  Network,
+  Play,
   Search,
+  Server,
+  Shield,
   Sparkles,
-  Star,
+  Terminal,
   UserRound,
 } from 'lucide-react';
 import { useSiteData } from '../app/SiteProvider';
 import { joinWithRoot } from '../lib/base';
-import { countFiles } from '../services/docs';
 import { Spinner } from '../components/ui/spinner';
+import { cn } from '../lib/utils';
+
+// Contoh snippet interaktif untuk "Try it Yourself" di Hero
+const HERO_SNIPPETS: Record<string, { label: string; code: string; defaultOutput: string }> = {
+  javascript: {
+    label: 'JavaScript',
+    code: `// Coba eksekusi kode JavaScript langsung di browser!
+const skills = ['Python', 'Docker', 'Web Security', 'Networking'];
+
+function sapa(nama) {
+  return \`Halo, selamat datang \${nama} di CodeLearn!\`;
+}
+
+console.log(sapa("Aryanda"));
+console.log("Topik siap dipelajari:", skills.join(" · "));
+`,
+    defaultOutput: `Halo, selamat datang Aryanda di CodeLearn!
+Topik siap dipelajari: Python · Docker · Web Security · Networking`,
+  },
+  python: {
+    label: 'Python',
+    code: `# Algoritma Enkripsi Caesar Cipher Sederhana
+def caesar(teks, shift=3):
+    hasil = ""
+    for c in teks:
+        if c.isalpha():
+            base = ord('A') if c.isupper() else ord('a')
+            hasil += chr((ord(c) - base + shift) % 26 + base)
+        else:
+            hasil += c
+    return hasil
+
+plain = "CodeLearn 2026"
+cipher = caesar(plain, 3)
+print(f"Plaintext : {plain}")
+print(f"Ciphertext: {cipher}")
+`,
+    defaultOutput: `Plaintext : CodeLearn 2026
+Ciphertext: FrghOhduq 2026`,
+  },
+  php: {
+    label: 'PHP',
+    code: `<?php
+// PHP WebAssembly (php-wasm) berjalan 100% di browser
+$modul = [
+    "Fundamental" => "Tipe Data & Percabangan",
+    "CyberSec"    => "Kriptografi & Forensic",
+    "DevOps"      => "Docker & AWS Cloud"
+];
+
+echo "Daftar Modul Belajar:\n";
+foreach ($modul as $kategori => $materi) {
+    echo "- [$kategori]: $materi\n";
+}
+`,
+    defaultOutput: `Daftar Modul Belajar:
+- [Fundamental]: Tipe Data & Percabangan
+- [CyberSec]: Kriptografi & Forensic
+- [DevOps]: Docker & AWS Cloud`,
+  },
+  html: {
+    label: 'HTML/CSS',
+    code: `<!-- Preview HTML interaktif -->
+<div style="font-family: sans-serif; padding: 1.5rem; text-align: center;">
+  <h2 style="color: #16a34a; margin: 0 0 0.5rem 0;">🎉 Halo dari Browser!</h2>
+  <p style="color: #64748b; font-size: 14px;">HTML, CSS dan JavaScript dirender tanpa backend server.</p>
+  <button style="background: #16a34a; color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-weight: bold; cursor: pointer;">
+    Coba Sendiri »
+  </button>
+</div>
+`,
+    defaultOutput: `[Pratinjau HTML terender langsung di iframe sandbox]`,
+  },
+};
 
 export default function HomePage() {
   const { tree, metadata, loading, error } = useSiteData();
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // State untuk interactive Try-it-yourself widget di Hero
+  const [activeSnippetLang, setActiveSnippetLang] = useState<keyof typeof HERO_SNIPPETS>('javascript');
+  const [snippetCode, setSnippetCode] = useState(HERO_SNIPPETS.javascript.code);
+  const [snippetOutput, setSnippetOutput] = useState<string | null>(null);
+  const [isExecuting, setIsExecuting] = useState(false);
+
+  const handleSelectLang = (langKey: keyof typeof HERO_SNIPPETS) => {
+    setActiveSnippetLang(langKey);
+    setSnippetCode(HERO_SNIPPETS[langKey].code);
+    setSnippetOutput(null);
+  };
+
+  const handleRunHeroSnippet = () => {
+    setIsExecuting(true);
+    setSnippetOutput(null);
+
+    // Quick client-side evaluation for JS or mock for other languages in the hero teaser
+    if (activeSnippetLang === 'javascript') {
+      setTimeout(() => {
+        try {
+          const logs: string[] = [];
+          const customConsole = {
+            log: (...args: unknown[]) =>
+              logs.push(args.map((a) => (typeof a === 'object' ? JSON.stringify(a) : String(a))).join(' ')),
+          };
+          const fn = new Function('console', snippetCode);
+          fn(customConsole);
+          setSnippetOutput(logs.join('\n') || '(Selesai tanpa output)');
+        } catch (err) {
+          setSnippetOutput(`Error: ${(err as Error).message}`);
+        }
+        setIsExecuting(false);
+      }, 250);
+    } else {
+      // Untuk Python/PHP di Hero card, tampilkan hasil representatif atau ajak buka di full editor
+      setTimeout(() => {
+        setSnippetOutput(HERO_SNIPPETS[activeSnippetLang].defaultOutput);
+        setIsExecuting(false);
+      }, 400);
+    }
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    } else {
+      navigate('/search');
+    }
+  };
 
   if (loading) {
     return (
@@ -34,250 +169,663 @@ export default function HomePage() {
     return (
       <div className="mx-auto max-w-2xl px-4 py-16 text-center">
         <h1 className="text-2xl font-bold text-slate-100">Data belum tersedia</h1>
-        <p className="mt-3 text-sm leading-relaxed text-slate-400">
+        <p className="mt-3 text-sm text-slate-400">
           {error ?? 'tree.json tidak ditemukan.'} Jalankan parser terlebih dahulu:
         </p>
-        <pre className="mt-4 overflow-x-auto rounded-lg border border-slate-800 bg-slate-900 p-4 text-left text-xs text-slate-300">
+        <pre className="mt-4 rounded-xl border border-slate-800 bg-slate-900 p-4 text-xs text-slate-300">
           npm run parse -- --vault=/path/ke/Obsidian-Vault
         </pre>
       </div>
     );
   }
 
-  const topFolders = tree.slice(0, 8);
-
-  const stats = [
-    {
-      icon: FileText,
-      value: metadata?.totalNotes ?? 0,
-      label: 'Catatan',
-    },
-    {
-      icon: FolderTree,
-      value: metadata?.totalFolders ?? 0,
-      label: 'Folder',
-    },
-    {
-      icon: Clock,
-      value: `${Math.round((metadata?.totalNotes ?? 0) / 200)} jam`,
-      label: 'Estimasi baca',
-    },
-    {
-      icon: Layers,
-      value: metadata?.subskillCount ?? 0,
-      label: 'Skill',
-    },
-    {
-      icon: Star,
-      value: metadata?.myskillCount ?? 0,
-      label: 'Bidang',
-    },
-  ];
-
   return (
-    <div className="mx-auto max-w-5xl px-4 py-14 sm:px-6 sm:py-20">
-      {/* ===================== HERO ===================== */}
-      <header className="hero-bg relative overflow-hidden rounded-3xl px-6 py-14 text-center sm:px-10 sm:py-20">
-        <img
-          src={joinWithRoot('assets/asset/logo%20web.png')}
-          alt="Logo CodeLearn"
-          className="mx-auto h-16 w-16 object-contain sm:h-20 sm:w-20"
-        />
+    <div className="space-y-16 py-4 sm:py-8">
+      {/* ============================================================
+          1. HERO SECTION (W3Schools Welcome & Interactive Try-It)
+          ============================================================ */}
+      <section className="relative overflow-hidden rounded-3xl border border-slate-800 bg-gradient-to-b from-slate-900 via-slate-950 to-slate-950 p-6 sm:p-10 lg:p-12 light:border-slate-200 light:from-slate-50 light:to-white shadow-md">
+        <div className="grid gap-10 lg:grid-cols-12 lg:items-center">
+          {/* Kolom Kiri: Penjelasan, Search & Action */}
+          <div className="lg:col-span-6 space-y-6">
+            <div className="inline-flex items-center gap-2 rounded-full border border-accent-500/30 bg-accent-500/10 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-accent-400 light:bg-accent-100 light:text-accent-700">
+              <Sparkles className="h-3.5 w-3.5" />
+              Platform Belajar IT Mandiri
+            </div>
 
-        <span className="mt-7 inline-flex items-center gap-2 rounded-full border border-accent-100 bg-accent-50 px-4 py-1.5 text-xs font-semibold text-accent-700">
-          <Sparkles className="h-3.5 w-3.5" />
-          Personal learning platform
-        </span>
+            <h1 className="text-3xl font-extrabold tracking-tight text-slate-50 sm:text-5xl lg:text-5xl light:text-slate-900 leading-[1.15]">
+              Belajar Coding, Keamanan Siber & Cloud{' '}
+              <span className="text-accent-500">Langkah demi Langkah.</span>
+            </h1>
 
-        <h1 className="mx-auto mt-6 max-w-3xl text-4xl font-extrabold tracking-tight text-slate-50 sm:text-6xl">
-          Belajar IT, <span className="text-gradient">langkah demi langkah.</span>
-        </h1>
+            <p className="text-sm sm:text-base leading-relaxed text-slate-400 light:text-slate-600">
+              Kurikulum terstruktur langsung dari Obsidian Vault: materi lengkap, peta roadmap
+              bercabang, latihan coding interaktif di browser, dan 100+ security tools siap pakai
+              tanpa backend.
+            </p>
 
-        <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-slate-400 sm:text-lg">
-          Dokumentasi dengan navigasi, pencarian, graph antar-catatan, dan roadmap belajar.
-          Materi disusun oleh{' '}
-          <span className="font-semibold text-slate-200">M. Aryanda Sanggadiennata</span>, penyedia
-          materi sekaligus developer web.
-        </p>
+            {/* W3Schools Signature Search Box */}
+            <form onSubmit={handleSearchSubmit} className="relative max-w-lg">
+              <div className="flex items-center rounded-2xl border border-slate-700 bg-slate-900/90 p-1.5 shadow-inner focus-within:border-accent-500 focus-within:ring-2 focus-within:ring-accent-500/30 light:border-slate-300 light:bg-white">
+                <Search className="ml-3 h-4 w-4 text-slate-400" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Mau belajar apa? misal: Python, Docker, SQLi..."
+                  className="w-full bg-transparent px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none light:text-slate-900"
+                />
+                <button
+                  type="submit"
+                  className="rounded-xl bg-accent-600 px-4 py-2 text-xs font-bold text-white shadow transition-all hover:bg-accent-700 active:scale-95 shrink-0"
+                >
+                  Cari Materi ❯
+                </button>
+              </div>
 
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-          <Link
-            to="/docs"
-            className="inline-flex items-center gap-2 rounded-lg bg-accent-500 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:bg-accent-600"
-          >
-            <BookOpen className="h-4 w-4" />
-            Jelajahi Docs
-          </Link>
-          <Link
-            to="/search"
-            className="inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900 px-6 py-3 text-sm font-medium text-slate-300 transition-colors hover:border-accent-300 hover:bg-accent-500/10"
-          >
-            <Search className="h-4 w-4" />
-            Cari Materi
-          </Link>
-          <a
-            href="https://portofolioaryanda.vercel.app/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-lg border border-accent-500/40 bg-accent-500/10 px-6 py-3 text-sm font-medium text-accent-300 transition-colors hover:bg-accent-500/20 hover:text-accent-200"
-          >
-            <UserRound className="h-4 w-4" />
-            Profile Pembuat
-          </a>
+              {/* Quick suggestion tags */}
+              <div className="mt-2.5 flex flex-wrap items-center gap-1.5 text-xs text-slate-400 light:text-slate-600">
+                <span className="text-[11px] font-semibold text-slate-500">Populer:</span>
+                {[
+                  { label: 'Python', path: '/docs/pemrograman/python' },
+                  { label: 'JavaScript', path: '/docs/pemrograman/javascript' },
+                  { label: 'Docker', path: '/docs/devops' },
+                  { label: 'Kriptografi', path: '/docs/cybersecurity' },
+                  { label: 'CySec Tools', path: '/cysec-tools' },
+                ].map((sug) => (
+                  <Link
+                    key={sug.label}
+                    to={sug.path}
+                    className="rounded-lg bg-slate-800/80 px-2 py-0.5 text-[11px] font-medium text-slate-300 transition-colors hover:bg-accent-500/20 hover:text-accent-300 light:bg-slate-200 light:text-slate-700"
+                  >
+                    {sug.label}
+                  </Link>
+                ))}
+              </div>
+            </form>
+
+            {/* Quick Action CTA Buttons */}
+            <div className="flex flex-wrap gap-3 pt-2">
+              <Link
+                to="/docs"
+                className="inline-flex items-center gap-2 rounded-xl bg-accent-600 px-5 py-2.5 text-xs sm:text-sm font-bold text-white shadow-sm transition-all hover:bg-accent-700 hover:shadow-md active:scale-95"
+              >
+                <BookOpen className="h-4 w-4" />
+                Mulai dari Dasar ❯
+              </Link>
+              <Link
+                to="/roadmap"
+                className="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-800/80 px-5 py-2.5 text-xs sm:text-sm font-semibold text-slate-200 transition-all hover:border-accent-500 hover:bg-slate-800 hover:text-white light:border-slate-300 light:bg-white light:text-slate-700 active:scale-95"
+              >
+                <Map className="h-4 w-4 text-accent-500" />
+                Alur Roadmap
+              </Link>
+              <Link
+                to="/editor"
+                className="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-800/80 px-5 py-2.5 text-xs sm:text-sm font-semibold text-slate-200 transition-all hover:border-accent-500 hover:bg-slate-800 hover:text-white light:border-slate-300 light:bg-white light:text-slate-700 active:scale-95"
+              >
+                <Code2 className="h-4 w-4 text-accent-500" />
+                Code Editor
+              </Link>
+            </div>
+          </div>
+
+          {/* Kolom Kanan: W3Schools Interactive "Try It Yourself" Sandbox */}
+          <div className="lg:col-span-6">
+            <div className="w3-try-box relative rounded-2xl border border-slate-700 bg-slate-900/95 shadow-xl light:border-slate-300 light:bg-white overflow-hidden">
+              {/* Header Tab Bahasa */}
+              <div className="flex items-center justify-between border-b border-slate-800 bg-slate-950/80 px-4 py-2.5 light:border-slate-200 light:bg-slate-100">
+                <div className="flex items-center gap-1.5">
+                  <Terminal className="h-4 w-4 text-accent-500" />
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-200 light:text-slate-800">
+                    Coba Langsung (Try It Yourself)
+                  </span>
+                </div>
+                <div className="flex items-center gap-1">
+                  {(Object.keys(HERO_SNIPPETS) as Array<keyof typeof HERO_SNIPPETS>).map((key) => (
+                    <button
+                      key={key}
+                      onClick={() => handleSelectLang(key)}
+                      className={cn(
+                        'rounded-lg px-2.5 py-1 text-[11px] font-semibold transition-all',
+                        activeSnippetLang === key
+                          ? 'bg-accent-600 text-white shadow-sm'
+                          : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200 light:text-slate-600 light:hover:bg-slate-200'
+                      )}
+                    >
+                      {HERO_SNIPPETS[key].label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Code Area */}
+              <div className="p-3 sm:p-4">
+                <div className="relative rounded-xl border border-slate-800 bg-slate-950 p-3 light:border-slate-200 light:bg-slate-900 font-mono text-xs text-slate-200">
+                  <textarea
+                    value={snippetCode}
+                    onChange={(e) => setSnippetCode(e.target.value)}
+                    rows={7}
+                    className="w-full resize-none bg-transparent font-mono text-xs leading-relaxed text-emerald-300 focus:outline-none scrollbar-thin"
+                    spellCheck={false}
+                  />
+                </div>
+
+                {/* Tombol Eksekusi & Link Full Editor */}
+                <div className="mt-3 flex items-center justify-between gap-2">
+                  <button
+                    onClick={handleRunHeroSnippet}
+                    disabled={isExecuting}
+                    className="inline-flex items-center gap-2 rounded-xl bg-accent-600 px-4 py-2 text-xs font-bold text-white shadow transition-all hover:bg-accent-700 active:scale-95 disabled:opacity-50"
+                  >
+                    <Play className="h-3.5 w-3.5 fill-current" />
+                    {isExecuting ? 'Mengeksekusi…' : 'Jalankan Kode ❯'}
+                  </button>
+
+                  <Link
+                    to={`/editor?lang=${activeSnippetLang}&code=${encodeURIComponent(snippetCode)}`}
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-accent-500 hover:text-accent-400 hover:underline"
+                  >
+                    Buka di Full Editor ↗
+                  </Link>
+                </div>
+
+                {/* Output Console Box */}
+                {snippetOutput && (
+                  <div className="mt-3 rounded-xl border border-slate-800 bg-black/60 p-3 light:border-slate-300 light:bg-slate-100">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+                      Hasil Output:
+                    </p>
+                    <pre className="whitespace-pre-wrap font-mono text-xs text-slate-200 light:text-slate-800">
+                      {snippetOutput}
+                    </pre>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
-      </header>
+      </section>
 
-      {/* ===================== STATISTIK ===================== */}
-      <section className="mt-14 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-        {stats.map((stat) => (
-          <div key={stat.label} className="card card-hover flex items-center gap-4 p-5">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-accent-100 text-accent-600">
-              <stat.icon className="h-5 w-5" />
-            </span>
-            <div>
-              <p className="text-2xl font-bold tabular-nums text-slate-50">{stat.value}</p>
-              <p className="mt-0.5 text-xs font-medium text-slate-500">{stat.label}</p>
+      {/* ============================================================
+          2. STATISTIK KONTEN (Material 3 Tonal Metric Row)
+          ============================================================ */}
+      <section className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-4">
+        {[
+          {
+            icon: FileText,
+            value: metadata?.totalNotes ?? 618,
+            label: 'Catatan Dokumentasi',
+            desc: 'Tersanitasi & terindeks',
+          },
+          {
+            icon: FileCode,
+            value: metadata?.totalCodeFiles ?? 172,
+            label: 'File Latihan Koding',
+            desc: 'Python, JS, HTML, PHP',
+          },
+          {
+            icon: Shield,
+            value: '108+',
+            label: 'CySec & OSINT Tools',
+            desc: '100% Client-side browser',
+          },
+          {
+            icon: Layers,
+            value: metadata?.subskillCount ?? 13,
+            label: 'Pohon Subskill',
+            desc: 'Roadmap kurikulum',
+          },
+        ].map((item) => (
+          <div
+            key={item.label}
+            className="m3-card m3-card-hover flex flex-col justify-between p-4 sm:p-5"
+          >
+            <div className="flex items-center justify-between">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent-500/15 text-accent-500 light:bg-accent-100 light:text-accent-700">
+                <item.icon className="h-5 w-5" />
+              </span>
+              <span className="text-xl sm:text-2xl font-black text-slate-50 light:text-slate-900 tabular-nums">
+                {item.value}
+              </span>
+            </div>
+            <div className="mt-3">
+              <h3 className="text-xs font-bold text-slate-200 light:text-slate-800">{item.label}</h3>
+              <p className="text-[11px] text-slate-500 light:text-slate-400">{item.desc}</p>
             </div>
           </div>
         ))}
       </section>
 
-      {/* ===================== TOPIK UTAMA ===================== */}
-      <section className="mt-16">
-        <div className="flex items-center justify-between">
-          <h2 className="flex items-center gap-2.5 text-lg font-bold text-slate-50">
-            <span className="h-5 w-1 rounded-full bg-accent-500" />
-            Topik Utama
-          </h2>
+      {/* ============================================================
+          3. W3SCHOOLS-STYLE TRACK CARDS (Modul Jalur Belajar Utama)
+          ============================================================ */}
+      <section className="space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-black tracking-tight text-slate-100 light:text-slate-900 flex items-center gap-2">
+              <span className="h-6 w-1.5 rounded-full bg-accent-500" />
+              Jalur Belajar Utama (Learning Tracks)
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-400 light:text-slate-600 mt-1">
+              Pilih bidang keahlian yang ingin kamu kuasai. Disertai teori, studi kasus, dan latihan koding.
+            </p>
+          </div>
           <Link
             to="/docs"
-            className="inline-flex items-center gap-1 text-sm font-medium text-accent-600 transition-colors hover:text-accent-700"
+            className="inline-flex items-center gap-1 text-xs font-bold text-accent-500 hover:text-accent-400"
           >
-            Semua docs <ArrowRight className="h-3.5 w-3.5" />
+            Lihat Semua Modul ❯
           </Link>
         </div>
 
-        <div className="mt-5 grid gap-3 sm:grid-cols-2">
-          {topFolders.map((folder) => (
-            <Link
-              key={folder.relativePath}
-              to="/docs"
-              className="group card card-hover flex items-center justify-between p-5"
-            >
-              <div className="flex items-center gap-3.5">
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent-100 text-accent-600 transition-colors group-hover:bg-accent-200/60">
-                  <Folder className="h-5 w-5" />
+        <div className="grid gap-6 md:grid-cols-2">
+          {/* Track 1: Pemrograman & Web Dev */}
+          <div className="m3-card p-6 flex flex-col justify-between border-l-4 border-l-emerald-500">
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-400">
+                  <Code2 className="h-3.5 w-3.5" />
+                  Pemrograman & Web
                 </span>
-                <div>
-                  <h3 className="font-semibold text-slate-200 transition-colors group-hover:text-slate-50">
-                    {folder.name}
-                  </h3>
-                  <p className="mt-0.5 text-xs text-slate-400">
-                    {countFiles(folder.children)} catatan
-                  </p>
-                </div>
+                <span className="text-xs text-slate-500">400+ Catatan</span>
               </div>
-              <ArrowRight className="h-4 w-4 text-slate-600 transition-transform group-hover:translate-x-1 group-hover:text-accent-500" />
+              <h3 className="text-lg font-bold text-slate-100 light:text-slate-900">
+                Python, JavaScript, PHP & Frameworks
+              </h3>
+              <p className="mt-2 text-xs leading-relaxed text-slate-400 light:text-slate-600">
+                Kuasai logika pemrograman dari nol: tipe data, modularitas, OOP, asynchronous, DOM
+                manipulation, hingga REST API menggunakan Node.js, Express, dan Laravel.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-1.5">
+                {['Python Dasar', 'Python Advanced', 'JavaScript', 'Node.js', 'PHP', 'Laravel'].map(
+                  (tag) => (
+                    <span
+                      key={tag}
+                      className="rounded-lg bg-slate-800/80 px-2 py-1 text-[11px] font-medium text-slate-300 light:bg-slate-100 light:text-slate-700"
+                    >
+                      {tag}
+                    </span>
+                  )
+                )}
+              </div>
+            </div>
+            <div className="mt-6 flex items-center gap-3 pt-4 border-t border-slate-800/80 light:border-slate-200">
+              <Link
+                to="/docs/pemrograman"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-emerald-700 active:scale-95"
+              >
+                Mulai Belajar ❯
+              </Link>
+              <Link
+                to="/roadmap"
+                className="text-xs font-semibold text-slate-400 hover:text-slate-200 light:text-slate-600"
+              >
+                Cek Roadmap
+              </Link>
+            </div>
+          </div>
+
+          {/* Track 2: Cyber Security & Kriptografi */}
+          <div className="m3-card p-6 flex flex-col justify-between border-l-4 border-l-indigo-500">
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-500/10 px-3 py-1 text-xs font-bold text-indigo-400">
+                  <Shield className="h-3.5 w-3.5" />
+                  Keamanan Siber
+                </span>
+                <span className="text-xs text-slate-500">100+ Tools & Catatan</span>
+              </div>
+              <h3 className="text-lg font-bold text-slate-100 light:text-slate-900">
+                Kriptografi, Forensik Digital & CTF
+              </h3>
+              <p className="mt-2 text-xs leading-relaxed text-slate-400 light:text-slate-600">
+                Belajar kriptanalisis klasik & modern, packet analysis (PCAP/PCAPNG), investigasi
+                forensik berkas (EXIF, PDF, ELF/PE), web exploitation (SQLi, XSS, JWT), dan OSINT.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-1.5">
+                {['Kriptografi', 'Digital Forensic', 'PCAP Analysis', 'Web Security', 'Reverse Eng', 'OSINT'].map(
+                  (tag) => (
+                    <span
+                      key={tag}
+                      className="rounded-lg bg-slate-800/80 px-2 py-1 text-[11px] font-medium text-slate-300 light:bg-slate-100 light:text-slate-700"
+                    >
+                      {tag}
+                    </span>
+                  )
+                )}
+              </div>
+            </div>
+            <div className="mt-6 flex items-center gap-3 pt-4 border-t border-slate-800/80 light:border-slate-200">
+              <Link
+                to="/docs/cybersecurity"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-indigo-700 active:scale-95"
+              >
+                Mulai Belajar ❯
+              </Link>
+              <Link
+                to="/cysec-tools"
+                className="text-xs font-semibold text-slate-400 hover:text-slate-200 light:text-slate-600"
+              >
+                Buka 108 Tools
+              </Link>
+            </div>
+          </div>
+
+          {/* Track 3: DevOps & Cloud Computing */}
+          <div className="m3-card p-6 flex flex-col justify-between border-l-4 border-l-cyan-500">
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-cyan-500/10 px-3 py-1 text-xs font-bold text-cyan-400">
+                  <Server className="h-3.5 w-3.5" />
+                  DevOps & Cloud
+                </span>
+                <span className="text-xs text-slate-500">Panduan Praktis</span>
+              </div>
+              <h3 className="text-lg font-bold text-slate-100 light:text-slate-900">
+                Docker, AWS Cloud & Containerization
+              </h3>
+              <p className="mt-2 text-xs leading-relaxed text-slate-400 light:text-slate-600">
+                Pelajari konsep containerization dengan Docker, pembuatan Dockerfile, multi-container
+                compose, infrastruktur komputasi AWS (EC2, VPC, S3), dan dasar CI/CD.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-1.5">
+                {['Docker Basic', 'Docker Compose', 'AWS Cloud', 'Linux Admin', 'Git Workflow'].map(
+                  (tag) => (
+                    <span
+                      key={tag}
+                      className="rounded-lg bg-slate-800/80 px-2 py-1 text-[11px] font-medium text-slate-300 light:bg-slate-100 light:text-slate-700"
+                    >
+                      {tag}
+                    </span>
+                  )
+                )}
+              </div>
+            </div>
+            <div className="mt-6 flex items-center gap-3 pt-4 border-t border-slate-800/80 light:border-slate-200">
+              <Link
+                to="/docs/devops"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-cyan-600 px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-cyan-700 active:scale-95"
+              >
+                Mulai Belajar ❯
+              </Link>
+              <Link
+                to="/roadmap"
+                className="text-xs font-semibold text-slate-400 hover:text-slate-200 light:text-slate-600"
+              >
+                Cek Roadmap
+              </Link>
+            </div>
+          </div>
+
+          {/* Track 4: Jaringan Komputer */}
+          <div className="m3-card p-6 flex flex-col justify-between border-l-4 border-l-amber-500">
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-3 py-1 text-xs font-bold text-amber-400">
+                  <Globe className="h-3.5 w-3.5" />
+                  Jaringan Komputer
+                </span>
+                <span className="text-xs text-slate-500">Fundamental</span>
+              </div>
+              <h3 className="text-lg font-bold text-slate-100 light:text-slate-900">
+                Model OSI, TCP/IP & Protokol Jaringan
+              </h3>
+              <p className="mt-2 text-xs leading-relaxed text-slate-400 light:text-slate-600">
+                Pahami cara internet bekerja: arsitektur protokol TCP/IP, IP addressing & subnetting
+                (IPv4 / IPv6), DNS lookup, routing, dan analisis lalu lintas jaringan.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-1.5">
+                {['OSI Layer', 'TCP / UDP', 'Subnetting CIDR', 'DNS & HTTP', 'Wireshark'].map(
+                  (tag) => (
+                    <span
+                      key={tag}
+                      className="rounded-lg bg-slate-800/80 px-2 py-1 text-[11px] font-medium text-slate-300 light:bg-slate-100 light:text-slate-700"
+                    >
+                      {tag}
+                    </span>
+                  )
+                )}
+              </div>
+            </div>
+            <div className="mt-6 flex items-center gap-3 pt-4 border-t border-slate-800/80 light:border-slate-200">
+              <Link
+                to="/docs/jaringan"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-amber-600 px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-amber-700 active:scale-95"
+              >
+                Mulai Belajar ❯
+              </Link>
+              <Link
+                to="/cysec-tools/category/network"
+                className="text-xs font-semibold text-slate-400 hover:text-slate-200 light:text-slate-600"
+              >
+                PCAP Analyzer
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================
+          4. INTERACTIVE TOOL SPOTLIGHT (108 Client-Side Utilities)
+          ============================================================ */}
+      <section className="m3-surface p-6 sm:p-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
+          <div>
+            <div className="inline-flex items-center gap-1.5 text-xs font-bold text-accent-500 uppercase tracking-wider">
+              <Lock className="h-3.5 w-3.5" />
+              100% Privacy & Client-Side
+            </div>
+            <h2 className="text-xl sm:text-2xl font-black text-slate-100 light:text-slate-900 mt-1">
+              Cyber Security & OSINT Interactive Tools
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-400 light:text-slate-600 mt-1">
+              Semua file dan data diproses di memori browser Anda via WebAssembly & Web Crypto API.
+              Tanpa server, aman untuk data sensitif.
+            </p>
+          </div>
+          <Link
+            to="/cysec-tools"
+            className="inline-flex items-center gap-1 text-xs font-bold text-accent-500 hover:text-accent-400 shrink-0"
+          >
+            Buka Katalog 108 Tools ❯
+          </Link>
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {[
+            {
+              id: 'hash-generator',
+              name: 'Hash Generator',
+              category: 'Kriptografi',
+              desc: 'MD5, SHA-1, SHA-256, SHA-3, ChaCha20',
+              link: '/cysec-tools/hash-generator',
+            },
+            {
+              id: 'pcap-analyzer',
+              name: 'PCAP & PCAPNG Dissector',
+              category: 'Jaringan',
+              desc: 'Disseksi paket jaringan Ethernet, IPv4, TCP, DNS',
+              link: '/cysec-tools/pcap-analyzer',
+            },
+            {
+              id: 'jwt-debugger',
+              name: 'JWT Token Inspector',
+              category: 'Web Security',
+              desc: 'Decode header, payload & verifikasi expired date',
+              link: '/cysec-tools/jwt-debugger',
+            },
+            {
+              id: 'dork-builder',
+              name: 'Google Dork Search Builder',
+              category: 'OSINT',
+              desc: 'Generator query dorking cerdas untuk intelijen',
+              link: '/cysec-tools/google-dork-search',
+            },
+            {
+              id: 'binary-parser',
+              name: 'ELF / PE / Mach-O Header',
+              category: 'Reverse Eng',
+              desc: 'Bedah struktur header file executable biner',
+              link: '/cysec-tools/pe-parser',
+            },
+            {
+              id: 'subnet-calculator',
+              name: 'Subnet & CIDR Calculator',
+              category: 'Networking',
+              desc: 'Hitung network, broadcast, wildcard & usable IP',
+              link: '/cysec-tools/subnet-calculator',
+            },
+          ].map((tool) => (
+            <Link
+              key={tool.id}
+              to={tool.link}
+              className="group m3-card m3-card-hover p-4 flex flex-col justify-between"
+            >
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-accent-500 light:text-accent-700">
+                  {tool.category}
+                </span>
+                <h4 className="text-sm font-bold text-slate-100 group-hover:text-accent-400 transition-colors light:text-slate-900 mt-0.5">
+                  {tool.name}
+                </h4>
+                <p className="text-xs text-slate-400 light:text-slate-600 mt-1 line-clamp-2">
+                  {tool.desc}
+                </p>
+              </div>
+              <div className="mt-3 flex items-center justify-end text-xs font-semibold text-slate-500 group-hover:text-accent-400">
+                Gunakan Tool →
+              </div>
             </Link>
           ))}
         </div>
       </section>
 
-      {/* ===================== PART OF ===================== */}
-      <section className="mt-16">
-        <h2 className="flex items-center gap-2.5 text-lg font-bold text-slate-50">
-          <span className="h-5 w-1 rounded-full bg-accent-500" />
-          Part Of
-        </h2>
-
-        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {/* Politeknik Negeri Banjarmasin */}
-          <a
-            href="https://poliban.ac.id/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group card card-hover flex items-center gap-4 p-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500/50"
-          >
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white p-1 ring-1 ring-slate-800 transition-transform duration-200 group-hover:scale-105">
-              <img
-                src={joinWithRoot('assets/asset/Logo%20Poliban.jpeg')}
-                alt=""
-                className="h-full w-full object-contain"
-              />
+      {/* ============================================================
+          5. ROADMAP & GRAPH VIEW TEASER
+          ============================================================ */}
+      <section className="grid gap-6 md:grid-cols-2">
+        <div className="m3-card p-6 sm:p-8 flex flex-col justify-between">
+          <div>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-accent-500/10 px-3 py-1 text-xs font-bold text-accent-400">
+              <Map className="h-3.5 w-3.5" />
+              Pohon Belajar Bertingkat
             </span>
-            <div className="min-w-0 flex-1">
-              <h3 className="font-semibold leading-snug text-slate-200 transition-colors group-hover:text-slate-50">
-                Politeknik Negeri Banjarmasin
-              </h3>
-            </div>
-            <ExternalLink className="h-4 w-4 shrink-0 text-slate-600 transition-colors group-hover:text-accent-500" />
-          </a>
+            <h3 className="text-xl font-bold text-slate-100 light:text-slate-900 mt-3">
+              Roadmap Berbasis Tag (#Subskill)
+            </h3>
+            <p className="mt-2 text-xs sm:text-sm text-slate-400 light:text-slate-600 leading-relaxed">
+              Catatan Obsidian ber-tagar `#roadmap` dan `#Subskill` otomatis diubah menjadi bagan
+              langkah teratur. Setiap langkah langsung terhubung dengan catatan teori dan folder
+              source code latihan.
+            </p>
+          </div>
+          <div className="mt-6">
+            <Link
+              to="/roadmap"
+              className="inline-flex items-center gap-2 rounded-xl bg-accent-600 px-5 py-2.5 text-xs font-bold text-white shadow hover:bg-accent-700 active:scale-95"
+            >
+              Jelajahi Pohon Roadmap ❯
+            </Link>
+          </div>
+        </div>
 
-          {/* Itech Poliban */}
-          <a
-            href="https://www.itechpoliban.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group card card-hover flex items-center gap-4 p-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500/50"
-          >
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white p-1 ring-1 ring-slate-800 transition-transform duration-200 group-hover:scale-105">
-              <img
-                src={joinWithRoot('assets/asset/logo%20itech%20poliban.png')}
-                alt=""
-                className="h-full w-full object-contain"
-              />
+        <div className="m3-card p-6 sm:p-8 flex flex-col justify-between">
+          <div>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-cyan-500/10 px-3 py-1 text-xs font-bold text-cyan-400">
+              <Network className="h-3.5 w-3.5" />
+              Visualisasi Jaringan Pengetahuan
             </span>
-            <div className="min-w-0 flex-1">
-              <h3 className="font-semibold text-slate-200 transition-colors group-hover:text-slate-50">
-                Itech Poliban
-              </h3>
-            </div>
-            <ExternalLink className="h-4 w-4 shrink-0 text-slate-600 transition-colors group-hover:text-accent-500" />
-          </a>
-
-          {/* Makat-Xploit — placeholder, belum ada URL */}
-          <div className="card flex items-center gap-4 p-5">
-            <img
-              src={joinWithRoot('assets/asset/logo%20makat-xploit.jpeg')}
-              alt=""
-              className="h-12 w-12 shrink-0 rounded-xl object-contain"
-            />
-            <div className="min-w-0 flex-1">
-              <h3 className="font-semibold text-slate-200">Makat-Xploit</h3>
-            </div>
+            <h3 className="text-xl font-bold text-slate-100 light:text-slate-900 mt-3">
+              Obsidian Graph View di Web
+            </h3>
+            <p className="mt-2 text-xs sm:text-sm text-slate-400 light:text-slate-600 leading-relaxed">
+              Lihat bagaimana 618+ catatan saling terhubung satu sama lain melalui tautan wiki
+              (`[[wikilinks]]`). Ditenagai oleh simulasi fisika d3-force yang responsif di atas
+              HTML5 Canvas.
+            </p>
+          </div>
+          <div className="mt-6">
+            <Link
+              to="/graph"
+              className="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-800 px-5 py-2.5 text-xs font-bold text-slate-200 hover:border-accent-500 hover:bg-slate-700 light:border-slate-300 light:bg-white light:text-slate-800 active:scale-95"
+            >
+              Buka Graf Interaktif ❯
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* ===================== OPEN SOURCE ===================== */}
-      <section className="panel-soft-green mt-16 rounded-2xl border border-accent-100 p-6 sm:p-8">
-        <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-start gap-4">
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-slate-800 bg-slate-900 shadow-sm">
-              <Github className="h-6 w-6 text-slate-200" />
-            </span>
-            <div>
-              <h2 className="flex items-center gap-2.5 text-lg font-bold text-slate-50">
-                Project Open Source
-                <span className="rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-300">
-                  Open Source
-                </span>
-              </h2>
-              <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-slate-400">
-                Website ini adalah project open source. Kamu bisa ikut berkontribusi,
-                melaporkan bug, menambahkan fitur, atau memakai kodenya untuk project
-                belajarmu sendiri. Semua kontribusi sangat diterima!
-              </p>
-            </div>
-          </div>
+      {/* ============================================================
+          6. PART OF & PROFIL PENGEMBANG
+          ============================================================ */}
+      <section className="space-y-4">
+        <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+          <UserRound className="h-4 w-4 text-accent-500" />
+          Tentang Pengembang & Ekosistem
+        </h3>
+
+        <div className="grid gap-4 sm:grid-cols-3">
           <a
-            href="https://github.com/aryandaa/Learning-Web-Aryanda"
+            href="https://poliban.ac.id/"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-accent-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-accent-600"
+            className="group m3-card m3-card-hover p-4 flex items-center gap-3.5"
           >
-            <Github className="h-4 w-4" />
-            Jadilah Contributor
+            <div className="h-10 w-10 shrink-0 overflow-hidden rounded-xl bg-white p-1 ring-1 ring-slate-800 flex items-center justify-center">
+              <img
+                src={joinWithRoot('assets/asset/Logo%20Poliban.jpeg')}
+                alt="Poliban"
+                className="h-full w-full object-contain"
+              />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-bold text-slate-200 group-hover:text-accent-400 transition-colors light:text-slate-900">
+                Politeknik Negeri Banjarmasin
+              </p>
+              <p className="text-[11px] text-slate-500">Pendidikan Vokasi</p>
+            </div>
+            <ExternalLink className="h-3.5 w-3.5 text-slate-500 group-hover:text-accent-500" />
+          </a>
+
+          <a
+            href="https://www.itechpoliban.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group m3-card m3-card-hover p-4 flex items-center gap-3.5"
+          >
+            <div className="h-10 w-10 shrink-0 overflow-hidden rounded-xl bg-white p-1 ring-1 ring-slate-800 flex items-center justify-center">
+              <img
+                src={joinWithRoot('assets/asset/logo%20itech%20poliban.png')}
+                alt="Itech Poliban"
+                className="h-full w-full object-contain"
+              />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-bold text-slate-200 group-hover:text-accent-400 transition-colors light:text-slate-900">
+                Itech Poliban
+              </p>
+              <p className="text-[11px] text-slate-500">Komunitas Teknologi</p>
+            </div>
+            <ExternalLink className="h-3.5 w-3.5 text-slate-500 group-hover:text-accent-500" />
+          </a>
+
+          <a
+            href="https://portofolioaryanda.vercel.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group m3-card m3-card-hover p-4 flex items-center gap-3.5"
+          >
+            <div className="h-10 w-10 shrink-0 overflow-hidden rounded-xl bg-accent-500/20 text-accent-400 flex items-center justify-center font-bold text-sm">
+              MA
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-bold text-slate-200 group-hover:text-accent-400 transition-colors light:text-slate-900">
+                M. Aryanda Sanggadiennata
+              </p>
+              <p className="text-[11px] text-slate-500">Developer & Author</p>
+            </div>
+            <ExternalLink className="h-3.5 w-3.5 text-slate-500 group-hover:text-accent-500" />
           </a>
         </div>
       </section>

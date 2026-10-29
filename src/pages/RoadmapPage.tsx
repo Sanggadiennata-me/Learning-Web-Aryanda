@@ -281,7 +281,7 @@ export default function RoadmapPage() {
   const isSub = selected.id.startsWith('sub:');
 
   return (
-    <div className="flex h-[calc(100vh-3.5rem)]">
+    <div className="flex min-h-[calc(100vh-6rem)]">
       {/* Sidebar kategori */}
       <aside className="hidden w-72 shrink-0 overflow-y-auto border-r border-slate-800/80 p-4 md:block">
         <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
