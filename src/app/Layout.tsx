@@ -22,6 +22,7 @@ import { TreeExplorer } from '../components/explorer/TreeExplorer';
 import { TopicRibbon } from '../components/navigation/TopicRibbon';
 import { TutorialsModal } from '../components/navigation/TutorialsModal';
 import { MobileBottomNav } from '../components/navigation/MobileBottomNav';
+import { normalizeId } from '../services/docs';
 import { cn } from '../lib/utils';
 import type { TreeFolderNode, TreeNode } from '../domain/types';
 
@@ -43,87 +44,106 @@ function readSidebarState(): boolean {
   }
 }
 
-function getActiveTrackInfo(pathname: string, activeId: string | null, tree: TreeFolderNode[] | null): { title: string; nodes: TreeNode[] } {
-  const path = (activeId || pathname).toLowerCase();
-  if (path.includes('pemrograman/html') || path.includes('/html')) {
-    const pem = tree?.find((t) => t.name === 'Pemrograman');
-    const htmlFolder = pem?.children.find((c): c is TreeFolderNode => c.type === 'folder' && c.name.toLowerCase() === 'html');
+/**
+ * Resolver dinamis untuk konten Sidebar Tutorial:
+ * - Secara otomatis mendeteksi Skill (Level 1) dan Subskill (Level 2) dari path aktif.
+ * - Berfungsi universal: jika pengguna menambah skill/subskill baru di Obsidian,
+ *   sidebar otomatis memakai format W3Schools modern ("[SUBSKILL] TUTORIAL" + daftar lesson)
+ *   tanpa perlu hardcoding nama folder sama sekali.
+ */
+function getActiveTrackInfo(
+  pathname: string,
+  activeId: string | null,
+  tree: TreeFolderNode[] | null
+): { title: string; nodes: TreeNode[] } {
+  if (!tree || tree.length === 0) {
+    return { title: 'TUTORIAL MATERI', nodes: [] };
+  }
+
+  // 1. Ekstrak raw path dokumen
+  let rawPath = activeId || '';
+  if (!rawPath && pathname.startsWith('/docs/')) {
+    rawPath = decodeURIComponent(pathname.slice('/docs/'.length));
+  }
+  rawPath = rawPath.replace(/^\/+|\/+$/g, '');
+
+  const segments = rawPath.split('/').filter(Boolean);
+
+  // Jika di root (belum memilih dokumen), default ke subskill pertama (mis. HTML)
+  if (segments.length === 0) {
+    const firstSkill = tree[0];
+    const firstSub = firstSkill?.children.find((c): c is TreeFolderNode => c.type === 'folder');
+    if (firstSub) {
+      return {
+        title: `${firstSub.name.toUpperCase()} TUTORIAL`,
+        nodes: firstSub.children,
+      };
+    }
     return {
-      title: 'HTML TUTORIAL',
-      nodes: htmlFolder ? htmlFolder.children : [],
+      title: `${(firstSkill?.name || 'MATERI').toUpperCase()} TUTORIAL`,
+      nodes: firstSkill?.children || [],
     };
   }
-  if (path.includes('pemrograman/css') || path.includes('/css')) {
-    const pem = tree?.find((t) => t.name === 'Pemrograman');
-    const cssFolder = pem?.children.find((c): c is TreeFolderNode => c.type === 'folder' && c.name.toLowerCase() === 'css');
+
+  // 2. Cari Skill (Level 1: Pemrograman, CyberSecurity, DevOps, Jaringan, dll.)
+  const skillSegment = segments[0].toLowerCase();
+  const skillNode = tree.find(
+    (t) => t.name.toLowerCase() === skillSegment || normalizeId(t.name) === skillSegment
+  );
+
+  if (skillNode) {
+    // 3. Jika ada segmen Subskill (Level 2: Html, CSS, Python, Cryptography, Docker, dll.)
+    if (segments.length >= 2) {
+      const subSegment = segments[1].toLowerCase();
+      const subskillNode = skillNode.children.find(
+        (c): c is TreeFolderNode =>
+          c.type === 'folder' &&
+          (c.name.toLowerCase() === subSegment || normalizeId(c.name) === subSegment)
+      );
+
+      if (subskillNode) {
+        return {
+          title: `${subskillNode.name.toUpperCase()} TUTORIAL`,
+          nodes: subskillNode.children,
+        };
+      }
+    }
+
+    // Jika file berada langsung di bawah skillNode (atau subskill tidak punya folder terpisah)
     return {
-      title: 'CSS TUTORIAL',
-      nodes: cssFolder ? cssFolder.children : [],
+      title: `${skillNode.name.toUpperCase()} TUTORIAL`,
+      nodes: skillNode.children,
     };
   }
-  if (path.includes('pemrograman/javascript') || path.includes('/javascript')) {
-    const pem = tree?.find((t) => t.name === 'Pemrograman');
-    const jsFolder = pem?.children.find((c): c is TreeFolderNode => c.type === 'folder' && c.name.toLowerCase() === 'javascript');
-    return {
-      title: 'JAVASCRIPT TUTORIAL',
-      nodes: jsFolder ? jsFolder.children : [],
-    };
+
+  // 4. Fallback rekursif: cari folder yang langsung memuat file aktif
+  function findParentFolder(nodes: TreeNode[], targetId: string): TreeFolderNode | null {
+    for (const node of nodes) {
+      if (node.type === 'folder') {
+        const hasFile = node.children.some((c) => c.type === 'file' && c.id === targetId);
+        if (hasFile) return node;
+        const sub = findParentFolder(node.children, targetId);
+        if (sub) return sub;
+      }
+    }
+    return null;
   }
-  if (path.includes('pemrograman/python') || path.includes('/python')) {
-    const pem = tree?.find((t) => t.name === 'Pemrograman');
-    const pyFolder = pem?.children.find((c): c is TreeFolderNode => c.type === 'folder' && c.name.toLowerCase() === 'python');
-    return {
-      title: 'PYTHON TUTORIAL',
-      nodes: pyFolder ? pyFolder.children : [],
-    };
+
+  if (activeId) {
+    const parent = findParentFolder(tree, activeId);
+    if (parent) {
+      return {
+        title: `${parent.name.toUpperCase()} TUTORIAL`,
+        nodes: parent.children,
+      };
+    }
   }
-  if (path.includes('pemrograman/php') || path.includes('/php')) {
-    const pem = tree?.find((t) => t.name === 'Pemrograman');
-    const phpFolder = pem?.children.find((c): c is TreeFolderNode => c.type === 'folder' && c.name.toLowerCase() === 'php');
-    return {
-      title: 'PHP TUTORIAL',
-      nodes: phpFolder ? phpFolder.children : [],
-    };
-  }
-  if (path.includes('pemrograman/fundamental') || path.includes('/fundamental')) {
-    const pem = tree?.find((t) => t.name === 'Pemrograman');
-    const fundFolder = pem?.children.find((c): c is TreeFolderNode => c.type === 'folder' && c.name.toLowerCase() === 'fundamental');
-    return {
-      title: 'FUNDAMENTAL CODING',
-      nodes: fundFolder ? fundFolder.children : [],
-    };
-  }
-  if (path.includes('cybersecurity')) {
-    const cy = tree?.find((t) => t.name === 'CyberSecurity');
-    return {
-      title: 'CYBERSECURITY TUTORIAL',
-      nodes: cy?.children || [],
-    };
-  }
-  if (path.includes('devops')) {
-    const dev = tree?.find((t) => t.name === 'DevOps');
-    return {
-      title: 'DEVOPS & CLOUD TUTORIAL',
-      nodes: dev?.children || [],
-    };
-  }
-  if (path.includes('jaringan')) {
-    const jar = tree?.find((t) => t.name === 'Jaringan');
-    return {
-      title: 'JARINGAN KOMPUTER TUTORIAL',
-      nodes: jar?.children || [],
-    };
-  }
-  if (path.includes('terms') || path.includes('foreign')) {
-    const terms = tree?.find((t) => t.name.toLowerCase().includes('terms'));
-    return {
-      title: 'KAMUS ISTILAH IT',
-      nodes: terms?.children || [],
-    };
-  }
+
+  // Fallback akhir: tampilkan subskill pertama
+  const fallbackSub = tree[0]?.children.find((c): c is TreeFolderNode => c.type === 'folder');
   return {
-    title: 'DAFTAR SEMUA MATERI',
-    nodes: tree || [],
+    title: `${(fallbackSub ? fallbackSub.name : tree[0]?.name || 'MATERI').toUpperCase()} TUTORIAL`,
+    nodes: fallbackSub ? fallbackSub.children : (tree[0]?.children || []),
   };
 }
 
@@ -220,7 +240,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
             activeId={activeId}
             filterQuery={sidebarFilter}
             sidebarTitle={activeTrackInfo.title}
-            variant="sidebar"
             onNavigate={closeDrawer}
             onOpenTutorialsModal={() => setTutorialsModalOpen(true)}
           />
@@ -230,7 +249,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
             activeId={activeId}
             filterQuery={sidebarFilter}
             sidebarTitle="DAFTAR SEMUA MATERI"
-            variant="sidebar"
             onNavigate={closeDrawer}
             onOpenTutorialsModal={() => setTutorialsModalOpen(true)}
           />

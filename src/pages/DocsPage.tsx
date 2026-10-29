@@ -232,7 +232,6 @@ export default function DocsPage() {
         <TreeExplorer
           nodes={filteredTree}
           filterQuery={searchFilter}
-          variant="page"
         />
       </div>
 

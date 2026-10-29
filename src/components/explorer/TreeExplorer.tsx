@@ -1,9 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronRight, Code2, FileText, Folder, Map } from 'lucide-react';
 import type { TreeNode } from '../../domain/types';
-import { countFiles, normalizeId } from '../../services/docs';
-import { languageInfo } from '../../lib/codeLanguages';
+import { normalizeId } from '../../services/docs';
 import { cn } from '../../lib/utils';
 
 interface TreeExplorerProps {
@@ -11,9 +9,8 @@ interface TreeExplorerProps {
   activeId?: string | null;
   filterQuery?: string;
   sidebarTitle?: string;
-  /** Sidebar: gaya tutorial W3Schools. Page: mode eksplorasi penuh. */
-  variant?: 'sidebar' | 'page';
   className?: string;
+  variant?: 'page' | 'sidebar' | string;
   onNavigate?: () => void;
   onOpenTutorialsModal?: () => void;
 }
@@ -79,7 +76,6 @@ export function TreeExplorer({
   activeId,
   filterQuery = '',
   sidebarTitle,
-  variant = 'sidebar',
   className,
   onNavigate,
   onOpenTutorialsModal,
@@ -89,16 +85,36 @@ export function TreeExplorer({
     [nodes, filterQuery]
   );
 
+  // Kumpulkan semua folder di dalam modul tutorial agar langsung terbuka secara default (mirip W3Schools)
+  const defaultExpanded = useMemo(() => {
+    const paths = new Set<string>();
+    function collect(list: TreeNode[], depth = 0) {
+      for (const item of list) {
+        if (item.type === 'folder') {
+          paths.add(item.relativePath);
+          if (depth < 2) {
+            collect(item.children, depth + 1);
+          }
+        }
+      }
+    }
+    collect(nodes, 0);
+    return paths;
+  }, [nodes]);
+
   const autoExpand = useMemo(
     () => (activeId ? new Set(ancestorsOf(nodes, activeId)) : new Set<string>()),
     [nodes, activeId]
   );
 
-  const [expanded, setExpanded] = useState<Set<string>>(new Set());
+  const [expanded, setExpanded] = useState<Set<string>>(
+    () => new Set([...defaultExpanded, ...autoExpand])
+  );
 
+  // Saat track berganti atau materi aktif berganti, sinkronkan folder terbuka
   useEffect(() => {
-    setExpanded((prev) => new Set([...prev, ...autoExpand]));
-  }, [autoExpand]);
+    setExpanded((prev) => new Set([...prev, ...defaultExpanded, ...autoExpand]));
+  }, [defaultExpanded, autoExpand]);
 
   useEffect(() => {
     if (filterQuery.trim()) {
@@ -117,8 +133,8 @@ export function TreeExplorer({
 
   return (
     <nav className={cn('select-none flex flex-col h-full', className)} aria-label="Navigasi tutorial">
-      {/* W3Schools Sidebar Title (Screenshot 2) */}
-      {variant === 'sidebar' && sidebarTitle && (
+      {/* Sidebar Header Title */}
+      {sidebarTitle && (
         <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3 bg-white dark:bg-slate-950 dark:border-slate-800">
           <span className="text-xs font-extrabold uppercase tracking-widest text-slate-500 dark:text-slate-400">
             {sidebarTitle}
@@ -152,7 +168,6 @@ export function TreeExplorer({
               activeId={activeId}
               expanded={expanded}
               onToggle={toggle}
-              variant={variant}
               onNavigate={onNavigate}
             />
           ))}
@@ -168,7 +183,6 @@ interface RowProps {
   activeId?: string | null;
   expanded: Set<string>;
   onToggle: (path: string) => void;
-  variant: 'sidebar' | 'page';
   onNavigate?: () => void;
 }
 
@@ -178,59 +192,28 @@ function TreeNodeRow({
   activeId,
   expanded,
   onToggle,
-  variant,
   onNavigate,
 }: RowProps) {
   if (node.type === 'file') {
-    const active = activeId === node.id;
-    const padding = variant === 'sidebar' ? 16 + depth * 12 : 12 + depth * 16;
-    const codeLang = node.isCode ? languageInfo(node.language ?? 'plaintext') : null;
+    const active =
+      activeId === node.id ||
+      (Boolean(activeId) && normalizeId(activeId!) === normalizeId(node.id));
+    const padding = 16 + depth * 12;
 
-    if (variant === 'sidebar') {
-      return (
-        <li>
-          <Link
-            to={`/docs/${node.id}`}
-            onClick={onNavigate}
-            className={cn(
-              'flex items-center justify-between w-full py-2 pr-3 text-[13.5px] transition-colors',
-              active
-                ? 'bg-accent-500/15 text-accent-800 font-bold border-l-4 border-l-accent-600 dark:bg-accent-500/20 dark:text-accent-300 dark:border-l-accent-400'
-                : 'text-slate-700 hover:bg-slate-200/60 hover:text-slate-950 dark:text-slate-300 dark:hover:bg-slate-800/60 dark:hover:text-white'
-            )}
-            style={{ paddingLeft: padding }}
-            title={node.title}
-          >
-            <span className="truncate">{node.title}</span>
-            {node.isRoadmap && (
-              <span className="text-[9px] font-bold uppercase tracking-wider text-accent-600 dark:text-accent-400 ml-1.5 shrink-0">
-                MAP
-              </span>
-            )}
-          </Link>
-        </li>
-      );
-    }
-
-    // Tampilan Page Explorer (Directory Mode)
     return (
       <li>
         <Link
           to={`/docs/${node.id}`}
           onClick={onNavigate}
           className={cn(
-            'group relative flex items-center gap-2 rounded-xl py-1.5 pr-2.5 text-xs transition-all',
+            'flex items-center justify-between w-full py-2 pr-3 text-[13.5px] transition-colors',
             active
-              ? 'bg-accent-600 text-white font-bold shadow-sm'
-              : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
+              ? 'bg-accent-500/15 text-accent-800 font-bold border-l-4 border-l-accent-600 dark:bg-accent-500/20 dark:text-accent-300 dark:border-l-accent-400'
+              : 'text-slate-700 hover:bg-slate-200/60 hover:text-slate-950 dark:text-slate-300 dark:hover:bg-slate-800/60 dark:hover:text-white'
           )}
           style={{ paddingLeft: padding }}
+          title={node.title}
         >
-          {node.isRoadmap ? (
-            <Map className="h-3.5 w-3.5 shrink-0 text-accent-400" />
-          ) : (
-            <FileText className="h-3.5 w-3.5 shrink-0 opacity-60" />
-          )}
           <span className="truncate">{node.title}</span>
         </Link>
       </li>
@@ -238,66 +221,24 @@ function TreeNodeRow({
   }
 
   const isOpen = expanded.has(node.relativePath);
-  const count = countFiles([node]);
-  const padding = variant === 'sidebar' ? 16 + depth * 12 : 10 + depth * 16;
-
-  if (variant === 'sidebar') {
-    return (
-      <li className="mt-0.5">
-        <button
-          onClick={() => onToggle(node.relativePath)}
-          className="flex w-full items-center justify-between py-2 pr-3 text-left text-[13.5px] font-bold text-slate-800 transition-colors hover:bg-slate-200/80 dark:text-slate-200 dark:hover:bg-slate-800"
-          style={{ paddingLeft: padding }}
-          aria-expanded={isOpen}
-        >
-          <span className="truncate">{node.name}</span>
-          <span className="text-[10px] text-slate-400 shrink-0 ml-1">
-            {isOpen ? '▲' : '▼'}
-          </span>
-        </button>
-
-        {isOpen && (
-          <ul className="space-y-0.5 bg-black/[0.02] dark:bg-white/[0.02]">
-            {node.children.map((child) => (
-              <TreeNodeRow
-                key={child.type === 'file' ? child.id : child.relativePath}
-                node={child}
-                depth={depth + 1}
-                activeId={activeId}
-                expanded={expanded}
-                onToggle={onToggle}
-                variant={variant}
-                onNavigate={onNavigate}
-              />
-            ))}
-          </ul>
-        )}
-      </li>
-    );
-  }
+  const padding = 16 + depth * 12;
 
   return (
-    <li>
+    <li className="mt-0.5">
       <button
         onClick={() => onToggle(node.relativePath)}
-        className="flex w-full items-center gap-2 rounded-xl py-1.5 pr-2 text-left text-xs font-semibold text-slate-300 hover:bg-slate-800/70 hover:text-white"
+        className="flex w-full items-center justify-between py-2 pr-3 text-left text-[13.5px] font-bold text-slate-800 transition-colors hover:bg-slate-200/80 dark:text-slate-200 dark:hover:bg-slate-800"
         style={{ paddingLeft: padding }}
         aria-expanded={isOpen}
       >
-        {isOpen ? (
-          <ChevronDown className="h-3.5 w-3.5 shrink-0 text-slate-400" />
-        ) : (
-          <ChevronRight className="h-3.5 w-3.5 shrink-0 text-slate-400" />
-        )}
-        <Folder className="h-3.5 w-3.5 shrink-0 text-amber-400" />
         <span className="truncate">{node.name}</span>
-        <span className="ml-auto rounded-full bg-slate-800 px-1.5 py-0.5 text-[9px] text-slate-500">
-          {count}
+        <span className="text-[10px] text-slate-400 shrink-0 ml-1">
+          {isOpen ? '▲' : '▼'}
         </span>
       </button>
 
       {isOpen && (
-        <ul className="space-y-0.5 border-l border-slate-800/60 ml-3.5 pl-1 my-0.5">
+        <ul className="space-y-0.5 bg-black/[0.02] dark:bg-white/[0.02]">
           {node.children.map((child) => (
             <TreeNodeRow
               key={child.type === 'file' ? child.id : child.relativePath}
@@ -306,7 +247,6 @@ function TreeNodeRow({
               activeId={activeId}
               expanded={expanded}
               onToggle={onToggle}
-              variant={variant}
               onNavigate={onNavigate}
             />
           ))}
