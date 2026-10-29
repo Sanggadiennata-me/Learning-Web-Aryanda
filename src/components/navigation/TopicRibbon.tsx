@@ -207,7 +207,7 @@ export function TopicRibbon({ className }: { className?: string }) {
         {canScrollLeft && (
           <button
             onClick={() => scroll('left')}
-            className="hidden sm:flex h-7 w-7 items-center justify-center rounded-full bg-slate-800/90 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700/60 light:bg-white light:border-slate-300 light:text-slate-700 light:hover:bg-slate-200 transition-all shrink-0"
+            className="hidden sm:flex h-7 w-7 items-center justify-center rounded-full bg-slate-800/90 text-slate-300 hover:bg-slate-700 hover:text-slate-100 border border-slate-700/60 shadow-sm transition-all shrink-0 active:scale-95"
             aria-label="Geser ke kiri"
           >
             <ChevronLeft className="h-4 w-4" />
@@ -234,7 +234,7 @@ export function TopicRibbon({ className }: { className?: string }) {
                   'px-3 py-1.5 text-xs font-bold tracking-wider uppercase rounded-lg transition-all whitespace-nowrap shrink-0 mx-0.5',
                   isActive
                     ? 'bg-accent-600 text-white shadow-sm ring-1 ring-accent-500/50'
-                    : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/80 light:text-slate-600 light:hover:text-slate-950 light:hover:bg-slate-200/80'
+                    : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/80'
                 )}
               >
                 {item.label}
@@ -247,7 +247,7 @@ export function TopicRibbon({ className }: { className?: string }) {
         {canScrollRight && (
           <button
             onClick={() => scroll('right')}
-            className="hidden sm:flex h-7 w-7 items-center justify-center rounded-full bg-slate-800/90 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700/60 light:bg-white light:border-slate-300 light:text-slate-700 light:hover:bg-slate-200 transition-all shrink-0"
+            className="hidden sm:flex h-7 w-7 items-center justify-center rounded-full bg-slate-800/90 text-slate-300 hover:bg-slate-700 hover:text-slate-100 border border-slate-700/60 shadow-sm transition-all shrink-0 active:scale-95"
             aria-label="Geser ke kanan"
           >
             <ChevronRight className="h-4 w-4" />

@@ -230,13 +230,13 @@ export function TutorialsModal({ isOpen, onClose }: TutorialsModalProps) {
             <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-accent-500/10 text-accent-600 dark:text-accent-400">
               <Sparkles className="h-4 w-4" />
             </div>
-            <h2 className="text-base sm:text-lg font-extrabold tracking-tight text-slate-900 dark:text-white">
+            <h2 className="text-base sm:text-lg font-extrabold tracking-tight text-slate-100">
               Katalog Tutorial
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:bg-slate-200 hover:text-slate-800 dark:hover:bg-slate-800 dark:hover:text-white transition-colors"
+            className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:bg-slate-200 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-slate-100 transition-colors"
             aria-label="Tutup jendela"
           >
             <X className="h-4.5 w-4.5" />
@@ -252,7 +252,7 @@ export function TutorialsModal({ isOpen, onClose }: TutorialsModalProps) {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Cari subskill tutorial… (misal: Python, React, PWN, Docker, Git)"
-              className="w-full rounded-xl border border-slate-300 bg-slate-50 pl-10 pr-9 py-2 text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 focus:border-accent-500 focus:bg-white focus:outline-none dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+              className="w-full rounded-xl border border-slate-300 bg-slate-50 pl-10 pr-9 py-2 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:border-accent-500 focus:bg-white focus:outline-none dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
               autoFocus
             />
             {query && (
@@ -282,7 +282,7 @@ export function TutorialsModal({ isOpen, onClose }: TutorialsModalProps) {
                 >
                   {group.name}
                 </h3>
-                <span className="ml-auto rounded-full bg-slate-100 px-2.5 py-0.5 text-[10px] font-bold text-slate-500 dark:bg-slate-800 dark:text-slate-400">
+                <span className="ml-auto rounded-full bg-slate-100 px-2.5 py-0.5 text-[10px] font-bold text-slate-600 dark:bg-slate-800 dark:text-slate-400">
                   {group.tracks.length} Subskill
                 </span>
               </div>
@@ -303,7 +303,7 @@ export function TutorialsModal({ isOpen, onClose }: TutorialsModalProps) {
                       >
                         <track.icon className="h-4.5 w-4.5" />
                       </div>
-                      <span className="truncate text-xs sm:text-[13px] font-bold text-slate-800 transition-colors group-hover:text-accent-600 dark:text-slate-200 dark:group-hover:text-accent-400">
+                      <span className="truncate text-xs sm:text-[13px] font-bold text-slate-100 transition-colors group-hover:text-accent-600 dark:group-hover:text-accent-400">
                         {track.name}
                       </span>
                     </div>
@@ -323,7 +323,7 @@ export function TutorialsModal({ isOpen, onClose }: TutorialsModalProps) {
 
         {/* Footer Ringkas */}
         <div className="border-t border-slate-200 bg-slate-50 px-6 py-3 text-xs text-slate-500 dark:border-slate-800 dark:bg-slate-950/80 flex items-center justify-between">
-          <span className="font-medium text-slate-600 dark:text-slate-400">
+          <span className="font-medium text-slate-700 dark:text-slate-400">
             {totalResults} Subskill Tersedia
           </span>
           <Link

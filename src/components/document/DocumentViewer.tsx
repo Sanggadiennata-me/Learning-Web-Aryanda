@@ -279,18 +279,18 @@ export function DocumentViewer({ doc }: { doc: DocumentData }) {
       </div>
 
       {/* ============ JUDUL DOKUMEN & METADATA ============ */}
-      <header className="mt-4 border-b border-slate-800 pb-6 light:border-slate-200">
-        <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-50 light:text-slate-900">
+      <header className="mt-4 border-b border-slate-800 pb-6">
+        <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-100">
           {doc.title}
         </h1>
 
-        <div className="mt-4 flex flex-wrap items-center gap-2 text-xs sm:text-sm text-slate-400 light:text-slate-600">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-800 bg-slate-900/80 px-3 py-1 font-medium light:border-slate-200 light:bg-white shadow-sm">
+        <div className="mt-4 flex flex-wrap items-center gap-2 text-xs sm:text-sm text-slate-400">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-800 bg-slate-900/80 px-3 py-1 font-medium shadow-sm">
             <Clock className="h-3.5 w-3.5 text-accent-500" />
             {doc.readingTime} menit baca
           </span>
           {doc.updated && (
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-800 bg-slate-900/80 px-3 py-1 font-medium light:border-slate-200 light:bg-white shadow-sm">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-800 bg-slate-900/80 px-3 py-1 font-medium shadow-sm">
               <Calendar className="h-3.5 w-3.5 text-accent-500" />
               {doc.updated}
             </span>
@@ -302,16 +302,16 @@ export function DocumentViewer({ doc }: { doc: DocumentData }) {
 
         {/* W3Schools Signature "Learn [Topic]" Hero Card (Screenshot 2) */}
         {!doc.previous && (
-          <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm dark:border-slate-800 dark:bg-slate-900/90">
+          <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-900/80 p-6 sm:p-8 shadow-sm">
             <div className="flex items-start gap-4">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-accent-500/15 text-accent-600 dark:text-accent-400 font-bold text-xl">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-accent-500/15 text-accent-500 font-bold text-xl">
                 ★
               </span>
               <div className="min-w-0">
-                <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">
+                <h2 className="text-2xl font-extrabold text-slate-100">
                   Pelajari {doc.title}
                 </h2>
-                <p className="mt-2 text-base sm:text-[17px] text-slate-600 dark:text-slate-400 leading-relaxed">
+                <p className="mt-2 text-base sm:text-[17px] text-slate-400 leading-relaxed">
                   Modul kurikulum terstruktur. Ikuti materi di bawah secara bertahap untuk menguasai materi ini dengan tuntas.
                 </p>
                 {nextDoc && (
@@ -335,7 +335,7 @@ export function DocumentViewer({ doc }: { doc: DocumentData }) {
         <div
           ref={articleRef}
           className={cn(
-            'doc-content prose prose-slate max-w-none text-slate-300 light:text-slate-700',
+            'doc-content prose prose-slate max-w-none text-slate-300',
             theme === 'dark' && 'prose-invert'
           )}
           dangerouslySetInnerHTML={{ __html: doc.html }}

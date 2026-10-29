@@ -31,7 +31,7 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     'relative inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all duration-200',
     isActive
       ? 'bg-accent-600 text-white shadow-sm ring-1 ring-accent-500/50'
-      : 'text-slate-300 hover:bg-slate-800 hover:text-white light:text-slate-600 light:hover:bg-slate-200'
+      : 'text-slate-300 hover:bg-slate-800 hover:text-slate-100'
   );
 
 const SIDEBAR_STORAGE_KEY = 'lw-sidebar-collapsed';
@@ -280,21 +280,21 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Shield className="h-3.5 w-3.5" />
         CySec & OSINT Tools
       </NavLink>
-      <div className="my-2 border-t border-slate-800 light:border-slate-200" />
+      <div className="my-2 border-t border-slate-800" />
     </nav>
   );
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-300 light:bg-slate-50 light:text-slate-800">
+    <div className="min-h-screen bg-slate-950 text-slate-300">
       {/* ============ TOP APP BAR (Material 3 Style) ============ */}
-      <header className="sticky top-0 z-40 border-b border-slate-800/90 bg-slate-950/90 backdrop-blur-md supports-[backdrop-filter]:bg-slate-950/80 light:border-slate-200 light:bg-white/95 shadow-sm">
+      <header className="sticky top-0 z-40 border-b border-slate-800/90 bg-slate-950/90 backdrop-blur-md supports-[backdrop-filter]:bg-slate-950/80 shadow-sm">
         <div className={cn('flex h-14 items-center justify-between gap-2 px-3 sm:gap-4 sm:px-6', !isDocsRoute ? 'mx-auto max-w-[1550px]' : 'w-full')}>
           {/* Sisi Kiri: Hamburger + Brand */}
           <div className="flex items-center gap-2.5 sm:gap-3">
             {/* Hamburger button (muncul saat rute docs di HP atau drawer umum) */}
             <button
               onClick={() => setDrawerOpen(true)}
-              className="rounded-xl p-2 text-slate-400 transition-colors hover:bg-slate-800 hover:text-slate-100 light:hover:bg-slate-100 lg:hidden"
+              className="rounded-xl p-2 text-slate-400 transition-colors hover:bg-slate-800 hover:text-slate-100 lg:hidden"
               aria-label="Buka navigasi materi"
             >
               <Menu className="h-5 w-5" />
@@ -313,11 +313,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
               </div>
               <div className="flex flex-col">
                 <div className="flex items-center gap-1.5">
-                  <span className="font-extrabold tracking-tight text-slate-100 group-hover:text-accent-400 transition-colors light:text-slate-900 text-sm sm:text-base">
+                  <span className="font-extrabold tracking-tight text-slate-100 group-hover:text-accent-400 transition-colors text-sm sm:text-base">
                     CodeLearn
                   </span>
                 </div>
-                <span className="hidden text-[10px] text-slate-500 light:text-slate-400 sm:block leading-none -mt-0.5">
+                <span className="hidden text-[10px] text-slate-500 sm:block leading-none -mt-0.5">
                   Knowledge & Security Hub
                 </span>
               </div>
@@ -332,7 +332,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 'group inline-flex items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs sm:text-sm font-semibold transition-all duration-150',
                 isDocsRoute
                   ? 'bg-accent-600 text-white shadow-sm ring-1 ring-accent-500/50'
-                  : 'text-slate-300 hover:bg-slate-800 hover:text-white light:text-slate-600 light:hover:bg-slate-100 light:hover:text-slate-900'
+                  : 'text-slate-300 hover:bg-slate-800 hover:text-slate-100'
               )}
               title="Katalog tutorial & kurikulum belajar"
             >
@@ -359,12 +359,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
             {/* Search Pill Button */}
             <Link
               to="/search"
-              className="flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-900/90 px-3 py-1.5 text-xs text-slate-400 transition-all hover:border-accent-500/50 hover:text-slate-200 light:border-slate-200 light:bg-slate-100 light:text-slate-600 shadow-sm"
+              className="flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-900/90 px-3 py-1.5 text-xs text-slate-400 transition-all hover:border-accent-500/50 hover:text-slate-100 shadow-sm"
               aria-label="Cari materi pembelajaran"
             >
               <Search className="h-3.5 w-3.5 text-accent-500" />
               <span className="hidden sm:inline">Cari materi & tool…</span>
-              <kbd className="hidden rounded-md border border-slate-700 bg-slate-800/80 px-1.5 py-0.5 font-mono text-[10px] text-slate-400 light:border-slate-300 light:bg-white md:inline">
+              <kbd className="hidden rounded-md border border-slate-700 bg-slate-800/80 px-1.5 py-0.5 font-mono text-[10px] text-slate-400 md:inline">
                 /
               </kbd>
             </Link>
@@ -372,7 +372,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
             {/* Theme Toggle Button */}
             <button
               onClick={toggleTheme}
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-800 bg-slate-900/90 text-slate-400 transition-all hover:border-slate-700 hover:text-slate-100 light:border-slate-200 light:bg-slate-100 light:text-slate-700 shadow-sm active:scale-95"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-800 bg-slate-900/90 text-slate-400 transition-all hover:border-slate-700 hover:text-slate-100 shadow-sm active:scale-95"
               aria-label={theme === 'dark' ? 'Ganti ke tema terang' : 'Ganti ke tema gelap'}
               title={theme === 'dark' ? 'Tema terang' : 'Tema gelap'}
             >
@@ -399,17 +399,17 @@ export function Layout({ children }: { children: React.ReactNode }) {
               onClick={closeDrawer}
               aria-hidden
             />
-            <aside className="drawer-panel absolute left-0 top-0 flex h-full w-80 max-w-[85vw] flex-col border-r border-slate-800 bg-slate-950 shadow-2xl light:border-slate-200 light:bg-white">
-              <div className="flex items-center justify-between border-b border-slate-800 px-4 py-3 light:border-slate-200">
+            <aside className="drawer-panel absolute left-0 top-0 flex h-full w-80 max-w-[85vw] flex-col border-r border-slate-800 bg-slate-950 shadow-2xl">
+              <div className="flex items-center justify-between border-b border-slate-800 px-4 py-3">
                 <div className="flex items-center gap-2">
                   <Sparkles className="h-4 w-4 text-accent-500" />
-                  <span className="text-sm font-bold text-slate-100 light:text-slate-900">
+                  <span className="text-sm font-bold text-slate-100">
                     Navigasi CodeLearn
                   </span>
                 </div>
                 <button
                   onClick={closeDrawer}
-                  className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-800 hover:text-slate-100 light:hover:bg-slate-100"
+                  className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-800 hover:text-slate-100"
                   aria-label="Tutup menu"
                 >
                   <X className="h-5 w-5" />
@@ -425,7 +425,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {isDocsRoute && (
           <aside
             className={cn(
-              'sticky top-[5.75rem] hidden h-[calc(100vh-5.75rem)] shrink-0 border-r border-slate-800/80 transition-[width] duration-200 light:border-slate-200 lg:block',
+              'sticky top-[5.75rem] hidden h-[calc(100vh-5.75rem)] shrink-0 border-r border-slate-800/80 transition-[width] duration-200 lg:block',
               sidebarCollapsed ? 'w-14' : 'w-60 xl:w-64'
             )}
           >
@@ -433,7 +433,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
               <div className="flex h-full flex-col items-center pt-4">
                 <button
                   onClick={() => setSidebarCollapsed(false)}
-                  className="rounded-xl border border-slate-800 p-2 text-slate-400 transition-all hover:bg-slate-800 hover:text-slate-100 light:border-slate-200 light:hover:bg-slate-100 shadow-sm"
+                  className="rounded-xl border border-slate-800 p-2 text-slate-400 transition-all hover:bg-slate-800 hover:text-slate-100 shadow-sm"
                   aria-label="Buka sidebar materi"
                   title="Buka sidebar materi"
                 >
@@ -461,7 +461,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </div>
 
       {/* ============ FOOTER ============ */}
-      <footer className="border-t border-slate-800/80 bg-slate-950/80 light:border-slate-200 light:bg-white pb-16 md:pb-0">
+      <footer className="border-t border-slate-800/80 bg-slate-950/80 pb-16 md:pb-0">
         <div className="mx-auto max-w-[1550px] px-4 py-8 sm:px-6">
           <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
             <div className="flex items-center gap-2.5 text-sm">
@@ -470,14 +470,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 alt="Logo CodeLearn"
                 className="h-6 w-6 rounded-md object-cover"
               />
-              <span className="font-semibold text-slate-200 light:text-slate-800">
+              <span className="font-semibold text-slate-100">
                 CodeLearn
               </span>
               <span className="text-xs text-slate-500">
                 — Platform Belajar Mandiri berbasis Obsidian Vault
               </span>
             </div>
-            <nav className="flex flex-wrap items-center gap-4 text-xs font-medium text-slate-500 light:text-slate-600">
+            <nav className="flex flex-wrap items-center gap-4 text-xs font-medium text-slate-500">
               <Link to="/docs" className="transition-colors hover:text-accent-500">
                 Tutorials
               </Link>

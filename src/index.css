@@ -179,10 +179,7 @@ body {
     @apply bg-accent-600 text-white shadow-sm hover:bg-accent-700 active:scale-95;
   }
   .w3-nav-btn-secondary {
-    @apply bg-slate-800/80 text-slate-200 border border-slate-700 hover:bg-slate-700 active:scale-95;
-  }
-  html.light .w3-nav-btn-secondary {
-    @apply bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200;
+    @apply bg-slate-800/80 text-slate-100 border border-slate-700 hover:bg-slate-700 active:scale-95;
   }
 
   /* W3Schools Sub-Nav Ribbon item */
@@ -261,12 +258,12 @@ html.light .nav-active {
   overflow-wrap: break-word;
 }
 
-html.light .doc-content {
-  @apply text-slate-800;
-}
-
 .doc-content p {
   @apply my-4 sm:my-5;
+}
+
+.doc-content strong {
+  @apply font-bold text-slate-100;
 }
 
 .doc-content h1,
@@ -278,15 +275,6 @@ html.light .doc-content {
   @apply scroll-mt-20 font-bold tracking-tight text-slate-100;
 }
 
-html.light .doc-content h1,
-html.light .doc-content h2,
-html.light .doc-content h3,
-html.light .doc-content h4,
-html.light .doc-content h5,
-html.light .doc-content h6 {
-  @apply text-slate-900;
-}
-
 .doc-content h1 {
   @apply mb-4 mt-8 text-3xl sm:text-4xl font-extrabold;
 }
@@ -295,9 +283,6 @@ html.light .doc-content h6 {
   @apply mb-4 mt-10 border-b border-slate-800 pb-2.5 text-2xl sm:text-[28px] font-bold;
 }
 
-html.light .doc-content h2 {
-  @apply border-slate-200;
-}
 .doc-content h3 {
   @apply mb-3 mt-8 text-xl sm:text-[22px] font-semibold;
 }
@@ -339,7 +324,7 @@ html.light .doc-content h2 {
   @apply list-decimal marker:text-slate-500;
 }
 .doc-content li {
-  @apply leading-7;
+  @apply leading-7 text-slate-300;
 }
 .doc-content li::marker {
   @apply font-medium;
@@ -358,16 +343,23 @@ html.light .doc-content h2 {
   @apply rounded bg-slate-800/90 px-1.5 py-0.5 font-mono text-[14px] text-amber-200;
 }
 html.light .doc-content code {
-  @apply bg-slate-200 text-amber-800;
+  @apply bg-slate-100 text-amber-800 border border-slate-200/80;
 }
 .doc-content pre {
   @apply my-6 overflow-x-auto rounded-xl border border-slate-800/90 bg-slate-900 p-4 sm:p-5 shadow-lg shadow-black/20;
 }
 html.light .doc-content pre {
-  @apply shadow-md shadow-slate-500/15;
+  background-color: #f8fafc;
+  border-color: #e2e8f0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
 }
 .doc-content pre code {
   @apply block bg-transparent p-0 text-[14.5px] leading-relaxed text-slate-200;
+}
+html.light .doc-content pre code {
+  color: #1e293b;
+  border: none;
+  background-color: transparent !important;
 }
 
 /* header code block: label bahasa + tombol copy (disuntikkan frontend) */
@@ -379,14 +371,35 @@ html.light .doc-content pre {
   border-top-left-radius: 0.75rem;
   border-top-right-radius: 0.75rem;
 }
+html.light .doc-content .code-block-header {
+  background-color: #f1f5f9;
+  border-color: #e2e8f0;
+}
 .doc-content .code-block-lang {
   @apply text-[11px] font-semibold uppercase tracking-wider text-slate-500;
+}
+html.light .doc-content .code-block-lang {
+  color: #64748b;
 }
 .doc-content .code-block-copy {
   @apply inline-flex cursor-pointer items-center gap-1 rounded-md border border-slate-700 bg-slate-800/60 px-2 py-0.5 text-[11px] font-medium text-slate-300 transition-colors hover:border-slate-500 hover:text-slate-100 active:scale-95;
 }
+html.light .doc-content .code-block-copy {
+  background-color: #ffffff;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+html.light .doc-content .code-block-copy:hover {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
 .doc-content .code-block-copy.copied {
   @apply border-emerald-500/60 bg-emerald-500/15 text-emerald-300;
+}
+html.light .doc-content .code-block-copy.copied {
+  background-color: #dcfce7;
+  border-color: #22c55e;
+  color: #15803d;
 }
 .doc-content .code-block-try {
   @apply inline-flex cursor-pointer items-center gap-1 rounded-md bg-accent-600 px-2.5 py-0.5 text-[11px] font-semibold text-white transition-all hover:bg-accent-700 active:scale-95 no-underline shadow-sm;
@@ -395,6 +408,9 @@ html.light .doc-content pre {
 /* blockquote biasa */
 .doc-content blockquote:not(.callout) {
   @apply my-5 rounded-r-lg border-l-4 border-slate-700 bg-slate-900/50 px-4 py-2 text-slate-400;
+}
+html.light .doc-content blockquote:not(.callout) {
+  @apply border-accent-500 bg-slate-50 text-slate-600;
 }
 
 /* ---------- callouts ---------- */
@@ -448,14 +464,20 @@ html.light .doc-content pre {
 .doc-content thead {
   @apply bg-slate-900;
 }
+html.light .doc-content thead {
+  @apply bg-slate-100;
+}
 .doc-content th {
-  @apply border border-slate-800 px-3 py-2 text-left font-semibold text-slate-200;
+  @apply border border-slate-800 px-3 py-2 text-left font-semibold text-slate-100;
 }
 .doc-content td {
   @apply border border-slate-800 px-3 py-2 text-slate-300;
 }
 .doc-content tr:nth-child(even) td {
   @apply bg-slate-900/40;
+}
+html.light .doc-content tr:nth-child(even) td {
+  @apply bg-slate-50/80;
 }
 
 /* ---------- gambar ---------- */

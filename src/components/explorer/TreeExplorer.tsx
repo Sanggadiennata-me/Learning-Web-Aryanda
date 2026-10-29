@@ -245,8 +245,8 @@ function TreeNodeRow({
           className={cn(
             'flex items-center justify-between w-full py-2 pr-3 text-[13.5px] transition-colors',
             active
-              ? 'bg-accent-500/15 text-accent-800 font-bold border-l-4 border-l-accent-600 dark:bg-accent-500/20 dark:text-accent-300 dark:border-l-accent-400'
-              : 'text-slate-700 hover:bg-slate-200/60 hover:text-slate-950 dark:text-slate-300 dark:hover:bg-slate-800/60 dark:hover:text-white'
+              ? 'bg-accent-500/15 text-accent-700 font-bold border-l-4 border-l-accent-600 dark:bg-accent-500/20 dark:text-accent-300 dark:border-l-accent-400'
+              : 'text-slate-300 hover:bg-slate-800/60 hover:text-slate-100'
           )}
           style={{ paddingLeft: padding }}
           title={node.title}
@@ -264,7 +264,7 @@ function TreeNodeRow({
     <li className="mt-0.5">
       <button
         onClick={() => onToggle(node.relativePath)}
-        className="flex w-full items-center justify-between py-2 pr-3 text-left text-[13.5px] font-bold text-slate-800 transition-colors hover:bg-slate-200/80 dark:text-slate-200 dark:hover:bg-slate-800"
+        className="flex w-full items-center justify-between py-2 pr-3 text-left text-[13.5px] font-bold text-slate-100 transition-colors hover:bg-slate-800/60"
         style={{ paddingLeft: padding }}
         aria-expanded={isOpen}
       >
