@@ -194,9 +194,8 @@ export function TopicRibbon({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        'relative bg-slate-900 border-b border-slate-800 text-slate-200 select-none shadow-sm z-30',
-        'dark:bg-slate-950 dark:border-slate-800/80',
-        'light:bg-slate-100 light:border-slate-200 light:text-slate-700',
+        'relative bg-white border-b border-emerald-100/80 text-slate-700 select-none shadow-sm z-30',
+        'dark:bg-[#0c1410] dark:border-accent-950/60 dark:text-slate-200',
         className
       )}
       role="navigation"
@@ -207,7 +206,7 @@ export function TopicRibbon({ className }: { className?: string }) {
         {canScrollLeft && (
           <button
             onClick={() => scroll('left')}
-            className="hidden sm:flex h-7 w-7 items-center justify-center rounded-full bg-slate-800/90 text-slate-300 hover:bg-slate-700 hover:text-slate-100 border border-slate-700/60 shadow-sm transition-all shrink-0 active:scale-95"
+            className="hidden sm:flex h-7 w-7 items-center justify-center rounded-full bg-white text-emerald-800 hover:bg-emerald-50 hover:text-emerald-900 border border-emerald-200 dark:bg-[#13281d] dark:text-emerald-200 dark:hover:bg-[#1a3828] dark:border-accent-800/50 shadow-sm transition-all shrink-0 active:scale-95"
             aria-label="Geser ke kiri"
           >
             <ChevronLeft className="h-4 w-4" />
@@ -234,7 +233,7 @@ export function TopicRibbon({ className }: { className?: string }) {
                   'px-3 py-1.5 text-xs font-bold tracking-wider uppercase rounded-lg transition-all whitespace-nowrap shrink-0 mx-0.5',
                   isActive
                     ? 'bg-accent-600 text-white shadow-sm ring-1 ring-accent-500/50'
-                    : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/80'
+                    : 'text-slate-600 hover:text-accent-700 hover:bg-emerald-50 dark:text-slate-300 dark:hover:text-white dark:hover:bg-accent-500/10'
                 )}
               >
                 {item.label}
@@ -247,7 +246,7 @@ export function TopicRibbon({ className }: { className?: string }) {
         {canScrollRight && (
           <button
             onClick={() => scroll('right')}
-            className="hidden sm:flex h-7 w-7 items-center justify-center rounded-full bg-slate-800/90 text-slate-300 hover:bg-slate-700 hover:text-slate-100 border border-slate-700/60 shadow-sm transition-all shrink-0 active:scale-95"
+            className="hidden sm:flex h-7 w-7 items-center justify-center rounded-full bg-white text-emerald-800 hover:bg-emerald-50 hover:text-emerald-900 border border-emerald-200 dark:bg-[#13281d] dark:text-emerald-200 dark:hover:bg-[#1a3828] dark:border-accent-800/50 shadow-sm transition-all shrink-0 active:scale-95"
             aria-label="Geser ke kanan"
           >
             <ChevronRight className="h-4 w-4" />

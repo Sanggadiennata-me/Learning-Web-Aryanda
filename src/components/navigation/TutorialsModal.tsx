@@ -223,14 +223,14 @@ export function TutorialsModal({ isOpen, onClose }: TutorialsModalProps) {
       />
 
       {/* Modal Dialog Content */}
-      <div className="relative z-10 w-full max-w-5xl max-h-[88vh] flex flex-col rounded-3xl border border-slate-200/90 bg-white shadow-2xl overflow-hidden dark:bg-slate-900 dark:border-accent-500/20 animate-in fade-in zoom-in-95 duration-150 ring-1 ring-accent-500/10">
+      <div className="relative z-10 w-full max-w-5xl max-h-[88vh] flex flex-col rounded-3xl border border-emerald-100/90 bg-white shadow-2xl overflow-hidden dark:bg-[#0c1410] dark:border-accent-500/30 animate-in fade-in zoom-in-95 duration-150 ring-1 ring-accent-500/10">
         {/* Top Header: Clean, Ringkas & Sentuhan Hijau Brand */}
-        <div className="flex items-center justify-between border-b border-accent-500/15 px-6 py-4 bg-accent-50/40 dark:bg-accent-950/20">
+        <div className="flex items-center justify-between border-b border-emerald-100/90 px-6 py-4 bg-emerald-50/70 dark:bg-[#0d1c14] dark:border-accent-950/80">
           <div className="flex items-center gap-2.5">
             <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-accent-500/15 text-accent-600 dark:text-accent-400 ring-1 ring-accent-500/20">
               <Sparkles className="h-4 w-4" />
             </div>
-            <h2 className="text-base sm:text-lg font-extrabold tracking-tight text-slate-100">
+            <h2 className="text-base sm:text-lg font-extrabold tracking-tight text-emerald-950 dark:text-emerald-100">
               Katalog Tutorial
             </h2>
           </div>
@@ -244,15 +244,15 @@ export function TutorialsModal({ isOpen, onClose }: TutorialsModalProps) {
         </div>
 
         {/* Filter Input Bar */}
-        <div className="border-b border-slate-200/80 bg-white px-6 py-3 dark:border-slate-800 dark:bg-slate-900">
+        <div className="border-b border-emerald-100/80 bg-white px-6 py-3 dark:border-accent-950/80 dark:bg-[#0a1610]">
           <div className="relative max-w-md">
-            <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-accent-600 dark:text-accent-400" />
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Cari subskill tutorial… (misal: Python, React, PWN, Docker, Git)"
-              className="w-full rounded-xl border border-slate-300 bg-slate-50 pl-10 pr-9 py-2 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:border-accent-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent-500/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+              className="w-full rounded-xl border border-emerald-200/90 bg-emerald-50/40 pl-10 pr-9 py-2 text-xs sm:text-sm text-emerald-950 placeholder:text-emerald-700/50 focus:border-accent-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent-500/20 dark:border-accent-800/60 dark:bg-[#13281d] dark:text-emerald-100 dark:placeholder:text-emerald-400/50"
               autoFocus
             />
             {query && (
@@ -322,8 +322,8 @@ export function TutorialsModal({ isOpen, onClose }: TutorialsModalProps) {
         </div>
 
         {/* Footer Ringkas dengan Sentuhan Hijau */}
-        <div className="border-t border-accent-500/15 bg-accent-50/30 px-6 py-3 text-xs text-slate-500 dark:border-slate-800 dark:bg-slate-900/90 flex items-center justify-between">
-          <span className="font-medium text-slate-700 dark:text-slate-400">
+        <div className="border-t border-emerald-100/80 bg-emerald-50/50 px-6 py-3 text-xs text-emerald-900/80 dark:border-accent-950/80 dark:bg-[#0d1c14] dark:text-emerald-300/80 flex items-center justify-between">
+          <span className="font-medium text-emerald-950 dark:text-emerald-200">
             {totalResults} Subskill Tersedia
           </span>
           <Link

@@ -172,7 +172,7 @@ export function TreeExplorer({
     <nav className={cn('select-none flex flex-col h-full', className)} aria-label="Navigasi tutorial">
       {/* Sidebar Header Title */}
       {sidebarTitle && (
-        <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3 bg-white dark:bg-[#0c1410] dark:border-accent-950/60">
+        <div className="flex items-center justify-between border-b border-emerald-100/80 px-4 py-3 bg-white dark:bg-[#0c1410] dark:border-accent-950/60">
           <div className="flex items-center gap-2">
             <span className="h-2 w-2 rounded-full bg-accent-500" />
             <span className="text-xs font-black uppercase tracking-wider text-accent-700 dark:text-accent-400">

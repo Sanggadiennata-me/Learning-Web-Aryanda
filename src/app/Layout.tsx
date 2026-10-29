@@ -210,21 +210,23 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
   // Komponen Sidebar Explorer ala W3Schools
   const explorer = (
-    <div className="flex h-full min-h-0 flex-col bg-white border-r border-slate-200 dark:bg-[#0c1410] dark:border-accent-950/60">
+    <div className="flex h-full min-h-0 flex-col bg-white border-r border-emerald-100/80 dark:bg-[#0c1410] dark:border-accent-950/60">
       {/* Filter Bab Cepat ala W3Schools */}
-      <div className="border-b border-slate-200 p-2.5 dark:border-accent-950/60 bg-slate-50 dark:bg-[#0f1a14]">
+      <div className="border-b border-emerald-100/90 p-2.5 bg-emerald-50/70 dark:bg-[#0d1c14] dark:border-accent-950/80">
         <div className="relative">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-accent-600 dark:text-accent-400" />
           <input
             type="text"
             value={sidebarFilter}
             onChange={(e) => setSidebarFilter(e.target.value)}
             placeholder="Cari materi tutorial…"
-            className="w-full rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-800 placeholder:text-slate-400 focus:border-accent-500 focus:ring-2 focus:ring-accent-500/20 focus:outline-none dark:border-slate-800 dark:bg-[#13221a] dark:text-slate-200 dark:placeholder:text-slate-500"
+            className="w-full rounded-xl border border-emerald-200/90 bg-white pl-8 pr-7 py-1.5 text-xs text-emerald-950 placeholder:text-emerald-700/50 shadow-sm transition-all focus:border-accent-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent-500/25 dark:border-accent-800/60 dark:bg-[#13281d] dark:text-emerald-100 dark:placeholder:text-emerald-400/50 dark:focus:border-accent-400 dark:focus:ring-accent-500/20"
           />
           {sidebarFilter && (
             <button
               onClick={() => setSidebarFilter('')}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-accent-500 dark:hover:text-accent-400"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 flex h-4 w-4 items-center justify-center rounded-full text-xs font-bold text-accent-700 hover:bg-accent-100 hover:text-accent-900 dark:text-accent-400 dark:hover:bg-accent-900/40 dark:hover:text-accent-200"
+              title="Bersihkan filter"
             >
               ×
             </button>
@@ -390,17 +392,17 @@ export function Layout({ children }: { children: React.ReactNode }) {
               onClick={closeDrawer}
               aria-hidden
             />
-            <aside className="drawer-panel absolute left-0 top-0 flex h-full w-80 max-w-[85vw] flex-col border-r border-slate-200 bg-white dark:border-accent-950/60 dark:bg-[#0c1410] shadow-2xl">
-              <div className="flex items-center justify-between border-b border-slate-200 dark:border-accent-950/60 px-4 py-3 bg-slate-50 dark:bg-[#0f1a14]">
+            <aside className="drawer-panel absolute left-0 top-0 flex h-full w-80 max-w-[85vw] flex-col border-r border-emerald-100/80 bg-white dark:border-accent-950/60 dark:bg-[#0c1410] shadow-2xl">
+              <div className="flex items-center justify-between border-b border-emerald-100/90 px-4 py-3 bg-emerald-50/70 dark:bg-[#0d1c14] dark:border-accent-950/80">
                 <div className="flex items-center gap-2">
-                  <Sparkles className="h-4 w-4 text-accent-500" />
-                  <span className="text-sm font-bold text-slate-900 dark:text-slate-100">
+                  <Sparkles className="h-4 w-4 text-accent-600 dark:text-accent-400" />
+                  <span className="text-sm font-bold text-emerald-950 dark:text-emerald-100">
                     Navigasi CodeLearn
                   </span>
                 </div>
                 <button
                   onClick={closeDrawer}
-                  className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-accent-50 hover:text-accent-600 dark:hover:bg-accent-500/10 dark:hover:text-accent-400"
+                  className="rounded-lg p-1.5 text-accent-700 transition-colors hover:bg-accent-100 hover:text-accent-900 dark:text-accent-400 dark:hover:bg-accent-500/20 dark:hover:text-accent-200"
                   aria-label="Tutup menu"
                 >
                   <X className="h-5 w-5" />
@@ -416,7 +418,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {isDocsRoute && (
           <aside
             className={cn(
-              'sticky top-[5.75rem] hidden h-[calc(100vh-5.75rem)] shrink-0 border-r border-slate-200 dark:border-accent-950/60 transition-[width] duration-200 lg:block',
+              'sticky top-[5.75rem] hidden h-[calc(100vh-5.75rem)] shrink-0 border-r border-emerald-100/80 dark:border-accent-950/60 transition-[width] duration-200 lg:block',
               sidebarCollapsed ? 'w-14' : 'w-60 xl:w-64'
             )}
           >
@@ -424,7 +426,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
               <div className="flex h-full flex-col items-center pt-4">
                 <button
                   onClick={() => setSidebarCollapsed(false)}
-                  className="rounded-xl border border-slate-200 dark:border-accent-900/40 p-2 text-slate-400 transition-all hover:border-accent-500 hover:bg-accent-50 hover:text-accent-600 dark:hover:bg-accent-500/10 dark:hover:text-accent-400 shadow-sm"
+                  className="rounded-xl border border-emerald-200 dark:border-accent-900/40 p-2 text-slate-400 transition-all hover:border-accent-500 hover:bg-accent-50 hover:text-accent-600 dark:hover:bg-accent-500/10 dark:hover:text-accent-400 shadow-sm"
                   aria-label="Buka sidebar materi"
                   title="Buka sidebar materi"
                 >
