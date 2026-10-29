@@ -12,12 +12,12 @@ jobs:
       # Repository/branch/commit dari payload repository_dispatch yang dikirim
       # Obsidian-Vault (vaultCommit/vaultBranch). Fallback snake_case untuk
       # kompatibilitas, dan default hanya untuk workflow_dispatch manual.
-      VAULT_REPO_URL: ${{ github.event.client_payload.repo_clone_url || github.event.client_payload.repoCloneUrl || 'https://github.com/aryandaa/Obsidian-Vault.git' }}
+      VAULT_REPO_URL: ${{ github.event.client_payload.repo_clone_url || github.event.client_payload.repoCloneUrl || github.event.client_payload.vaultRepository || 'https://github.com/Sanggadiennata-me/Obsidian-Vault.git' }}
       VAULT_COMMIT: ${{ github.event.client_payload.vaultCommit || github.event.client_payload.vault_commit || '' }}
       VAULT_BRANCH: ${{ github.event.client_payload.vaultBranch || github.event.client_payload.vault_branch || 'main' }}
       # Direktori hasil clone vault (dipakai step parse).
       VAULT_DIR: /tmp/vault-clone
-      # Token Fine-grained PAT, Contents: Read-only ke aryandaa/Obsidian-Vault.
+      # Token PAT, Contents: Read-only ke Sanggadiennata-me/Obsidian-Vault.
       # Hanya dipakai di dalam run script — tidak pernah di-echo ke log.
       OBSIDIAN_VAULT_TOKEN: ${{ secrets.OBSIDIAN_VAULT_TOKEN }}
 
@@ -41,12 +41,14 @@ jobs:
           set -euo pipefail
           rm -rf /tmp/vault-clone
 
-          # Bangun URL ber-autentikasi hanya untuk github.com. URL yang berisi
-          # token tidak pernah dicetak; GitHub Actions juga otomatis mem-mask
-          # nilai secret di log sebagai lapisan pengaman kedua.
+          # Bangun URL kloning. Jika token tersedia gunakan autentikasi, jika tidak clone langsung (public repo).
           case "$VAULT_REPO_URL" in
             https://github.com/*)
-              AUTH_URL="https://x-access-token:${OBSIDIAN_VAULT_TOKEN}@github.com/${VAULT_REPO_URL#https://github.com/}"
+              if [ -n "${OBSIDIAN_VAULT_TOKEN:-}" ]; then
+                AUTH_URL="https://x-access-token:${OBSIDIAN_VAULT_TOKEN}@github.com/${VAULT_REPO_URL#https://github.com/}"
+              else
+                AUTH_URL="$VAULT_REPO_URL"
+              fi
               ;;
             *)
               AUTH_URL="$VAULT_REPO_URL"
