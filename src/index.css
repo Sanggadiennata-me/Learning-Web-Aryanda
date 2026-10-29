@@ -147,7 +147,9 @@ body {
     @apply bg-slate-900/80 border border-slate-800/80 rounded-2xl shadow-sm;
   }
   html.light .m3-surface-container {
-    @apply bg-slate-50 border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.05)];
+    background-color: #ffffff;
+    border-color: #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   }
 
   .m3-card {
@@ -338,13 +340,51 @@ html.light .nav-active {
   @apply mt-1.5 h-4 w-4 shrink-0 accent-accent-500;
 }
 
-/* ---------- code blocks ---------- */
+/* ---------- code & code blocks ---------- */
 .doc-content code {
-  @apply rounded bg-slate-800/90 px-1.5 py-0.5 font-mono text-[14px] text-amber-200;
+  @apply font-mono text-[14px];
 }
-html.light .doc-content code {
-  @apply bg-slate-100 text-amber-800 border border-slate-200/80;
+
+/* Hilangkan kutip backtick otomatis dari @tailwindcss/typography */
+.doc-content code::before,
+.doc-content code::after {
+  content: none !important;
 }
+
+/* Inline code (materi & tag kode, bukan di dalam block <pre>) */
+.doc-content :not(pre) > code,
+.doc-content code:not(pre code) {
+  @apply rounded-md px-1.5 py-0.5 font-medium border;
+  background-color: rgba(38, 51, 43, 0.85);
+  border-color: rgba(74, 222, 128, 0.25);
+  color: #fde68a; /* amber-200 hangat di tema gelap */
+}
+
+/* Inline code di light mode: background terang, border halus, teks kontras tinggi */
+html.light .doc-content :not(pre) > code,
+html.light .doc-content code:not(pre code) {
+  background-color: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #0f172a !important; /* slate-900 sangat jelas & tajam di atas tema terang */
+}
+
+/* Jika inline code berada di dalam tautan link */
+.doc-content a code {
+  color: inherit !important;
+}
+
+/* Highlight mark */
+.doc-content mark {
+  @apply rounded px-1.5 py-0.5 font-medium;
+  background-color: rgba(234, 179, 8, 0.25);
+  color: #fef08a;
+}
+html.light .doc-content mark {
+  background-color: #fef9c3;
+  border: 1px solid #fef08a;
+  color: #854d0e;
+}
+
 .doc-content pre {
   @apply my-6 overflow-x-auto rounded-xl border border-slate-800/90 bg-slate-900 p-4 sm:p-5 shadow-lg shadow-black/20;
 }
@@ -354,7 +394,7 @@ html.light .doc-content pre {
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
 }
 .doc-content pre code {
-  @apply block bg-transparent p-0 text-[14.5px] leading-relaxed text-slate-200;
+  @apply block bg-transparent p-0 text-[14.5px] leading-relaxed text-slate-200 border-0;
 }
 html.light .doc-content pre code {
   color: #1e293b;
@@ -410,7 +450,9 @@ html.light .doc-content .code-block-copy.copied {
   @apply my-5 rounded-r-lg border-l-4 border-slate-700 bg-slate-900/50 px-4 py-2 text-slate-400;
 }
 html.light .doc-content blockquote:not(.callout) {
-  @apply border-accent-500 bg-slate-50 text-slate-600;
+  border-color: #16a34a;
+  background-color: #f8fafc;
+  color: #334155;
 }
 
 /* ---------- callouts ---------- */
@@ -465,19 +507,27 @@ html.light .doc-content blockquote:not(.callout) {
   @apply bg-slate-900;
 }
 html.light .doc-content thead {
-  @apply bg-slate-100;
+  background-color: #f1f5f9;
 }
 .doc-content th {
   @apply border border-slate-800 px-3 py-2 text-left font-semibold text-slate-100;
 }
+html.light .doc-content th {
+  color: #0f172a;
+  border-color: #e2e8f0;
+}
 .doc-content td {
   @apply border border-slate-800 px-3 py-2 text-slate-300;
+}
+html.light .doc-content td {
+  color: #334155;
+  border-color: #e2e8f0;
 }
 .doc-content tr:nth-child(even) td {
   @apply bg-slate-900/40;
 }
 html.light .doc-content tr:nth-child(even) td {
-  @apply bg-slate-50/80;
+  background-color: #f8fafc;
 }
 
 /* ---------- gambar ---------- */
