@@ -5,6 +5,9 @@ on:
     types: [vault-sync]
   workflow_dispatch: {}
 
+permissions:
+  contents: write
+
 jobs:
   sync:
     runs-on: ubuntu-latest
