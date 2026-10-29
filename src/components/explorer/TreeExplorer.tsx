@@ -85,15 +85,23 @@ export function TreeExplorer({
     [nodes, filterQuery]
   );
 
-  // Kumpulkan semua folder di dalam modul tutorial agar langsung terbuka secara default (mirip W3Schools)
+  // Kumpulkan folder materi utama agar terbuka secara default (mirip W3Schools).
+  // Folder 'Praktek' / practice code dikecualikan agar tidak mengganggu alur baca materi.
   const defaultExpanded = useMemo(() => {
     const paths = new Set<string>();
     function collect(list: TreeNode[], depth = 0) {
       for (const item of list) {
         if (item.type === 'folder') {
-          paths.add(item.relativePath);
-          if (depth < 2) {
-            collect(item.children, depth + 1);
+          const isPractice =
+            item.name.toLowerCase() === 'praktek' ||
+            item.name.toLowerCase() === 'practice' ||
+            item.relativePath.toLowerCase().endsWith('/praktek');
+
+          if (!isPractice) {
+            paths.add(item.relativePath);
+            if (depth < 2) {
+              collect(item.children, depth + 1);
+            }
           }
         }
       }
@@ -102,19 +110,48 @@ export function TreeExplorer({
     return paths;
   }, [nodes]);
 
-  const autoExpand = useMemo(
-    () => (activeId ? new Set(ancestorsOf(nodes, activeId)) : new Set<string>()),
-    [nodes, activeId]
-  );
+  const [expanded, setExpanded] = useState<Set<string>>(() => {
+    const initial = new Set(defaultExpanded);
+    if (activeId) {
+      for (const a of ancestorsOf(nodes, activeId)) {
+        initial.add(a);
+      }
+    }
+    return initial;
+  });
 
-  const [expanded, setExpanded] = useState<Set<string>>(
-    () => new Set([...defaultExpanded, ...autoExpand])
-  );
-
-  // Saat track berganti atau materi aktif berganti, sinkronkan folder terbuka
+  // Saat modul tutorial berganti (nodes berganti), inisialisasi folder bab
   useEffect(() => {
-    setExpanded((prev) => new Set([...prev, ...defaultExpanded, ...autoExpand]));
-  }, [defaultExpanded, autoExpand]);
+    const initial = new Set(defaultExpanded);
+    if (activeId) {
+      for (const a of ancestorsOf(nodes, activeId)) {
+        initial.add(a);
+      }
+    }
+    setExpanded(initial);
+  }, [nodes]); // HANYA berjalan saat ganti modul track (nodes), BUKAN saat navigasi activeId!
+
+  // Saat berpindah materi di dalam modul (activeId berganti):
+  // HANYA buka ancestor dari file aktif jika file tersebut berada di folder yang sedang tertutup.
+  // Folder lain yang sengaja ditutup oleh user (mis. Praktek) TIDAK AKAN dibuka kembali!
+  useEffect(() => {
+    if (activeId) {
+      const ancestors = ancestorsOf(nodes, activeId);
+      if (ancestors.length > 0) {
+        setExpanded((prev) => {
+          let hasMissing = false;
+          for (const a of ancestors) {
+            if (!prev.has(a)) {
+              hasMissing = true;
+              break;
+            }
+          }
+          if (!hasMissing) return prev;
+          return new Set([...prev, ...ancestors]);
+        });
+      }
+    }
+  }, [activeId, nodes]);
 
   useEffect(() => {
     if (filterQuery.trim()) {
