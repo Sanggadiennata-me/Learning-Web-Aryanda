@@ -464,9 +464,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
               <span className="font-semibold text-slate-100">
                 CodeLearn
               </span>
-              <span className="text-xs text-slate-500">
-                — Platform Belajar Mandiri berbasis Obsidian Vault
-              </span>
             </div>
             <nav className="flex flex-wrap items-center gap-4 text-xs font-medium text-slate-500">
               <Link to="/docs" className="transition-colors hover:text-accent-500">

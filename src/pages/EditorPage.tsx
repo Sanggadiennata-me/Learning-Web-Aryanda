@@ -687,12 +687,9 @@ export default function EditorPage() {
             <Code2 className="h-4 w-4" />
           </span>
           <div>
-            <h1 className="text-sm font-bold text-slate-100 light:text-slate-900 leading-none">
+            <h1 className="text-sm font-bold text-slate-100 leading-none">
               Code Editor (Try it Yourself)
             </h1>
-            <span className="text-[11px] text-slate-500 light:text-slate-500 mt-0.5 block">
-              Eksekusi kode langsung di browser via WebAssembly tanpa backend.
-            </span>
           </div>
         </div>
 

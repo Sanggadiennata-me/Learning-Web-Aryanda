@@ -548,9 +548,6 @@ export default function HomePage() {
             <h2 className="text-xl sm:text-2xl font-black text-slate-100 light:text-slate-900 mt-1">
               Cyber Security & OSINT Interactive Tools
             </h2>
-            <p className="text-xs sm:text-sm text-slate-400 light:text-slate-600 mt-1">
-              Semua file dan data diproses di memori browser via WebAssembly & Web Crypto API tanpa server.
-            </p>
           </div>
           <Link
             to="/cysec-tools"
@@ -638,7 +635,8 @@ export default function HomePage() {
           Tentang Pengembang & Ekosistem
         </h3>
 
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {/* 1. Nama Kampus: Politeknik Negeri Banjarmasin */}
           <a
             href="https://poliban.ac.id/"
             target="_blank"
@@ -648,12 +646,12 @@ export default function HomePage() {
             <div className="h-10 w-10 shrink-0 overflow-hidden rounded-xl bg-white p-1 ring-1 ring-slate-800 flex items-center justify-center">
               <img
                 src={joinWithRoot('assets/asset/Logo%20Poliban.jpeg')}
-                alt="Poliban"
+                alt="Politeknik Negeri Banjarmasin"
                 className="h-full w-full object-contain"
               />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-bold text-slate-200 group-hover:text-accent-400 transition-colors light:text-slate-900 truncate">
+              <p className="text-xs font-bold text-slate-100 group-hover:text-accent-400 transition-colors truncate">
                 Politeknik Negeri Banjarmasin
               </p>
               <p className="text-[11px] text-slate-500">Pendidikan Vokasi</p>
@@ -661,6 +659,53 @@ export default function HomePage() {
             <ExternalLink className="h-3.5 w-3.5 text-slate-500 group-hover:text-accent-500 shrink-0" />
           </a>
 
+          {/* 2. Nama Jurusan: Jurusan Administrasi Bisnis Poliban */}
+          <a
+            href="https://poliban.ac.id/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group m3-card m3-card-hover p-4 flex items-center gap-3.5"
+          >
+            <div className="h-10 w-10 shrink-0 overflow-hidden rounded-xl bg-white p-1 ring-1 ring-slate-800 flex items-center justify-center">
+              <img
+                src={joinWithRoot('assets/asset/logo-administrasi-bisnis.jpeg')}
+                alt="Jurusan Administrasi Bisnis Poliban"
+                className="h-full w-full object-contain"
+              />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-bold text-slate-100 group-hover:text-accent-400 transition-colors truncate">
+                Jurusan Administrasi Bisnis
+              </p>
+              <p className="text-[11px] text-slate-500">Politeknik Negeri Banjarmasin</p>
+            </div>
+            <ExternalLink className="h-3.5 w-3.5 text-slate-500 group-hover:text-accent-500 shrink-0" />
+          </a>
+
+          {/* 3. Nama Prodi: Sistem Informasi Poliban */}
+          <a
+            href="https://poliban.ac.id/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group m3-card m3-card-hover p-4 flex items-center gap-3.5"
+          >
+            <div className="h-10 w-10 shrink-0 overflow-hidden rounded-xl bg-white p-1 ring-1 ring-slate-800 flex items-center justify-center">
+              <img
+                src={joinWithRoot('assets/asset/logo-sistem-informasi.jpeg')}
+                alt="Sistem Informasi Poliban"
+                className="h-full w-full object-contain"
+              />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-bold text-slate-100 group-hover:text-accent-400 transition-colors truncate">
+                Sistem Informasi Poliban
+              </p>
+              <p className="text-[11px] text-slate-500">Program Studi Vokasi</p>
+            </div>
+            <ExternalLink className="h-3.5 w-3.5 text-slate-500 group-hover:text-accent-500 shrink-0" />
+          </a>
+
+          {/* 4. Itech: Itech Poliban */}
           <a
             href="https://www.itechpoliban.com/"
             target="_blank"
@@ -675,7 +720,7 @@ export default function HomePage() {
               />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-bold text-slate-200 group-hover:text-accent-400 transition-colors light:text-slate-900 truncate">
+              <p className="text-xs font-bold text-slate-100 group-hover:text-accent-400 transition-colors truncate">
                 Itech Poliban
               </p>
               <p className="text-[11px] text-slate-500">Komunitas Teknologi</p>
@@ -683,17 +728,41 @@ export default function HomePage() {
             <ExternalLink className="h-3.5 w-3.5 text-slate-500 group-hover:text-accent-500 shrink-0" />
           </a>
 
+          {/* 5. Makat-Xploit: Komunitas Makat-Xploit */}
+          <a
+            href="https://github.com/makat-xploit"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group m3-card m3-card-hover p-4 flex items-center gap-3.5"
+          >
+            <div className="h-10 w-10 shrink-0 overflow-hidden rounded-xl bg-slate-900 p-0.5 ring-1 ring-slate-800 flex items-center justify-center">
+              <img
+                src={joinWithRoot('assets/asset/logo-makat-xploit.jpeg')}
+                alt="Komunitas Makat-Xploit"
+                className="h-full w-full object-cover rounded-lg"
+              />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-bold text-slate-100 group-hover:text-accent-400 transition-colors truncate">
+                Komunitas Makat-Xploit
+              </p>
+              <p className="text-[11px] text-slate-500">Cyber Security Research</p>
+            </div>
+            <ExternalLink className="h-3.5 w-3.5 text-slate-500 group-hover:text-accent-500 shrink-0" />
+          </a>
+
+          {/* 6. Baru Aku: M. Aryanda Sanggadiennata */}
           <a
             href="https://portofolioaryanda.vercel.app/"
             target="_blank"
             rel="noopener noreferrer"
             className="group m3-card m3-card-hover p-4 flex items-center gap-3.5"
           >
-            <div className="h-10 w-10 shrink-0 overflow-hidden rounded-xl bg-accent-500/20 text-accent-400 flex items-center justify-center font-bold text-sm">
+            <div className="h-10 w-10 shrink-0 overflow-hidden rounded-xl bg-accent-500/20 text-accent-400 flex items-center justify-center font-bold text-sm ring-1 ring-accent-500/30">
               MA
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-bold text-slate-200 group-hover:text-accent-400 transition-colors light:text-slate-900 truncate">
+              <p className="text-xs font-bold text-slate-100 group-hover:text-accent-400 transition-colors truncate">
                 M. Aryanda Sanggadiennata
               </p>
               <p className="text-[11px] text-slate-500">Developer & Author</p>

@@ -54,22 +54,22 @@ const SKILL_METAS: Record<string, SkillMeta> = {
   pemrograman: {
     order: 1,
     displayName: 'Pemrograman & Web Development',
-    color: '#C49A5A',
+    color: '#16A34A',
   },
   cybersecurity: {
     order: 2,
     displayName: 'Keamanan Siber (Cyber Security)',
-    color: '#B86B68',
+    color: '#0D9488',
   },
   devops: {
     order: 3,
     displayName: 'DevOps & Cloud Computing',
-    color: '#6F9B78',
+    color: '#15803D',
   },
   jaringan: {
     order: 4,
     displayName: 'Jaringan Komputer (Networking)',
-    color: '#6E9CB8',
+    color: '#059669',
   },
 };
 
@@ -82,29 +82,29 @@ interface SubskillMeta {
 
 const SUBSKILL_METAS: Record<string, SubskillMeta> = {
   // Pemrograman
-  html: { displayName: 'HTML', icon: FileCode, iconBg: '#C47A5A18', iconColor: '#C47A5A' },
-  css: { displayName: 'CSS', icon: Layers, iconBg: '#6E9CB818', iconColor: '#6E9CB8' },
-  javascript: { displayName: 'JavaScript', icon: Code2, iconBg: '#C49A5A18', iconColor: '#C49A5A' },
-  python: { displayName: 'Python', icon: Terminal, iconBg: '#6F9B7818', iconColor: '#6F9B78' },
-  php: { displayName: 'PHP & Laravel', icon: Server, iconBg: '#B86B6818', iconColor: '#B86B68' },
-  fundamental: { displayName: 'Fundamental Coding', icon: Cpu, iconBg: '#8A938A18', iconColor: '#8A938A' },
-  'rancangan software': { displayName: 'Rancangan Software', icon: Layout, iconBg: '#C49A5A18', iconColor: '#C49A5A' },
-  'vibe coding': { displayName: 'Vibe Coding', icon: Zap, iconBg: '#E07A5F18', iconColor: '#E07A5F' },
+  html: { displayName: 'HTML', icon: FileCode, iconBg: '#16A34A18', iconColor: '#16A34A' },
+  css: { displayName: 'CSS', icon: Layers, iconBg: '#0D948818', iconColor: '#0D9488' },
+  javascript: { displayName: 'JavaScript', icon: Code2, iconBg: '#15803D18', iconColor: '#15803D' },
+  python: { displayName: 'Python', icon: Terminal, iconBg: '#05966918', iconColor: '#059669' },
+  php: { displayName: 'PHP & Laravel', icon: Server, iconBg: '#10B98118', iconColor: '#10B981' },
+  fundamental: { displayName: 'Fundamental Coding', icon: Cpu, iconBg: '#16A34A18', iconColor: '#16A34A' },
+  'rancangan software': { displayName: 'Rancangan Software', icon: Layout, iconBg: '#0D948818', iconColor: '#0D9488' },
+  'vibe coding': { displayName: 'Vibe Coding', icon: Zap, iconBg: '#15803D18', iconColor: '#15803D' },
 
   // CyberSecurity
-  cryptography: { displayName: 'Kriptografi', icon: Lock, iconBg: '#B86B6818', iconColor: '#B86B68' },
-  forensic: { displayName: 'Forensik Digital', icon: Search, iconBg: '#6E9CB818', iconColor: '#6E9CB8' },
-  pwn: { displayName: 'PWN (Binary Exploit)', icon: Binary, iconBg: '#B86B6818', iconColor: '#B86B68' },
-  'web exploitation': { displayName: 'Web Exploitation', icon: Shield, iconBg: '#B86B6818', iconColor: '#B86B68' },
+  cryptography: { displayName: 'Kriptografi', icon: Lock, iconBg: '#0D948818', iconColor: '#0D9488' },
+  forensic: { displayName: 'Forensik Digital', icon: Search, iconBg: '#05966918', iconColor: '#059669' },
+  pwn: { displayName: 'PWN (Binary Exploit)', icon: Binary, iconBg: '#16A34A18', iconColor: '#16A34A' },
+  'web exploitation': { displayName: 'Web Exploitation', icon: Shield, iconBg: '#15803D18', iconColor: '#15803D' },
 
   // DevOps
-  cloud: { displayName: 'Cloud Computing', icon: Cloud, iconBg: '#6F9B7818', iconColor: '#6F9B78' },
-  docker: { displayName: 'Docker & Container', icon: Box, iconBg: '#6F9B7818', iconColor: '#6F9B78' },
-  github: { displayName: 'Git & GitHub', icon: GitBranch, iconBg: '#6F9B7818', iconColor: '#6F9B78' },
+  cloud: { displayName: 'Cloud Computing', icon: Cloud, iconBg: '#0D948818', iconColor: '#0D9488' },
+  docker: { displayName: 'Docker & Container', icon: Box, iconBg: '#16A34A18', iconColor: '#16A34A' },
+  github: { displayName: 'Git & GitHub', icon: GitBranch, iconBg: '#05966918', iconColor: '#059669' },
 
   // Jaringan
-  hardware: { displayName: 'Hardware Jaringan', icon: HardDrive, iconBg: '#6E9CB818', iconColor: '#6E9CB8' },
-  jaringan: { displayName: 'Jaringan Komputer', icon: Globe, iconBg: '#6E9CB818', iconColor: '#6E9CB8' },
+  hardware: { displayName: 'Hardware Jaringan', icon: HardDrive, iconBg: '#15803D18', iconColor: '#15803D' },
+  jaringan: { displayName: 'Jaringan Komputer', icon: Globe, iconBg: '#0D948818', iconColor: '#0D9488' },
 };
 
 interface TutorialsModalProps {
@@ -215,19 +215,19 @@ export function TutorialsModal({ isOpen, onClose }: TutorialsModalProps) {
       role="dialog"
       aria-modal="true"
     >
-      {/* Backdrop */}
+      {/* Backdrop: Green-tinted soft glassmorphism, bukan hitam pekat */}
       <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+        className="fixed inset-0 bg-slate-950/45 backdrop-blur-md transition-opacity"
         onClick={onClose}
         aria-hidden
       />
 
       {/* Modal Dialog Content */}
-      <div className="relative z-10 w-full max-w-5xl max-h-[88vh] flex flex-col rounded-3xl border border-slate-200 bg-white shadow-2xl overflow-hidden dark:bg-slate-900 dark:border-slate-800 animate-in fade-in zoom-in-95 duration-150">
-        {/* Top Header: Clean & Ringkas */}
-        <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60">
+      <div className="relative z-10 w-full max-w-5xl max-h-[88vh] flex flex-col rounded-3xl border border-slate-200/90 bg-white shadow-2xl overflow-hidden dark:bg-slate-900 dark:border-accent-500/20 animate-in fade-in zoom-in-95 duration-150 ring-1 ring-accent-500/10">
+        {/* Top Header: Clean, Ringkas & Sentuhan Hijau Brand */}
+        <div className="flex items-center justify-between border-b border-accent-500/15 px-6 py-4 bg-accent-50/40 dark:bg-accent-950/20">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-accent-500/10 text-accent-600 dark:text-accent-400">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-accent-500/15 text-accent-600 dark:text-accent-400 ring-1 ring-accent-500/20">
               <Sparkles className="h-4 w-4" />
             </div>
             <h2 className="text-base sm:text-lg font-extrabold tracking-tight text-slate-100">
@@ -236,7 +236,7 @@ export function TutorialsModal({ isOpen, onClose }: TutorialsModalProps) {
           </div>
           <button
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:bg-slate-200 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-slate-100 transition-colors"
+            className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:bg-accent-500/10 hover:text-accent-600 dark:hover:bg-accent-500/20 dark:hover:text-accent-400 transition-colors"
             aria-label="Tutup jendela"
           >
             <X className="h-4.5 w-4.5" />
@@ -244,7 +244,7 @@ export function TutorialsModal({ isOpen, onClose }: TutorialsModalProps) {
         </div>
 
         {/* Filter Input Bar */}
-        <div className="border-b border-slate-200 bg-white px-6 py-3 dark:border-slate-800 dark:bg-slate-900">
+        <div className="border-b border-slate-200/80 bg-white px-6 py-3 dark:border-slate-800 dark:bg-slate-900">
           <div className="relative max-w-md">
             <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input
@@ -252,7 +252,7 @@ export function TutorialsModal({ isOpen, onClose }: TutorialsModalProps) {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Cari subskill tutorial… (misal: Python, React, PWN, Docker, Git)"
-              className="w-full rounded-xl border border-slate-300 bg-slate-50 pl-10 pr-9 py-2 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:border-accent-500 focus:bg-white focus:outline-none dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+              className="w-full rounded-xl border border-slate-300 bg-slate-50 pl-10 pr-9 py-2 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:border-accent-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent-500/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
               autoFocus
             />
             {query && (
@@ -270,7 +270,7 @@ export function TutorialsModal({ isOpen, onClose }: TutorialsModalProps) {
         <div className="flex-1 overflow-y-auto p-5 sm:p-6 scrollbar-thin space-y-6">
           {filteredGroups.map((group) => (
             <section key={group.id} className="space-y-3">
-              {/* Header Grup Skill: Bersih tanpa teks deskripsi panjang */}
+              {/* Header Grup Skill: Bersih dengan Aksen Hijau */}
               <div className="flex items-center gap-2.5 border-b border-slate-200/80 pb-2 dark:border-slate-800">
                 <span
                   className="h-3.5 w-1.5 rounded-full shrink-0"
@@ -282,19 +282,19 @@ export function TutorialsModal({ isOpen, onClose }: TutorialsModalProps) {
                 >
                   {group.name}
                 </h3>
-                <span className="ml-auto rounded-full bg-slate-100 px-2.5 py-0.5 text-[10px] font-bold text-slate-600 dark:bg-slate-800 dark:text-slate-400">
+                <span className="ml-auto rounded-full bg-accent-500/10 px-2.5 py-0.5 text-[10px] font-bold text-accent-700 dark:bg-accent-500/20 dark:text-accent-300">
                   {group.tracks.length} Subskill
                 </span>
               </div>
 
-              {/* Grid Kartu Subskill Compact & Bersih */}
+              {/* Grid Kartu Subskill Compact & Bersih dengan Nuansa Hijau Modern */}
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2.5">
                 {group.tracks.map((track) => (
                   <Link
                     key={track.id}
                     to={track.path}
                     onClick={onClose}
-                    className="group flex items-center justify-between rounded-xl border border-slate-200/90 bg-white p-3 transition-all hover:border-accent-500 hover:bg-slate-50/80 hover:shadow-sm dark:border-slate-800/80 dark:bg-slate-950/60 dark:hover:border-accent-500 dark:hover:bg-slate-900/80"
+                    className="group flex items-center justify-between rounded-xl border border-slate-200/90 bg-white p-3 transition-all hover:border-accent-500 hover:bg-accent-50/50 hover:shadow-sm dark:border-slate-800/80 dark:bg-slate-800/60 dark:hover:border-accent-500 dark:hover:bg-accent-950/30"
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
                       <div
@@ -307,7 +307,7 @@ export function TutorialsModal({ isOpen, onClose }: TutorialsModalProps) {
                         {track.name}
                       </span>
                     </div>
-                    <ChevronRight className="h-4 w-4 shrink-0 text-slate-300 transition-transform group-hover:translate-x-0.5 group-hover:text-accent-500 dark:text-slate-600" />
+                    <ChevronRight className="h-4 w-4 shrink-0 text-slate-400 transition-transform group-hover:translate-x-0.5 group-hover:text-accent-500" />
                   </Link>
                 ))}
               </div>
@@ -321,15 +321,15 @@ export function TutorialsModal({ isOpen, onClose }: TutorialsModalProps) {
           )}
         </div>
 
-        {/* Footer Ringkas */}
-        <div className="border-t border-slate-200 bg-slate-50 px-6 py-3 text-xs text-slate-500 dark:border-slate-800 dark:bg-slate-950/80 flex items-center justify-between">
+        {/* Footer Ringkas dengan Sentuhan Hijau */}
+        <div className="border-t border-accent-500/15 bg-accent-50/30 px-6 py-3 text-xs text-slate-500 dark:border-slate-800 dark:bg-slate-900/90 flex items-center justify-between">
           <span className="font-medium text-slate-700 dark:text-slate-400">
             {totalResults} Subskill Tersedia
           </span>
           <Link
             to="/editor"
             onClick={onClose}
-            className="font-bold text-accent-600 hover:underline dark:text-accent-400"
+            className="font-bold text-accent-600 hover:text-accent-700 hover:underline dark:text-accent-400"
           >
             Code Editor ❯
           </Link>

@@ -119,12 +119,9 @@ export default function CySecToolsPage() {
           <Shield className="h-3.5 w-3.5" />
           100% Privacy & Client-Side
         </div>
-        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-50 light:text-slate-900">
+        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-100">
           Cyber Security & OSINT Interactive Tools
         </h1>
-        <p className="max-w-2xl text-sm text-slate-400 light:text-slate-600">
-          108+ tools interaktif untuk kriptografi, analisa PCAP, inspeksi berkas, web security, dan OSINT. Semua berjalan langsung di browser via WebAssembly & Web Crypto API.
-        </p>
 
         {/* Search global W3Schools / Material Bar */}
         <div className="pt-2 max-w-md">
