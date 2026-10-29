@@ -257,12 +257,16 @@ html.light .nav-active {
    Dokumen (konten yang disanitasi saat parsing)
    ============================================================ */
 .doc-content {
-  @apply text-[15.5px] leading-7;
+  @apply text-[17px] leading-[1.8] text-slate-300;
   overflow-wrap: break-word;
 }
 
+html.light .doc-content {
+  @apply text-slate-800;
+}
+
 .doc-content p {
-  @apply my-4;
+  @apply my-4 sm:my-5;
 }
 
 .doc-content h1,
@@ -271,17 +275,34 @@ html.light .nav-active {
 .doc-content h4,
 .doc-content h5,
 .doc-content h6 {
-  @apply scroll-mt-20 font-semibold tracking-tight text-slate-100;
+  @apply scroll-mt-20 font-bold tracking-tight text-slate-100;
+}
+
+html.light .doc-content h1,
+html.light .doc-content h2,
+html.light .doc-content h3,
+html.light .doc-content h4,
+html.light .doc-content h5,
+html.light .doc-content h6 {
+  @apply text-slate-900;
+}
+
+.doc-content h1 {
+  @apply mb-4 mt-8 text-3xl sm:text-4xl font-extrabold;
 }
 
 .doc-content h2 {
-  @apply mb-3 mt-9 border-b border-slate-800 pb-2 text-2xl;
+  @apply mb-4 mt-10 border-b border-slate-800 pb-2.5 text-2xl sm:text-[28px] font-bold;
+}
+
+html.light .doc-content h2 {
+  @apply border-slate-200;
 }
 .doc-content h3 {
-  @apply mb-2 mt-7 text-xl;
+  @apply mb-3 mt-8 text-xl sm:text-[22px] font-semibold;
 }
 .doc-content h4 {
-  @apply mb-2 mt-6 text-lg;
+  @apply mb-2 mt-6 text-lg sm:text-[19px] font-semibold;
 }
 
 .doc-content a {
@@ -334,16 +355,19 @@ html.light .nav-active {
 
 /* ---------- code blocks ---------- */
 .doc-content code {
-  @apply rounded bg-slate-800/90 px-1.5 py-0.5 font-mono text-[13px] text-amber-200;
+  @apply rounded bg-slate-800/90 px-1.5 py-0.5 font-mono text-[14px] text-amber-200;
+}
+html.light .doc-content code {
+  @apply bg-slate-200 text-amber-800;
 }
 .doc-content pre {
-  @apply my-5 overflow-x-auto rounded-xl border border-slate-800/90 bg-slate-900 p-4 shadow-lg shadow-black/20;
+  @apply my-6 overflow-x-auto rounded-xl border border-slate-800/90 bg-slate-900 p-4 sm:p-5 shadow-lg shadow-black/20;
 }
 html.light .doc-content pre {
   @apply shadow-md shadow-slate-500/15;
 }
 .doc-content pre code {
-  @apply block bg-transparent p-0 text-[13.5px] leading-6 text-slate-200;
+  @apply block bg-transparent p-0 text-[14.5px] leading-relaxed text-slate-200;
 }
 
 /* header code block: label bahasa + tombol copy (disuntikkan frontend) */

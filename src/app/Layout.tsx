@@ -288,7 +288,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-slate-950 text-slate-300 light:bg-slate-50 light:text-slate-800">
       {/* ============ TOP APP BAR (Material 3 Style) ============ */}
       <header className="sticky top-0 z-40 border-b border-slate-800/90 bg-slate-950/90 backdrop-blur-md supports-[backdrop-filter]:bg-slate-950/80 light:border-slate-200 light:bg-white/95 shadow-sm">
-        <div className="mx-auto flex h-14 max-w-[1550px] items-center justify-between gap-2 px-3 sm:gap-4 sm:px-5">
+        <div className={cn('flex h-14 items-center justify-between gap-2 px-3 sm:gap-4 sm:px-6', !isDocsRoute ? 'mx-auto max-w-[1550px]' : 'w-full')}>
           {/* Sisi Kiri: Hamburger + Brand */}
           <div className="flex items-center gap-2.5 sm:gap-3">
             {/* Hamburger button (muncul saat rute docs di HP atau drawer umum) */}
@@ -390,7 +390,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </header>
 
       {/* ============ KONTEN & SIDEBAR ============ */}
-      <div className="mx-auto flex max-w-[1550px]">
+      <div className={cn('flex w-full', !isDocsRoute && 'mx-auto max-w-[1550px]')}>
         {/* ============ MOBILE/TABLET DRAWER ============ */}
         {drawerOpen && (
           <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true">
@@ -426,7 +426,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <aside
             className={cn(
               'sticky top-[5.75rem] hidden h-[calc(100vh-5.75rem)] shrink-0 border-r border-slate-800/80 transition-[width] duration-200 light:border-slate-200 lg:block',
-              sidebarCollapsed ? 'w-14' : 'w-72 xl:w-80'
+              sidebarCollapsed ? 'w-14' : 'w-60 xl:w-64'
             )}
           >
             {sidebarCollapsed ? (
@@ -453,7 +453,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <main
           className={cn(
             'min-w-0 flex-1 pb-20 md:pb-8',
-            isDocsRoute ? 'px-4 py-6 sm:px-8 xl:px-10' : ''
+            isDocsRoute ? 'px-6 sm:px-10 lg:px-12 xl:px-16 py-6' : ''
           )}
         >
           {children}

@@ -202,7 +202,7 @@ export function TopicRibbon({ className }: { className?: string }) {
       role="navigation"
       aria-label="Pilihan topik materi"
     >
-      <div className="mx-auto flex max-w-[1600px] items-center px-1 sm:px-2">
+      <div className="flex w-full items-center px-1 sm:px-4">
         {/* Scroll Left Button */}
         {canScrollLeft && (
           <button
