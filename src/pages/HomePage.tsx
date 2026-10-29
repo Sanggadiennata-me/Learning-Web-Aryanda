@@ -8,7 +8,7 @@ import {
   Globe,
   Layers,
   Lock,
-  Map,
+  Network,
   Play,
   Search,
   Server,
@@ -241,11 +241,11 @@ export default function HomePage() {
                 Mulai Belajar ❯
               </Link>
               <Link
-                to="/roadmap"
+                to="/graph"
                 className="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-800/80 px-5 py-2.5 text-xs sm:text-sm font-semibold text-slate-200 transition-all hover:border-accent-500 hover:bg-slate-800 hover:text-white light:border-slate-300 light:bg-white light:text-slate-700 active:scale-95"
               >
-                <Map className="h-4 w-4 text-accent-500" />
-                Alur Roadmap
+                <Network className="h-4 w-4 text-accent-500" />
+                Graf Pengetahuan
               </Link>
               <Link
                 to="/editor"
@@ -427,10 +427,10 @@ export default function HomePage() {
                 Mulai Belajar ❯
               </Link>
               <Link
-                to="/roadmap"
+                to="/editor?lang=javascript"
                 className="text-xs font-semibold text-slate-400 hover:text-slate-200 light:text-slate-600 hover:underline"
               >
-                Cek Roadmap
+                Coba di Editor →
               </Link>
             </div>
           </div>
@@ -493,10 +493,10 @@ export default function HomePage() {
                 Mulai Belajar ❯
               </Link>
               <Link
-                to="/roadmap"
+                to="/editor?lang=javascript"
                 className="text-xs font-semibold text-slate-400 hover:text-slate-200 light:text-slate-600 hover:underline"
               >
-                Cek Roadmap
+                Coba di Editor →
               </Link>
             </div>
           </div>

@@ -344,13 +344,13 @@ export function TutorialsModal({ isOpen, onClose }: TutorialsModalProps) {
 
         {/* Footer info */}
         <div className="border-t border-slate-200 bg-slate-50 px-6 py-3 text-xs text-slate-500 dark:border-slate-800 dark:bg-slate-950/80 flex items-center justify-between">
-          <span>{totalResults} modul tutorial tersedia dari Obsidian Vault</span>
+          <span>{totalResults} modul tutorial siap dipelajari dari Obsidian Vault</span>
           <Link
-            to="/roadmap"
+            to="/editor"
             onClick={onClose}
             className="font-bold text-accent-600 hover:underline dark:text-accent-400"
           >
-            Lihat Alur Roadmap Belajar ❯
+            Buka Tryit Editor Interaktif ❯
           </Link>
         </div>
       </div>

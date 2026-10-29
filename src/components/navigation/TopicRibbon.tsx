@@ -66,12 +66,6 @@ export const W3S_RIBBON_ITEMS: RibbonItem[] = [
     matchPrefixes: ['/cysec-tools', '/osint'],
   },
   {
-    id: 'roadmap',
-    label: 'ROADMAP',
-    path: '/roadmap',
-    matchPrefixes: ['/roadmap'],
-  },
-  {
     id: 'editor',
     label: 'EDITOR',
     path: '/editor',

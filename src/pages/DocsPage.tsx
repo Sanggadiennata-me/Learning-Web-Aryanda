@@ -213,7 +213,7 @@ export default function DocsPage() {
             {roadmaps.subskills.map((sub) => (
               <Link
                 key={sub.id}
-                to={`/roadmap?sub=${encodeURIComponent(`sub:${sub.id}`)}`}
+                to={`/docs/${encodeURIComponent(sub.folder.toLowerCase())}`}
                 className="group flex shrink-0 items-center gap-2 rounded-xl border border-slate-800 bg-slate-900/80 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-accent-500 hover:text-accent-300 light:border-slate-200 light:bg-white light:text-slate-700 shadow-sm transition-all"
               >
                 <span

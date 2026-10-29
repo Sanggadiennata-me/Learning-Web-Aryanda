@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { BookOpen, Code2, Home, Map, Shield } from 'lucide-react';
+import { BookOpen, Code2, Home, Network, Shield } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 interface NavItem {
@@ -11,8 +11,8 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { label: 'Home', to: '/', icon: Home },
   { label: 'Tutorials', to: '/docs', icon: BookOpen },
+  { label: 'Graph', to: '/graph', icon: Network },
   { label: 'Editor', to: '/editor', icon: Code2 },
-  { label: 'Roadmap', to: '/roadmap', icon: Map },
   { label: 'Tools', to: '/cysec-tools', icon: Shield },
 ];
 

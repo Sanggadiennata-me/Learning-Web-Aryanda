@@ -5,7 +5,6 @@ import {
   ChevronsRight,
   Code2,
   FolderTree,
-  Map,
   Menu,
   Moon,
   Network,
@@ -251,10 +250,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <BookOpen className="h-3.5 w-3.5" />
         Tutorials
       </NavLink>
-      <NavLink to="/roadmap" className={navLinkClass}>
-        <Map className="h-3.5 w-3.5" />
-        Roadmap Belajar
-      </NavLink>
       <NavLink to="/graph" className={navLinkClass}>
         <Network className="h-3.5 w-3.5" />
         Graf Pengetahuan
@@ -330,10 +325,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
               <span>Tutorials</span>
               <span className="text-[10px] opacity-70">▾</span>
             </button>
-            <NavLink to="/roadmap" className={navLinkClass}>
-              <Map className="h-3.5 w-3.5" />
-              Roadmap
-            </NavLink>
             <NavLink to="/graph" className={navLinkClass}>
               <Network className="h-3.5 w-3.5" />
               Graph
@@ -474,9 +465,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
             <nav className="flex flex-wrap items-center gap-4 text-xs font-medium text-slate-500 light:text-slate-600">
               <Link to="/docs" className="transition-colors hover:text-accent-500">
                 Tutorials
-              </Link>
-              <Link to="/roadmap" className="transition-colors hover:text-accent-500">
-                Roadmap
               </Link>
               <Link to="/graph" className="transition-colors hover:text-accent-500">
                 Graph
