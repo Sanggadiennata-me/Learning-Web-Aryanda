@@ -15,22 +15,6 @@ interface TreeExplorerProps {
   onOpenTutorialsModal?: () => void;
 }
 
-function ancestorsOf(nodes: TreeNode[], id: string, trail: string[] = []): string[] {
-  for (const node of nodes) {
-    if (node.type === 'file') {
-      if (node.id === id) return trail;
-    } else {
-      const pathTrail = [...trail, node.relativePath];
-      if (node.relativePath && normalizeId(node.relativePath) === id) {
-        return pathTrail;
-      }
-      const found = ancestorsOf(node.children, id, pathTrail);
-      if (found.length > 0) return found;
-    }
-  }
-  return [];
-}
-
 function filterTree(
   nodes: TreeNode[],
   query: string
@@ -85,73 +69,15 @@ export function TreeExplorer({
     [nodes, filterQuery]
   );
 
-  // Kumpulkan folder materi utama agar terbuka secara default (mirip W3Schools).
-  // Folder 'Praktek' / practice code dikecualikan agar tidak mengganggu alur baca materi.
-  const defaultExpanded = useMemo(() => {
-    const paths = new Set<string>();
-    function collect(list: TreeNode[], depth = 0) {
-      for (const item of list) {
-        if (item.type === 'folder') {
-          const isPractice =
-            item.name.toLowerCase() === 'praktek' ||
-            item.name.toLowerCase() === 'practice' ||
-            item.relativePath.toLowerCase().endsWith('/praktek');
+  // Folder pada sidebar diset tertutup secara default (auto open = false)
+  // sesuai permintaan: saat subskill dibuka, hanya nama subskill/bab utama yang tampil
+  // dan pengguna membukanya secara manual.
+  const [expanded, setExpanded] = useState<Set<string>>(() => new Set<string>());
 
-          if (!isPractice) {
-            paths.add(item.relativePath);
-            if (depth < 2) {
-              collect(item.children, depth + 1);
-            }
-          }
-        }
-      }
-    }
-    collect(nodes, 0);
-    return paths;
+  // Saat modul tutorial berganti (nodes berganti), reset folder bab ke kondisi tertutup
+  useEffect(() => {
+    setExpanded(new Set<string>());
   }, [nodes]);
-
-  const [expanded, setExpanded] = useState<Set<string>>(() => {
-    const initial = new Set(defaultExpanded);
-    if (activeId) {
-      for (const a of ancestorsOf(nodes, activeId)) {
-        initial.add(a);
-      }
-    }
-    return initial;
-  });
-
-  // Saat modul tutorial berganti (nodes berganti), inisialisasi folder bab
-  useEffect(() => {
-    const initial = new Set(defaultExpanded);
-    if (activeId) {
-      for (const a of ancestorsOf(nodes, activeId)) {
-        initial.add(a);
-      }
-    }
-    setExpanded(initial);
-  }, [nodes]); // HANYA berjalan saat ganti modul track (nodes), BUKAN saat navigasi activeId!
-
-  // Saat berpindah materi di dalam modul (activeId berganti):
-  // HANYA buka ancestor dari file aktif jika file tersebut berada di folder yang sedang tertutup.
-  // Folder lain yang sengaja ditutup oleh user (mis. Praktek) TIDAK AKAN dibuka kembali!
-  useEffect(() => {
-    if (activeId) {
-      const ancestors = ancestorsOf(nodes, activeId);
-      if (ancestors.length > 0) {
-        setExpanded((prev) => {
-          let hasMissing = false;
-          for (const a of ancestors) {
-            if (!prev.has(a)) {
-              hasMissing = true;
-              break;
-            }
-          }
-          if (!hasMissing) return prev;
-          return new Set([...prev, ...ancestors]);
-        });
-      }
-    }
-  }, [activeId, nodes]);
 
   useEffect(() => {
     if (filterQuery.trim()) {
