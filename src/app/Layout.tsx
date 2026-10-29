@@ -304,20 +304,17 @@ export function Layout({ children }: { children: React.ReactNode }) {
               to="/"
               className="group flex min-w-0 items-center gap-2.5 rounded-xl py-1 focus:outline-none"
             >
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-accent-500/10 p-1 ring-1 ring-accent-500/30 transition-transform group-hover:scale-105">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-accent-500/10 p-0.5 ring-1 ring-accent-500/30 transition-transform group-hover:scale-105 overflow-hidden">
                 <img
-                  src={joinWithRoot('assets/asset/logo%20web.png')}
+                  src={joinWithRoot('assets/asset/codelearn-logo.png')}
                   alt="Logo CodeLearn"
-                  className="h-full w-full object-contain"
+                  className="h-full w-full object-cover rounded-lg"
                 />
               </div>
               <div className="flex flex-col">
                 <div className="flex items-center gap-1.5">
                   <span className="font-extrabold tracking-tight text-slate-100 group-hover:text-accent-400 transition-colors light:text-slate-900 text-sm sm:text-base">
                     CodeLearn
-                  </span>
-                  <span className="hidden rounded-full bg-accent-500/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent-400 light:bg-accent-100 light:text-accent-700 sm:inline-block">
-                    PRO
                   </span>
                 </div>
                 <span className="hidden text-[10px] text-slate-500 light:text-slate-400 sm:block leading-none -mt-0.5">
@@ -469,9 +466,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
             <div className="flex items-center gap-2.5 text-sm">
               <img
-                src={joinWithRoot('assets/asset/logo%20web.png')}
-                alt=""
-                className="h-6 w-6 object-contain"
+                src={joinWithRoot('assets/asset/codelearn-logo.png')}
+                alt="Logo CodeLearn"
+                className="h-6 w-6 rounded-md object-cover"
               />
               <span className="font-semibold text-slate-200 light:text-slate-800">
                 CodeLearn
