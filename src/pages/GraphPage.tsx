@@ -6,13 +6,14 @@ import { ForceGraph } from '../components/graph/ForceGraph';
 import { Spinner } from '../components/ui/spinner';
 import type { GraphData, GraphNode } from '../domain/types';
 import { cn } from '../lib/utils';
+import { FOLDER_COLORS, FALLBACK_COLOR } from '../lib/colors';
 
 const FOLDER_LABELS: Record<string, { label: string; color: string }> = {
-  Pemrograman: { label: 'Pemrograman', color: '#10B981' },
-  CyberSecurity: { label: 'CyberSecurity', color: '#6366F1' },
-  DevOps: { label: 'DevOps', color: '#06B6D4' },
-  Jaringan: { label: 'Jaringan', color: '#F59E0B' },
-  'Terms and foreign words': { label: 'Kamus IT', color: '#EC4899' },
+  Pemrograman: { label: 'Pemrograman', color: FOLDER_COLORS.Pemrograman },
+  CyberSecurity: { label: 'CyberSecurity', color: FOLDER_COLORS.CyberSecurity },
+  DevOps: { label: 'DevOps', color: FOLDER_COLORS.DevOps },
+  Jaringan: { label: 'Jaringan', color: FOLDER_COLORS.Jaringan },
+  'Terms and foreign words': { label: 'Kamus IT', color: FALLBACK_COLOR },
 };
 
 /**

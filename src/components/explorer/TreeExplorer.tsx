@@ -69,9 +69,9 @@ function filterTree(
 }
 
 /**
- * W3Schools Signature Sidebar Navigation (Screenshot 2):
- * - Judul modul di paling atas (misal: "HTML TUTORIAL", "PYTHON TUTORIAL").
- * - Item yang aktif memiliki background abu-abu (#E7E9EB) dan border kiri hijau tebal (#04AA6D).
+ * Sidebar Navigation:
+ * - Mengadopsi struktur bab & materi W3Schools yang terstruktur per kurikulum.
+ * - Menggunakan palet warna personal CodeLearn: aksen hijau tema (accent) dengan indikator border kiri.
  * - Tampilan flat, bersih, tanpa ikon bertumpuk, nyaman dibaca.
  */
 export function TreeExplorer({
@@ -195,8 +195,8 @@ function TreeNodeRow({
             className={cn(
               'flex items-center justify-between w-full py-2 pr-3 text-[13.5px] transition-colors',
               active
-                ? 'bg-[#E7E9EB] text-slate-950 font-bold border-l-4 border-l-[#04AA6D] dark:bg-[#38444D] dark:text-white dark:border-l-[#04AA6D]'
-                : 'text-slate-700 hover:bg-slate-200/80 hover:text-slate-950 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white'
+                ? 'bg-accent-500/15 text-accent-800 font-bold border-l-4 border-l-accent-600 dark:bg-accent-500/20 dark:text-accent-300 dark:border-l-accent-400'
+                : 'text-slate-700 hover:bg-slate-200/60 hover:text-slate-950 dark:text-slate-300 dark:hover:bg-slate-800/60 dark:hover:text-white'
             )}
             style={{ paddingLeft: padding }}
             title={node.title}

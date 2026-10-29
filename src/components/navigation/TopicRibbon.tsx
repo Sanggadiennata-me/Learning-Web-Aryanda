@@ -80,10 +80,10 @@ export const W3S_RIBBON_ITEMS: RibbonItem[] = [
 ];
 
 /**
- * W3Schools Signature Horizontal Ribbon Bar (Screenshot 2):
- * - Background khas W3Schools: dark charcoal #282A35.
- * - Tab aktif memiliki background PUTIH dan teks HITAM TEBAL (persis tab HTML di screenshot).
- * - Tab non-aktif memiliki teks PUTIH dengan hover dark highlight.
+ * Horizontal Ribbon Bar Navigasi:
+ * - Mengadopsi struktur horizontal scroll W3Schools yang cepat diakses.
+ * - Menggunakan palet warna personal: slate charcoal background & aksen hijau segar khas CodeLearn.
+ * - Tab aktif terhighlight dengan aksen brand (accent-600).
  */
 export function TopicRibbon({ className }: { className?: string }) {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -119,18 +119,20 @@ export function TopicRibbon({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        'relative bg-[#282a35] border-b border-black/40 text-white select-none shadow-sm z-30',
+        'relative bg-slate-900 border-b border-slate-800 text-slate-200 select-none shadow-sm z-30',
+        'dark:bg-slate-950 dark:border-slate-800/80',
+        'light:bg-slate-100 light:border-slate-200 light:text-slate-700',
         className
       )}
       role="navigation"
-      aria-label="Pilihan topik W3Schools"
+      aria-label="Pilihan topik materi"
     >
       <div className="mx-auto flex max-w-[1600px] items-center px-1 sm:px-2">
         {/* Scroll Left Button */}
         {canScrollLeft && (
           <button
             onClick={() => scroll('left')}
-            className="hidden sm:flex h-7 w-7 items-center justify-center rounded-full bg-black/50 text-white hover:bg-black transition-all shrink-0"
+            className="hidden sm:flex h-7 w-7 items-center justify-center rounded-full bg-slate-800/90 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700/60 light:bg-white light:border-slate-300 light:text-slate-700 light:hover:bg-slate-200 transition-all shrink-0"
             aria-label="Geser ke kiri"
           >
             <ChevronLeft className="h-4 w-4" />
@@ -140,7 +142,7 @@ export function TopicRibbon({ className }: { className?: string }) {
         {/* Scrollable Container */}
         <div
           ref={scrollRef}
-          className="scrollbar-thin flex flex-1 items-center overflow-x-auto scroll-smooth"
+          className="scrollbar-thin flex flex-1 items-center overflow-x-auto scroll-smooth py-1"
         >
           {W3S_RIBBON_ITEMS.map((item) => {
             const isActive = item.matchPrefixes.some((prefix) =>
@@ -152,10 +154,10 @@ export function TopicRibbon({ className }: { className?: string }) {
                 key={item.id}
                 to={item.path}
                 className={cn(
-                  'px-3.5 py-2 text-xs font-bold tracking-wider uppercase transition-colors whitespace-nowrap shrink-0',
+                  'px-3.5 py-1.5 text-xs font-bold tracking-wider uppercase rounded-lg transition-all whitespace-nowrap shrink-0 mx-0.5',
                   isActive
-                    ? 'bg-white text-black shadow'
-                    : 'text-white hover:bg-black/40'
+                    ? 'bg-accent-600 text-white shadow-sm ring-1 ring-accent-500/50'
+                    : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/80 light:text-slate-600 light:hover:text-slate-950 light:hover:bg-slate-200/80'
                 )}
               >
                 {item.label}
@@ -168,7 +170,7 @@ export function TopicRibbon({ className }: { className?: string }) {
         {canScrollRight && (
           <button
             onClick={() => scroll('right')}
-            className="hidden sm:flex h-7 w-7 items-center justify-center rounded-full bg-black/50 text-white hover:bg-black transition-all shrink-0"
+            className="hidden sm:flex h-7 w-7 items-center justify-center rounded-full bg-slate-800/90 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700/60 light:bg-white light:border-slate-300 light:text-slate-700 light:hover:bg-slate-200 transition-all shrink-0"
             aria-label="Geser ke kanan"
           >
             <ChevronRight className="h-4 w-4" />

@@ -353,7 +353,7 @@ export function DocumentViewer({ doc }: { doc: DocumentData }) {
                 {nextDoc && (
                   <Link
                     to={`/docs/${doc.next}`}
-                    className="mt-4 inline-flex items-center gap-2 rounded-xl bg-[#04AA6D] px-5 py-2.5 text-xs sm:text-sm font-bold text-white shadow transition-all hover:bg-[#059862] active:scale-95"
+                    className="mt-4 inline-flex items-center gap-2 rounded-xl bg-accent-600 px-5 py-2.5 text-xs sm:text-sm font-bold text-white shadow-sm ring-1 ring-accent-500/50 transition-all hover:bg-accent-500 active:scale-95"
                   >
                     <span>Mulai Belajar Sekarang</span>
                     <span>❯</span>
