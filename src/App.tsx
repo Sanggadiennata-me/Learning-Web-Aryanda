@@ -21,7 +21,9 @@ function App() {
         <Layout>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/docs" element={<DocsPage />} />
+          {/* Halaman /docs dan /tutorials dialihkan langsung ke modul tutorial aktif */}
+          <Route path="/docs" element={<Navigate to="/docs/pemrograman/html/block-formatting-text" replace />} />
+          <Route path="/tutorials" element={<Navigate to="/docs/pemrograman/html/block-formatting-text" replace />} />
           <Route path="/docs/*" element={<DocumentPage />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/graph" element={<GraphPage />} />

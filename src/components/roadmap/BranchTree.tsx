@@ -37,9 +37,12 @@ function buildBranchTree(roadmap: RoadmapInfo, graph: GraphData): BranchNode {
   const nodeById = new Map(graph.nodes.map((n) => [n.id, n]));
   const outLinks = new Map<string, string[]>();
   for (const link of graph.links) {
-    const list = outLinks.get(link.source) ?? [];
-    list.push(link.target);
-    outLinks.set(link.source, list);
+    const srcId = typeof link.source === 'object' && link.source !== null ? (link.source as { id: string }).id : link.source;
+    const tgtId = typeof link.target === 'object' && link.target !== null ? (link.target as { id: string }).id : link.target;
+    if (!srcId || !tgtId) continue;
+    const list = outLinks.get(srcId) ?? [];
+    list.push(tgtId);
+    outLinks.set(srcId, list);
   }
 
   const stepSet = new Set(roadmap.stepIds);

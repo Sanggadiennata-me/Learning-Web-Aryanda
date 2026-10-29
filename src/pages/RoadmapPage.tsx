@@ -193,6 +193,21 @@ export default function RoadmapPage() {
     return map;
   }, [practiceGroups, selectedRoadmaps]);
 
+  const displayedGroups = useMemo(() => {
+    if (filterCategory === 'all') return groups;
+    return groups.filter((g) => g.skill.toLowerCase() === filterCategory.toLowerCase());
+  }, [groups, filterCategory]);
+
+  const syncedAt = metadata?.generatedAt
+    ? new Date(metadata.generatedAt).toLocaleString('id-ID', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      })
+    : null;
+
   if (error) {
     return (
       <div className="mx-auto max-w-2xl py-16 text-center text-sm text-slate-400">
@@ -208,21 +223,6 @@ export default function RoadmapPage() {
       </div>
     );
   }
-
-  const syncedAt = metadata?.generatedAt
-    ? new Date(metadata.generatedAt).toLocaleString('id-ID', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      })
-    : null;
-
-  const displayedGroups = useMemo(() => {
-    if (filterCategory === 'all') return groups;
-    return groups.filter((g) => g.skill.toLowerCase() === filterCategory.toLowerCase());
-  }, [groups, filterCategory]);
 
   /* ============================ GRID VIEW (semua subskill) ============================ */
   if (!selected) {
@@ -410,10 +410,33 @@ export default function RoadmapPage() {
           </header>
 
           {selectedRoadmaps.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-slate-700 bg-slate-900/30 p-8 text-center text-sm text-slate-500">
-              Belum ada roadmap untuk subskill ini. Tambahkan file bertag{' '}
-              <code className="rounded bg-slate-800 px-1.5 py-0.5 text-xs text-emerald-300">#roadmap</code>{' '}
-              di folder ini.
+            <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-900/30 p-10 text-center dark:border-slate-800">
+              <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-accent-500/10 text-accent-400 text-xl font-bold">
+                📖
+              </span>
+              <h3 className="mt-4 text-base font-bold text-slate-200 dark:text-slate-100">
+                Alur Roadmap Belum Dikonfigurasi
+              </h3>
+              <p className="mt-1.5 text-xs text-slate-400 max-w-md mx-auto leading-relaxed">
+                Modul &ldquo;{selected.label}&rdquo; belum memiliki berkas catatan bertanda{' '}
+                <code className="rounded bg-slate-800 px-1.5 py-0.5 text-accent-400 font-mono">#roadmap</code>.
+                Namun Anda tetap dapat membaca materi dan tutorial lengkapnya secara langsung.
+              </p>
+              <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+                <Link
+                  to={`/docs/${selected.path.toLowerCase()}`}
+                  className="inline-flex items-center gap-2 rounded-xl bg-accent-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm ring-1 ring-accent-500/50 hover:bg-accent-500 transition-all"
+                >
+                  <span>Buka Materi {selected.label}</span>
+                  <span>❯</span>
+                </Link>
+                <button
+                  onClick={() => navigate('/roadmap')}
+                  className="rounded-xl border border-slate-700 bg-slate-800/80 px-4 py-2.5 text-xs font-semibold text-slate-300 hover:bg-slate-700 transition-colors"
+                >
+                  ← Kembali ke Katalog Roadmap
+                </button>
+              </div>
             </div>
           ) : (
             <div className="space-y-8">

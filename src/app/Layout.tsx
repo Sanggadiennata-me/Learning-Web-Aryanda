@@ -249,7 +249,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </p>
       <NavLink to="/docs" className={navLinkClass}>
         <BookOpen className="h-3.5 w-3.5" />
-        Dokumentasi
+        Tutorials
       </NavLink>
       <NavLink to="/roadmap" className={navLinkClass}>
         <Map className="h-3.5 w-3.5" />
@@ -312,24 +312,24 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 </span>
               </div>
             </Link>
-
-            {/* W3Schools Signature "Tutorials ▾" Dropdown (Screenshot 1 & 2) */}
-            <button
-              onClick={() => setTutorialsModalOpen(true)}
-              className="flex items-center gap-1.5 rounded-xl border border-slate-700 bg-slate-900/90 px-3 py-1.5 text-xs sm:text-sm font-bold text-slate-100 transition-all hover:bg-slate-800 hover:text-white dark:border-slate-700 dark:hover:bg-slate-800 light:border-slate-300 light:bg-slate-100 light:text-slate-800 light:hover:bg-slate-200 shadow-sm"
-              title="Pilih tutorial & materi (W3Schools style)"
-            >
-              <span>Tutorials</span>
-              <span className="text-[10px] text-slate-400">▾</span>
-            </button>
           </div>
 
           {/* Sisi Tengah: Navigasi Desktop Ber-Pills ala Material */}
-          <nav className="hidden items-center gap-1 lg:flex" aria-label="Navigasi Utama">
-            <NavLink to="/docs" className={navLinkClass}>
+          <nav className="hidden items-center gap-1.5 lg:flex" aria-label="Navigasi Utama">
+            <button
+              onClick={() => setTutorialsModalOpen(true)}
+              className={cn(
+                'group inline-flex items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs sm:text-sm font-semibold transition-all duration-150',
+                isDocsRoute
+                  ? 'bg-accent-600 text-white shadow-sm ring-1 ring-accent-500/50'
+                  : 'text-slate-300 hover:bg-slate-800 hover:text-white light:text-slate-600 light:hover:bg-slate-100 light:hover:text-slate-900'
+              )}
+              title="Katalog tutorial & kurikulum belajar"
+            >
               <BookOpen className="h-3.5 w-3.5" />
-              Docs
-            </NavLink>
+              <span>Tutorials</span>
+              <span className="text-[10px] opacity-70">▾</span>
+            </button>
             <NavLink to="/roadmap" className={navLinkClass}>
               <Map className="h-3.5 w-3.5" />
               Roadmap
@@ -473,7 +473,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
             </div>
             <nav className="flex flex-wrap items-center gap-4 text-xs font-medium text-slate-500 light:text-slate-600">
               <Link to="/docs" className="transition-colors hover:text-accent-500">
-                Docs
+                Tutorials
               </Link>
               <Link to="/roadmap" className="transition-colors hover:text-accent-500">
                 Roadmap

@@ -10,7 +10,7 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { label: 'Home', to: '/', icon: Home },
-  { label: 'Docs', to: '/docs', icon: BookOpen },
+  { label: 'Tutorials', to: '/docs', icon: BookOpen },
   { label: 'Editor', to: '/editor', icon: Code2 },
   { label: 'Roadmap', to: '/roadmap', icon: Map },
   { label: 'Tools', to: '/cysec-tools', icon: Shield },

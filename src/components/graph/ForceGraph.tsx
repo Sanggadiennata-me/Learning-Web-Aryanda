@@ -94,7 +94,9 @@ export function ForceGraph({ data, showIsolated, onNodeClick, onHoverChange, fit
 
   const graphLinks = useMemo(() => {
     const ids = new Set(graphNodes.map((n) => n.id));
-    return data.links.filter((link) => ids.has(link.source) && ids.has(link.target));
+    return data.links
+      .filter((link) => ids.has(link.source) && ids.has(link.target))
+      .map((link) => ({ ...link }));
   }, [data.links, graphNodes]);
 
   // ukuran container
