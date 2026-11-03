@@ -194,6 +194,18 @@
       "hash": "sha256:9748bf0ddabc714f016e43272e78ea64eab4be657c67a5ea9eedb7317a6e52dd"
     },
     {
+      "sourcePath": "Pemrograman/CSS/Bootstrap/image/bs_grid_12_visual.png",
+      "publicPath": "/assets/vault/Pemrograman/CSS/Bootstrap/image/bs_grid_12_visual.png",
+      "size": 13104,
+      "hash": "sha256:541b0643153ad3f5f6ee76b5f6689b0fe2653c24660aaef3bfd9acd471049f84"
+    },
+    {
+      "sourcePath": "Pemrograman/CSS/Bootstrap/image/bs_vs_tailwind_concept.png",
+      "publicPath": "/assets/vault/Pemrograman/CSS/Bootstrap/image/bs_vs_tailwind_concept.png",
+      "size": 35184,
+      "hash": "sha256:af8f21ad5f1970896f9477f33c802af8b0277803192768c58bb3e5c156c82bde"
+    },
+    {
       "sourcePath": "Pemrograman/CSS/Native/image/aftermargin.png",
       "publicPath": "/assets/vault/Pemrograman/CSS/Native/image/aftermargin.png",
       "size": 317812,
