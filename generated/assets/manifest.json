@@ -518,6 +518,12 @@
       "hash": "sha256:da27acff76a718457327a8086ebd00b628415d32dfd595411ce4fa215d196712"
     },
     {
+      "sourcePath": "Pemrograman/CSS/Tailwind/image/tw_container_queries_visual.png",
+      "publicPath": "/assets/vault/Pemrograman/CSS/Tailwind/image/tw_container_queries_visual.png",
+      "size": 37957,
+      "hash": "sha256:ed1472209fe3eaaed345d363c7fb921464d07d416a0555648fef8922e7df203a"
+    },
+    {
       "sourcePath": "Pemrograman/CSS/Tailwind/image/tw_utility_concept.png",
       "publicPath": "/assets/vault/Pemrograman/CSS/Tailwind/image/tw_utility_concept.png",
       "size": 36997,
