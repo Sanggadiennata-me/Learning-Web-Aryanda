@@ -296,6 +296,12 @@
       "hash": "sha256:f179fa30ca587eb837e7dfcf4c2ffe35f075eddcb0fb1e6a6feb0fccfd8f341f"
     },
     {
+      "sourcePath": "Pemrograman/CSS/Native/image/flexbox_justify_visual.png",
+      "publicPath": "/assets/vault/Pemrograman/CSS/Native/image/flexbox_justify_visual.png",
+      "size": 24137,
+      "hash": "sha256:ea1103d1ee59f9fbe30280c93d6e777313f2304fea667047a4030e90ae7847de"
+    },
+    {
       "sourcePath": "Pemrograman/CSS/Native/image/Floating 2.png",
       "publicPath": "/assets/vault/Pemrograman/CSS/Native/image/Floating 2.png",
       "size": 504221,
@@ -384,6 +390,36 @@
       "publicPath": "/assets/vault/Pemrograman/CSS/Native/image/padding2.png",
       "size": 205399,
       "hash": "sha256:f265585054baa4a32ca05105d0e527f89866ff68de368abf10bba329f47f533c"
+    },
+    {
+      "sourcePath": "Pemrograman/CSS/Native/image/positioning_comparison.png",
+      "publicPath": "/assets/vault/Pemrograman/CSS/Native/image/positioning_comparison.png",
+      "size": 33473,
+      "hash": "sha256:e8f2614ea449ffdf4bd54fb60c4beebc3c7d79db23821ca57080116446002842"
+    },
+    {
+      "sourcePath": "Pemrograman/CSS/Native/image/praktek_flexbox_dashboard.png",
+      "publicPath": "/assets/vault/Pemrograman/CSS/Native/image/praktek_flexbox_dashboard.png",
+      "size": 42314,
+      "hash": "sha256:38ecc4ed04ade00e022ff9c6587de81aabad56e09a06e74efa81985fbe15ea84"
+    },
+    {
+      "sourcePath": "Pemrograman/CSS/Native/image/praktek_navbar.png",
+      "publicPath": "/assets/vault/Pemrograman/CSS/Native/image/praktek_navbar.png",
+      "size": 41065,
+      "hash": "sha256:9f485f56c74c306f46dc7694e9b7528309e71d1fc3170c06369cca29cbaddd32"
+    },
+    {
+      "sourcePath": "Pemrograman/CSS/Native/image/praktek_pricing_table.png",
+      "publicPath": "/assets/vault/Pemrograman/CSS/Native/image/praktek_pricing_table.png",
+      "size": 82072,
+      "hash": "sha256:769778397087c5e2b88eeb833cc2b2db40e4faac1b3d29714a7eb48dde74a605"
+    },
+    {
+      "sourcePath": "Pemrograman/CSS/Native/image/praktek_profile_card.png",
+      "publicPath": "/assets/vault/Pemrograman/CSS/Native/image/praktek_profile_card.png",
+      "size": 44216,
+      "hash": "sha256:e47743b3015b0f0ae951a2940b2d16f7fe8bd701f72a42e87a54c74783b012e3"
     },
     {
       "sourcePath": "Pemrograman/CSS/Native/image/Pseudo.png",
