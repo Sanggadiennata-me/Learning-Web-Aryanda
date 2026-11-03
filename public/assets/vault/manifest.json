@@ -644,6 +644,18 @@
       "hash": "sha256:93b7cf98988202b704f55e0e6317740613da07fcb27d05b17d7c5b2c3c1b7faf"
     },
     {
+      "sourcePath": "Pemrograman/Html/Image/praktek_html_form.png",
+      "publicPath": "/assets/vault/Pemrograman/Html/Image/praktek_html_form.png",
+      "size": 81529,
+      "hash": "sha256:1e54f6f0793d696ace9d1ee497dc58db5f1ec81e3f7ae7e6bdf59d3ef7204850"
+    },
+    {
+      "sourcePath": "Pemrograman/Html/Image/praktek_html_portfolio.png",
+      "publicPath": "/assets/vault/Pemrograman/Html/Image/praktek_html_portfolio.png",
+      "size": 161355,
+      "hash": "sha256:b3fb34d5c42b52cd111aca663f30053cb117a4cc43c0e8eaca58528af4f3c553"
+    },
+    {
       "sourcePath": "Pemrograman/Html/Image/preformatted.png",
       "publicPath": "/assets/vault/Pemrograman/Html/Image/preformatted.png",
       "size": 60494,
