@@ -542,6 +542,30 @@
       "hash": "sha256:1fe769cf3dad0b068d619048dcb4b44914ae3181ac0a7ca60895753140db557a"
     },
     {
+      "sourcePath": "Pemrograman/CSS/Semantic UI/image/praktek_semantic_catalog.png",
+      "publicPath": "/assets/vault/Pemrograman/CSS/Semantic UI/image/praktek_semantic_catalog.png",
+      "size": 230231,
+      "hash": "sha256:3bad00f94c1ffde05a26e878791ee7d01162f2bdfe32e8948745365092816096"
+    },
+    {
+      "sourcePath": "Pemrograman/CSS/Semantic UI/image/praktek_semantic_portal.png",
+      "publicPath": "/assets/vault/Pemrograman/CSS/Semantic UI/image/praktek_semantic_portal.png",
+      "size": 81830,
+      "hash": "sha256:52fcb0b3cbdfc8bd87296a1b02c3d8fa0f7bf049e73fbbc000e6021ad13f7ff0"
+    },
+    {
+      "sourcePath": "Pemrograman/CSS/Semantic UI/image/semantic_grid_16_visual.png",
+      "publicPath": "/assets/vault/Pemrograman/CSS/Semantic UI/image/semantic_grid_16_visual.png",
+      "size": 36203,
+      "hash": "sha256:d5f13686edf34f7f8d78ab187be72b8c690d1ea8337a422bd642f72f21e74484"
+    },
+    {
+      "sourcePath": "Pemrograman/CSS/Semantic UI/image/semantic_syntax_concept.png",
+      "publicPath": "/assets/vault/Pemrograman/CSS/Semantic UI/image/semantic_syntax_concept.png",
+      "size": 42626,
+      "hash": "sha256:c8273ff482a16eeb080ce27d7d25ba98681e4995b398a25e9fe86fb59a5a4679"
+    },
+    {
       "sourcePath": "Pemrograman/CSS/Tailwind/image/praktek_tailwind_dashboard.png",
       "publicPath": "/assets/vault/Pemrograman/CSS/Tailwind/image/praktek_tailwind_dashboard.png",
       "size": 41135,
