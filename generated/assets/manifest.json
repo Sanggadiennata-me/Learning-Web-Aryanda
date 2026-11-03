@@ -506,6 +506,24 @@
       "hash": "sha256:1fe769cf3dad0b068d619048dcb4b44914ae3181ac0a7ca60895753140db557a"
     },
     {
+      "sourcePath": "Pemrograman/CSS/Tailwind/image/praktek_tailwind_dashboard.png",
+      "publicPath": "/assets/vault/Pemrograman/CSS/Tailwind/image/praktek_tailwind_dashboard.png",
+      "size": 41135,
+      "hash": "sha256:4c7227e2ef5385d31b3f3fef2c3ed493ce79e884dd8ee4d2258bed4832f1df6a"
+    },
+    {
+      "sourcePath": "Pemrograman/CSS/Tailwind/image/tw_breakpoints_visual.png",
+      "publicPath": "/assets/vault/Pemrograman/CSS/Tailwind/image/tw_breakpoints_visual.png",
+      "size": 15697,
+      "hash": "sha256:da27acff76a718457327a8086ebd00b628415d32dfd595411ce4fa215d196712"
+    },
+    {
+      "sourcePath": "Pemrograman/CSS/Tailwind/image/tw_utility_concept.png",
+      "publicPath": "/assets/vault/Pemrograman/CSS/Tailwind/image/tw_utility_concept.png",
+      "size": 36997,
+      "hash": "sha256:5888c77da19916871037a429775ff5559aac427163adadb21b08a2a90981c479"
+    },
+    {
       "sourcePath": "Pemrograman/Fundamental/image/perulangan.png",
       "publicPath": "/assets/vault/Pemrograman/Fundamental/image/perulangan.png",
       "size": 27224,
