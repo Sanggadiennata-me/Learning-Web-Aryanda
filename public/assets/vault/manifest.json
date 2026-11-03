@@ -206,6 +206,30 @@
       "hash": "sha256:af8f21ad5f1970896f9477f33c802af8b0277803192768c58bb3e5c156c82bde"
     },
     {
+      "sourcePath": "Pemrograman/CSS/Bulma/image/bulma_columns_visual.png",
+      "publicPath": "/assets/vault/Pemrograman/CSS/Bulma/image/bulma_columns_visual.png",
+      "size": 17857,
+      "hash": "sha256:4ba3980ba848f22d4a86e4916ff8b81addd248bb51debddf8250080104c2fd33"
+    },
+    {
+      "sourcePath": "Pemrograman/CSS/Bulma/image/bulma_modifiers_concept.png",
+      "publicPath": "/assets/vault/Pemrograman/CSS/Bulma/image/bulma_modifiers_concept.png",
+      "size": 18032,
+      "hash": "sha256:a37a875ff87e404c53147c5f4e968fa2cee3368dd4d77e5dc5d13fc9f99cc2a8"
+    },
+    {
+      "sourcePath": "Pemrograman/CSS/Bulma/image/praktek_bulma_dashboard.png",
+      "publicPath": "/assets/vault/Pemrograman/CSS/Bulma/image/praktek_bulma_dashboard.png",
+      "size": 73643,
+      "hash": "sha256:6580b064c51c68ea721379f199a00ad9808d0a42a03562f8f19ce841c3294330"
+    },
+    {
+      "sourcePath": "Pemrograman/CSS/Bulma/image/praktek_bulma_landing.png",
+      "publicPath": "/assets/vault/Pemrograman/CSS/Bulma/image/praktek_bulma_landing.png",
+      "size": 62352,
+      "hash": "sha256:28064f3c5b8a93b70151367167cf098b007d2ffc26f4d6586ac41f8e488d45e1"
+    },
+    {
       "sourcePath": "Pemrograman/CSS/Native/image/aftermargin.png",
       "publicPath": "/assets/vault/Pemrograman/CSS/Native/image/aftermargin.png",
       "size": 317812,
